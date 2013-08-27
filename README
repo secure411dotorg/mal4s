@@ -1,4 +1,13 @@
+ Alpha stage
 
+See https://www.youtube.com/watch?v=BgCYJHnLHWk
+
+We forked the excellent effort from Andrew Caudwell called "gource" which was created for a different purpose (software version control visualization). The reason for our fork instead of contributing to the original repo is that the features we want to add wouldn't be suitable for the original purpose.
+
+At present the code and docs are unchanged. We will be modifying and fixing up to reflect the new purpose, example conf and data files we have used, etc.
+
+*****
+ 
                              Gource
 
               software version control visualization
