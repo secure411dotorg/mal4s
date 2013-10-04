@@ -146,6 +146,22 @@ Gource::Gource(FrameExporter* exporter) {
     //if recording a video or in demo mode, or multiple repos, the slider is initially hidden
     if(exporter==0 && gGourceSettings.repo_count==1) slider.show();
 }
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
 
 void Gource::writeCustomLog(const std::string& logfile, const std::string& output_file) {
 
@@ -2602,12 +2618,19 @@ void Gource::draw(float t, float dt) {
 
     //text box
     if(hoverFile && hoverFile != selectedFile) {
-
+	// Changed display of "path" to better represent the dataset
         std::string display_path = hoverFile->path;
+	// Erase leading slash from the path
         display_path.erase(0,1);
 
+	std::vector<std::string> display_elems = split(display_path, '/');
+
         textbox.setText(hoverFile->getName());
-        if(display_path.size()) textbox.addLine(display_path);
+	//if(display_path.size()) textbox.addLine(display_path);
+	std::string display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
+	textbox.addLine(display_elems[0]);
+	textbox.addLine(display_elems[1]);
+	textbox.addLine(display_address);
         textbox.setColour(hoverFile->getColour());
 
         textbox.setPos(mousepos, true);

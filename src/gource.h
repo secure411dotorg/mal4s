@@ -21,6 +21,10 @@
 #include <deque>
 #include <list>
 #include <fstream>
+#include <string>
+#include <sstream>
+#include <vector>
+
 
 #include "core/display.h"
 #include "core/shader.h"
