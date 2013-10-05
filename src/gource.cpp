@@ -2620,17 +2620,29 @@ void Gource::draw(float t, float dt) {
     if(hoverFile && hoverFile != selectedFile) {
 	// Changed display of "path" to better represent the dataset
         std::string display_path = hoverFile->path;
+	//Need to modify the display of "File name" to separate the autonomous system number from the domain name
+	std::string domain_asn = hoverFile->getName();
 	// Erase leading slash from the path
         display_path.erase(0,1);
 
+	std::vector<std::string> domain_asn_elems = split(domain_asn, '.');
 	std::vector<std::string> display_elems = split(display_path, '/');
+	
+	std::string display_asn = *--domain_asn_elems.cend();
+	std::string display_domain = *domain_asn_elems.cbegin();
+	for (auto it = ++domain_asn_elems.cbegin(); it != --domain_asn_elems.cend(); ++it)
+		display_domain += "." + *it;
 
-        textbox.setText(hoverFile->getName());
-	//if(display_path.size()) textbox.addLine(display_path);
 	std::string display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
-	textbox.addLine(display_elems[0]);
-	textbox.addLine(display_elems[1]);
-	textbox.addLine(display_address);
+
+        textbox.setText(display_domain);  //Domain name
+	textbox.addLine(display_elems[6]);  //Registration date
+	textbox.addLine(display_elems[7]);  //Registrar
+	textbox.addLine("");  //Blank line
+	textbox.addLine(display_elems[0]);  //RIR
+	textbox.addLine(display_elems[1]);  //Two letter country code
+	textbox.addLine(display_asn);  // Autonomous System Number
+	textbox.addLine(display_address);  //IP address
         textbox.setColour(hoverFile->getColour());
 
         textbox.setPos(mousepos, true);
