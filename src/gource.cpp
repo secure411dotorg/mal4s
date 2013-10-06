@@ -2332,7 +2332,6 @@ void Gource::drawUsers(float dt) {
         user_vbo.draw();
 
     } else {
-Delta compression using up to 4 threads.
 
         for(std::map<std::string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
             it->second->draw(dt);
