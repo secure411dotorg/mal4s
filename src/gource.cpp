@@ -2332,6 +2332,7 @@ void Gource::drawUsers(float dt) {
         user_vbo.draw();
 
     } else {
+Delta compression using up to 4 threads.
 
         for(std::map<std::string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
             it->second->draw(dt);
@@ -2638,11 +2639,11 @@ void Gource::draw(float t, float dt) {
 	std::string display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
 
         textbox.setText(display_domain);  //Domain name
-	textbox.addLine(display_elems[6] + " (Creation Date)");  //Registration date
-	textbox.addLine(display_elems[7] + " (Registrar)");  //Registrar
+	textbox.addLine(display_elems[6] + " (creation date)");  //Registration date
+	textbox.addLine(display_elems[7] + " (registrar)");  //Registrar
 	textbox.addLine("");  //Blank line
 	textbox.addLine(display_elems[0]);  //RIR
-	textbox.addLine(display_elems[1] + " (Country)");  //Two letter country code
+	textbox.addLine(display_elems[1] + " (country)");  //Two letter country code
 	textbox.addLine(display_asn);  // Autonomous System Number
 	textbox.addLine(display_address);  //IP address
         textbox.setColour(hoverFile->getColour());
