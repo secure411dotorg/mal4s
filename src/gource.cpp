@@ -2618,6 +2618,7 @@ void Gource::draw(float t, float dt) {
 
     //text box
     if(hoverFile && hoverFile != selectedFile) {
+	camera.lockOn(true);
 	// Changed display of "path" to better represent the dataset
         std::string display_path = hoverFile->path;
 	//Need to modify the display of "File name" to separate the autonomous system number from the domain name
