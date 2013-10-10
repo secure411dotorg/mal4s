@@ -319,9 +319,12 @@ void GourceSettings::setGourceDefaults() {
     hide_tree      = false;
     hide_files     = false;
     hide_usernames = false;
-    hide_filenames = false;
-    hide_dirnames  = false;
-    hide_progress  = false;
+//    hide_filenames = false;
+    hide_filenames = true;
+//    hide_dirnames  = false;
+    hide_dirnames  = true;
+//    hide_progress  = false;
+    hide_progress  = true;
     hide_bloom     = false;
     hide_mouse     = false;
     hide_root      = false;
@@ -331,14 +334,17 @@ void GourceSettings::setGourceDefaults() {
     stop_position  = 0.0f;
     stop_at_time   = -1.0f;
     stop_on_idle   = false;
-    stop_at_end    = false;
+//    stop_at_end    = false;
+    stop_at_end    = true;
     dont_stop      = false;
 
-    show_key = false;
+    show_key = true;
+//    show_key = false;
 
     disable_auto_rotate = false;
 
-    auto_skip_seconds = 3.0f;
+//    auto_skip_seconds = 3.0f;
+    auto_skip_seconds = 1.0f;
     days_per_second   = 0.1f; // TODO: check this is right
     file_idle_time    = 0.0f;
     time_scale        = 1.0f;
@@ -364,7 +370,8 @@ void GourceSettings::setGourceDefaults() {
     crop_horizontal = false;
 
     bloom_multiplier = 1.0f;
-    bloom_intensity  = 0.75f;
+//    bloom_intensity  = 0.75f;
+    bloom_intensity  = 0.3f;
 
     background_colour = vec3(0.1f, 0.1f, 0.1f);
     background_image  = "";
@@ -381,8 +388,10 @@ void GourceSettings::setGourceDefaults() {
 
     git_branch = "";
 
-    log_format  = "";
-    date_format = "%A, %d %B, %Y %X";
+    log_format  = "custom";
+//    log_format  = "";
+//    date_format = "%A, %d %B, %Y %X";
+    date_format = "";
 
     max_files      = 0;
     max_user_speed = 500.0f;
