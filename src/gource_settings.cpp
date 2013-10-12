@@ -309,7 +309,7 @@ GourceSettings::GourceSettings() {
 
 void GourceSettings::setGourceDefaults() {
 
-    path = ".";
+    path = "-";
     default_path = true;
 
     ffp = false;
