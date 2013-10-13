@@ -1945,6 +1945,11 @@ void Gource::mousetrace(float dt) {
         } else if(hoverFile!=0) {
             camera.lockOn(false);
             selectFile(hoverFile);
+		std::ofstream txtfile;
+		txtfile.open("malhost.txt", std::ios::app);
+		std::string domain_asn = selectedFile->getName();
+		txtfile << domain_asn << "\n";
+		txtfile.close();
         } else {
             selectBackground();
         }
