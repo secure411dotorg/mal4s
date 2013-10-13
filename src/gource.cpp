@@ -689,11 +689,29 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             screenshot();
         }
 
-	//FIXME Text output of contents of hoverFile textbox
-	if(e->keysym.sym == SDLK_F11) {
+	//FIXME Text output of file name of hoverFile
+	if(e->keysym.sym == SDLK_F5) {
 		if(hoverFile != 0) {
 			std::ofstream txtfile;
-			txtfile.open("malhost.txt", std::ios::app);
+			txtfile.open("malhost-f5.txt", std::ios::app);
+			std::string domain_asn = hoverFile->getName();
+			txtfile << domain_asn << "\n";
+			txtfile.close();
+		}
+	}
+	if(e->keysym.sym == SDLK_F7) {
+		if(hoverFile != 0) {
+			std::ofstream txtfile;
+			txtfile.open("malhost-f7.txt", std::ios::app);
+			std::string domain_asn = hoverFile->getName();
+			txtfile << domain_asn << "\n";
+			txtfile.close();
+		}
+	}
+	if(e->keysym.sym == SDLK_F9) {
+		if(hoverFile != 0) {
+			std::ofstream txtfile;
+			txtfile.open("malhost-f9.txt", std::ios::app);
 			std::string domain_asn = hoverFile->getName();
 			txtfile << domain_asn << "\n";
 			txtfile.close();
