@@ -692,8 +692,11 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 	//FIXME Text output of contents of hoverFile textbox
 	if(e->keysym.sym == SDLK_F11) {
 		if(hoverFile != 0) {
+			std::ofstream txtfile;
+			txtfile.open("malhost.txt", std::ios::app);
 			std::string domain_asn = hoverFile->getName();
-			std::cout << domain_asn << "\n";
+			txtfile << domain_asn << "\n";
+			txtfile.close();
 		}
 	}
 
