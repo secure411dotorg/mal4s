@@ -599,6 +599,12 @@ void Gource::selectFile(RFile* file) {
 
     selectedFile = file;
 
+	 //FIXME This could be good place to execute a command to share data with another program
+	 //Would execute when clicking a file
+           //char * command = "echo hello world";  //Simple test command
+	   //int sysresult = system(command);
+
+
     //select user, lock on camera
     selectedFile->setSelected(true);
 }
@@ -675,6 +681,12 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
         if (key_escape) {
             quit();
         }
+
+//	if(e->keysym.sym == SDLK_F11) {
+	 //FIXME Command execution on key press.  Useful to share data with another program.
+//           char * command = "echo hello world";  //Simple test command
+//	   int sysresult = system(command);
+//	}
 
         if(commitlog==0) return;
 
