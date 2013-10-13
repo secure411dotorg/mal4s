@@ -682,17 +682,21 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             quit();
         }
 
-//	if(e->keysym.sym == SDLK_F11) {
-	 //FIXME Command execution on key press.  Useful to share data with another program.
-//           char * command = "echo hello world";  //Simple test command
-//	   int sysresult = system(command);
-//	}
-
+	
         if(commitlog==0) return;
 
         if(e->keysym.sym == SDLK_F12) {
             screenshot();
         }
+
+	//FIXME Text output of contents of hoverFile textbox
+	if(e->keysym.sym == SDLK_F11) {
+		if(hoverFile != 0) {
+			std::string domain_asn = hoverFile->getName();
+			std::cout << domain_asn << "\n";
+		}
+	}
+
 
         if (e->keysym.sym == SDLK_q) {
             debug = !debug;
@@ -2651,6 +2655,7 @@ void Gource::draw(float t, float dt) {
 
 	std::string display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
 
+	//Create a textbox and display these elements
         textbox.setText(display_domain);  //Domain name
 	textbox.addLine(display_elems[6] + " (creation date)");  //Registration date
 	textbox.addLine(display_elems[7] + " (registrar)");  //Registrar
@@ -2659,10 +2664,15 @@ void Gource::draw(float t, float dt) {
 	textbox.addLine(display_elems[1] + " (country)");  //Two letter country code
 	textbox.addLine(display_asn);  // Autonomous System Number
 	textbox.addLine(display_address);  //IP address
-        textbox.setColour(hoverFile->getColour());
 
+
+        textbox.setColour(hoverFile->getColour());
         textbox.setPos(mousepos, true);
         textbox.draw();
+
+
+
+
     } else if(hoverUser && hoverUser != selectedUser) {
 
         textbox.setText(hoverUser->getName());
