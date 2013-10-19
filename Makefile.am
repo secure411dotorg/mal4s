@@ -1,10 +1,10 @@
 ACLOCAL_AMFLAGS = -I m4
 
-bin_PROGRAMS = gource
+bin_PROGRAMS = mal4s
 
-gource_CXXFLAGS = -std=gnu++0x -Wall -Wno-sign-compare -Wno-reorder -Wno-unused-but-set-variable -Wno-unused-variable
+mal4s_CXXFLAGS = -std=gnu++0x -Wall -Wno-sign-compare -Wno-reorder -Wno-unused-but-set-variable -Wno-unused-variable
 
-gource_SOURCES = \
+mal4s_SOURCES = \
 	src/action.cpp \
 	src/bloom.cpp \
 	src/caption.cpp \
@@ -70,7 +70,7 @@ uninstall-hook:
 
 
 if USE_BUNDLED_TINYXML
-gource_SOURCES += \
+mal4s_SOURCES += \
 	src/tinyxml/tinyxmlerror.cpp \
 	src/tinyxml/tinystr.cpp \
 	src/tinyxml/tinyxml.cpp \
