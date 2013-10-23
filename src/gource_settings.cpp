@@ -43,9 +43,9 @@ void GourceSettings::help(bool extended_help) {
     SDLApp::showConsole(true);
 #endif
 
-    printf("Gource v%s\n", GOURCE_VERSION);
+    printf("Mal4s v%s\n", GOURCE_VERSION);
 
-    printf("Usage: gource [OPTIONS] [PATH]\n");
+    printf("Usage: mal4s [OPTIONS] [PATH]\n");
     printf("\nOptions:\n");
     printf("  -h, --help                       Help\n\n");
     printf("  -WIDTHxHEIGHT, --viewport        Set viewport size\n");
