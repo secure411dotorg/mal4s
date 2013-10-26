@@ -17,11 +17,13 @@
 
 #include "gource.h"
 
+
 bool  gGourceDrawBackground  = true;
 bool  gGourceQuadTreeDebug   = false;
 int   gGourceMaxQuadTreeDepth = 6;
 
-int gGourceUserInnerLoops = 0;
+int gGourceUserInnerLoops = 0
+
 
 Gource::Gource(FrameExporter* exporter) {
 
@@ -717,7 +719,17 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 			txtfile.close();
 		}
 	}
-
+// FIXME testing sound
+	if(e->keysym.sym == SDLK_F11) {
+	Mix_Chunk *cowbell = NULL;
+	SDL_Init(SDL_INIT_AUDIO);
+	std::string soundFileDir = texturemanager.getDir() + "cowbell.wav";
+	const char* soundFile = soundFileDir.c_str();
+	cowbell = Mix_LoadWAV(soundFile);
+	Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 );
+	Mix_PlayChannel( -1, cowbell, 0 );
+	}
+//FIXME
 
         if (e->keysym.sym == SDLK_q) {
             debug = !debug;

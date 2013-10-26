@@ -54,6 +54,11 @@
 #include "zoomcamera.h"
 #include "key.h"
 
+#include <stdlib.h>
+#include <signal.h>
+#include "SDL_audio.h"
+#include "SDL_mixer.h"
+
 class Gource : public SDLApp {
     std::string logfile;
 
