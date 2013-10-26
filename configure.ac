@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.61)
 
-AC_INIT(Gource, 0.41, [acaudwell@gmail.com])
+AC_INIT(Mal4s, 0.41, [https://github.com/secure411dotorg/OpenGL-Malicious-Host-Finder/])
 AC_CONFIG_SRCDIR([src/main.h])
 
 AM_INIT_AUTOMAKE([dist-bzip2 foreign subdir-objects])
@@ -36,11 +36,10 @@ PKG_CHECK_MODULES([FT2], [freetype2 >= 9.0.3])
 PKG_CHECK_MODULES([PCRE], [libpcre])
 PKG_CHECK_MODULES([GLEW], [glew])
 
-PKG_CHECK_MODULES([SDL2], [sdl2 SDL2_image], [have_sdl2=yes], [have_sdl2=no])
-
+PKG_CHECK_MODULES([SDL2], [sdl2 SDL2_image SDL2_mixer], [have_sdl2=yes], [have_sdl2=no])
 # use SDL 2 if available, otherwise use SDL 1.2
 if test "x$have_sdl2" = xno; then
-    PKG_CHECK_MODULES([SDL], [sdl >= 1.2.10 SDL_image])
+    PKG_CHECK_MODULES([SDL], [sdl >= 1.2.10 SDL_image SDL_mixer])
 fi
 
 CPPFLAGS="${CPPFLAGS} ${FT2_CFLAGS} ${PCRE_CFLAGS} ${GLEW_CFLAGS} ${SDL2_CFLAGS} ${SDL_CFLAGS}"
