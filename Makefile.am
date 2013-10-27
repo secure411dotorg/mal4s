@@ -56,7 +56,7 @@ mal4s_SOURCES = \
 
 AM_CPPFLAGS = -DSDLAPP_RESOURCE_DIR=\"$(pkgdatadir)\"
 
-dist_pkgdata_DATA = data/beam.png data/bloom.tga data/bloom_alpha.tga data/file.png data/user.png data/gource.style
+dist_pkgdata_DATA = data/beam.png data/bloom.tga data/bloom_alpha.tga data/file.png data/user.png data/gource.style data/cowbell.wav
 
 shadersdir = $(pkgdatadir)/shaders
 dist_shaders_DATA = data/shaders/shadow.vert data/shaders/shadow.frag data/shaders/bloom.vert data/shaders/bloom.frag data/shaders/text.vert data/shaders/text.frag
