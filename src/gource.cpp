@@ -22,7 +22,7 @@ bool  gGourceDrawBackground  = true;
 bool  gGourceQuadTreeDebug   = false;
 int   gGourceMaxQuadTreeDepth = 6;
 
-int gGourceUserInnerLoops = 0
+int gGourceUserInnerLoops = 0;
 
 
 Gource::Gource(FrameExporter* exporter) {
