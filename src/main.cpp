@@ -158,6 +158,11 @@ int main(int argc, char *argv[]) {
         SDLAppQuit(errormsg);
     }
 
+    //Open sound
+    Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 );
+    Mix_Music *music = NULL;
+    Mix_PlayMusic(music, 1);
+
     //init frame exporter
     FrameExporter* exporter = 0;
 
