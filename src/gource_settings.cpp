@@ -613,6 +613,70 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
+    //Hover text labels
+    if((entry = gource_settings->getEntry("hover-label-1")) != 0) {
+
+        if(!entry->hasValue()) {
+		hoverLine1Label = "";
+	} else {
+		hoverLine1Label = " " + entry->getString();
+	}
+    }
+
+    if((entry = gource_settings->getEntry("hover-label-2")) != 0) {
+
+        if(!entry->hasValue()) {
+		hoverLine2Label = "";
+	} else {
+		hoverLine2Label = " " + entry->getString();
+	}
+    }
+
+    if((entry = gource_settings->getEntry("hover-label-3")) != 0) {
+
+        if(!entry->hasValue()) {
+		hoverLine3Label = "";
+	} else {
+		hoverLine3Label = " " + entry->getString();
+	}
+    }
+
+    if((entry = gource_settings->getEntry("hover-label-4")) != 0) {
+
+        if(!entry->hasValue()) {
+		hoverLine4Label = "";
+	} else {
+		hoverLine4Label = " " + entry->getString();
+	}
+    }
+
+    if((entry = gource_settings->getEntry("hover-label-5")) != 0) {
+
+        if(!entry->hasValue()) {
+		hoverLine5Label = "";
+	} else {
+		hoverLine5Label = " " + entry->getString();
+	}
+    }
+
+    if((entry = gource_settings->getEntry("hover-label-6")) != 0) {
+
+        if(!entry->hasValue()) {
+		hoverLine6Label = "";
+	} else {
+		hoverLine6Label = " " + entry->getString();
+	}
+    }
+
+    if((entry = gource_settings->getEntry("hover-label-7")) != 0) {
+
+        if(!entry->hasValue()) {
+		hoverLine7Label = "";
+	} else {
+		hoverLine7Label = " " + entry->getString();
+	}
+    }
+
     if((entry = gource_settings->getEntry("date-format")) != 0) {
 
         if(!entry->hasValue()) conffile.missingValueException(entry);
