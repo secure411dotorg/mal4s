@@ -414,6 +414,15 @@ void GourceSettings::setGourceDefaults() {
 
     gStringHashSeed = 31;
 
+    //Default hover text labels
+    hoverLine1Label = "";
+    hoverLine2Label = " (creation date)";
+    hoverLine3Label = " (registrar)";
+    hoverLine4Label = "";
+    hoverLine5Label = " (country)";
+    hoverLine6Label = "";
+    hoverLine7Label = "";
+
     //delete file filters
     for(std::vector<Regex*>::iterator it = file_filters.begin(); it != file_filters.end(); it++) {
         delete (*it);

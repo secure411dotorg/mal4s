@@ -2708,14 +2708,15 @@ void Gource::draw(float t, float dt) {
 	std::string display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
 
 	//Create a textbox and display these elements
-        textbox.setText(display_domain);  //Domain name
-	textbox.addLine(display_elems[6] + " (creation date)");  //Registration date
-	textbox.addLine(display_elems[7] + " (registrar)");  //Registrar
+        textbox.setText(display_domain + gGourceSettings.hoverLine1Label);  //Domain name
+	textbox.addLine(display_elems[6] + gGourceSettings.hoverLine2Label);  //Registration date
+	textbox.addLine(display_elems[7] + gGourceSettings.hoverLine3Label);  //Registrar
 	textbox.addLine("");  //Blank line
-	textbox.addLine(display_elems[0]);  //RIR
-	textbox.addLine(display_elems[1] + " (country)");  //Two letter country code
-	textbox.addLine(display_asn);  // Autonomous System Number
-	textbox.addLine(display_address);  //IP address
+	
+	textbox.addLine(display_elems[0] + gGourceSettings.hoverLine4Label);  //RIR
+	textbox.addLine(display_elems[1] + gGourceSettings.hoverLine5Label);  //Two letter country code
+	textbox.addLine(display_asn + gGourceSettings.hoverLine6Label);  // Autonomous System Number
+	textbox.addLine(display_address + gGourceSettings.hoverLine7Label);  //IP address
 
 
         textbox.setColour(hoverFile->getColour());

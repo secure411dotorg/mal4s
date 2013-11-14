@@ -30,6 +30,14 @@ protected:
 public:
     int repo_count;
 
+    std::string hoverLine1Label;
+    std::string hoverLine2Label;
+    std::string hoverLine3Label;
+    std::string hoverLine4Label;
+    std::string hoverLine5Label;
+    std::string hoverLine6Label;
+    std::string hoverLine7Label;
+
     bool hide_date;
     bool hide_users;
     bool hide_tree;
