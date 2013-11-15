@@ -2700,11 +2700,20 @@ void Gource::draw(float t, float dt) {
 	
 	int domain_asn_elems_size = domain_asn_elems.size();
 	std::string display_asn = domain_asn_elems[--domain_asn_elems_size];
-	display_asn.erase(0,2);
-	display_asn = "AS" + display_asn;
-	std::string display_domain = domain_asn_elems[0];
-	for (auto it = &domain_asn_elems[0]; it != &domain_asn_elems[domain_asn_elems_size]; ++it)
-		display_domain += "." + *it;
+
+	Regex asn_regex("^[a-zA-Z]{2}[0-9]+$");
+	std::vector<std::string> ignored;
+	std::string display_domain;
+	if(asn_regex.matchAll(display_asn, &ignored)) {
+		display_asn.erase(0,2);
+		display_asn = "AS" + display_asn;
+		display_domain = domain_asn_elems[0];
+		for (auto it = &domain_asn_elems[1]; it != &domain_asn_elems[domain_asn_elems_size]; ++it)
+			display_domain += "." + *it;
+	} else {
+		display_asn = "N/A";
+		display_domain =  hoverFile->getName();
+	}
 
 	std::string display_address;
 	if(display_elems.size() >= 8) {
