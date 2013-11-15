@@ -371,7 +371,7 @@ void GourceSettings::setGourceDefaults() {
 
     bloom_multiplier = 1.0f;
 //    bloom_intensity  = 0.75f;
-    bloom_intensity  = 0.3f;
+    bloom_intensity  = 0.025f;
 
     background_colour = vec3(0.1f, 0.1f, 0.1f);
     background_image  = texturemanager.getDir() + "dissectcyber.png";
