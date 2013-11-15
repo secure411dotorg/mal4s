@@ -2698,19 +2698,25 @@ void Gource::draw(float t, float dt) {
 	std::vector<std::string> domain_asn_elems = split(domain_asn, '.');
 	std::vector<std::string> display_elems = split(display_path, '/');
 	
-	std::string display_asn = *--domain_asn_elems.cend();
+	int domain_asn_elems_size = domain_asn_elems.size();
+	std::string display_asn = domain_asn_elems[--domain_asn_elems_size];
 	display_asn.erase(0,2);
 	display_asn = "AS" + display_asn;
-	std::string display_domain = *domain_asn_elems.cbegin();
-	for (auto it = ++domain_asn_elems.cbegin(); it != --domain_asn_elems.cend(); ++it)
+	std::string display_domain = domain_asn_elems[0];
+	for (auto it = &domain_asn_elems[0]; it != &domain_asn_elems[domain_asn_elems_size]; ++it)
 		display_domain += "." + *it;
 
-	std::string display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
+	std::string display_address;
+	if(display_elems.size() >= 8) {
+		display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
+	} else {
+		display_address = "Non conforming entry";
+	}
 
 	//Create a textbox and display these elements
         textbox.setText(display_domain + gGourceSettings.hoverLine1Label);  //Domain name
-	textbox.addLine(display_elems[6] + gGourceSettings.hoverLine2Label);  //Registration date
-	textbox.addLine(display_elems[7] + gGourceSettings.hoverLine3Label);  //Registrar
+	textbox.addLine(display_elems[display_elems.size() - 2] + gGourceSettings.hoverLine2Label);  //Registration date
+	textbox.addLine(display_elems[display_elems.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
 	textbox.addLine("");  //Blank line
 	
 	textbox.addLine(display_elems[0] + gGourceSettings.hoverLine4Label);  //RIR
