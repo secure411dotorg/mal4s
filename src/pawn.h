@@ -33,6 +33,8 @@ protected:
     vec2 shadowOffset;
 
     std::string name;
+    std::string imageName;
+
     float namewidth;
     vec2 accel;
     float speed;

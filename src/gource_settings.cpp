@@ -737,6 +737,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
            && log_format != "cvs2cl"
            && log_format != "svn"
            && log_format != "custom"
+	   && log_format != "mal4s"
            && log_format != "hg"
            && log_format != "bzr"
            && log_format != "apache") {

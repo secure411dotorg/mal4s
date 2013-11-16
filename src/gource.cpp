@@ -1067,7 +1067,7 @@ RFile* Gource::addFile(const RCommitFile& cf) {
     return file;
 }
 
-RUser* Gource::addUser(const std::string& username) {
+RUser* Gource::addUser(const std::string& username, const std::string& imageName) {
 
     vec2 pos;
 
@@ -1079,7 +1079,7 @@ RUser* Gource::addUser(const std::string& username) {
 
     int tagid = tag_seq++;
 
-    RUser* user = new RUser(username, pos, tagid);
+    RUser* user = new RUser(username, pos, tagid, imageName);
 
     users[username]   = user;
     tagusermap[tagid] = user;
@@ -1244,7 +1244,7 @@ void Gource::processCommit(RCommit& commit, float t) {
                 for(std::list<RFile*>::iterator it = dir_files.begin(); it != dir_files.end(); it++) {
                     RFile* file = *it;
 
-                    addFileAction(commit.username, cf, file, t);
+                    addFileAction(commit.username, cf, file, t, commit.userimagename);
                 }
             }
 
@@ -1260,11 +1260,11 @@ void Gource::processCommit(RCommit& commit, float t) {
             if(!file) continue;
         }
 
-        addFileAction(commit.username, cf, file, t);
+        addFileAction(commit.username, cf, file, t, commit.userimagename);
     }
 }
 
-void Gource::addFileAction(const std::string& username, const RCommitFile& cf, RFile* file, float t) {
+void Gource::addFileAction(const std::string& username, const RCommitFile& cf, RFile* file, float t, const std::string& imageName) {
     //create user if havent yet. do it here to ensure at least one of there files
     //was added (incase we hit gGourceSettings.max_files)
 
@@ -1276,7 +1276,7 @@ void Gource::addFileAction(const std::string& username, const RCommitFile& cf, R
     if(seen_user != users.end()) user = seen_user->second;
 
     if(user == 0) {
-        user = addUser(username);
+        user = addUser(username, imageName);
 
         if(gGourceSettings.highlight_all_users) user->setHighlighted(true);
         else {

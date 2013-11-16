@@ -206,7 +206,7 @@ class Gource : public SDLApp {
 
     void reset();
 
-    RUser* addUser(const std::string& username);
+    RUser* addUser(const std::string& username, const std::string& imageName);
     RFile* addFile(const RCommitFile& cf);
 
     void deleteUser(RUser* user);
@@ -224,7 +224,7 @@ class Gource : public SDLApp {
     void logReadingError(const std::string& error);
 
     void processCommit(RCommit& commit, float t);
-    void addFileAction(const std::string& username, const RCommitFile& cf, RFile* file, float t);
+    void addFileAction(const std::string& username, const RCommitFile& cf, RFile* file, float t, const std::string& imageName);
 
     std::string dateAtPosition(float percent);
 

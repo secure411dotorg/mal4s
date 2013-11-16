@@ -33,7 +33,7 @@ class RFile;
 
 class RUser : public Pawn {
 
-    void assignUserImage();
+    void assignUserImage(const std::string& imageName);
 
     std::list<RAction*> actions;
     std::list<RAction*> activeActions;
@@ -48,6 +48,8 @@ class RUser : public Pawn {
     float min_units_ps;
 
     std::string name;
+    std::string imageName;
+
     vec3 usercol;
 
     bool highlighted;
@@ -58,7 +60,7 @@ class RUser : public Pawn {
     const vec3& getNameColour() const;
     void drawNameText(float alpha);
 public:
-    RUser(const std::string& name, vec2 pos, int tagid);
+    RUser(const std::string& name, vec2 pos, int tagid, std::string imageName);
 
     vec3 getColour() const;
     void colourize();

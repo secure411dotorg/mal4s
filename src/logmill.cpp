@@ -21,6 +21,7 @@
 #include "formats/git.h"
 #include "formats/gitraw.h"
 #include "formats/custom.h"
+#include "formats/mal4s.h"
 #include "formats/hg.h"
 #include "formats/bzr.h"
 #include "formats/svn.h"
@@ -232,6 +233,12 @@ RCommitLog* RLogMill::fetchLog(std::string& log_format) {
 
         if(log_format == "cvs") {
             clog = new CVSEXPCommitLog(logfile);
+            if(clog->checkFormat()) return clog;
+            delete clog;
+        }
+
+        if(log_format == "mal4s") {
+            clog = new Mal4sLog(logfile);
             if(clog->checkFormat()) return clog;
             delete clog;
         }

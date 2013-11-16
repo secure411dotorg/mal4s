@@ -35,6 +35,7 @@ mal4s_SOURCES = \
 	src/formats/bzr.cpp \
 	src/formats/commitlog.cpp \
 	src/formats/custom.cpp \
+	src/formats/mal4s.cpp \
 	src/formats/cvs-exp.cpp \
 	src/formats/cvs2cl.cpp \
 	src/formats/git.cpp \

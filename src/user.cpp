@@ -16,14 +16,16 @@
 */
 
 #include "user.h"
+#include <iostream>
 
 float gGourceBeamDist          = 100.0;
 float gGourceActionDist        = 50.0;
 float gGourcePersonalSpaceDist = 100.0;
 
-RUser::RUser(const std::string& name, vec2 pos, int tagid) : Pawn(name,pos,tagid) {
+RUser::RUser(const std::string& name, vec2 pos, int tagid, std::string imageName) : Pawn(name,pos,tagid) {
 
     this->name = name;
+
 
     speed = gGourceSettings.max_user_speed;
     size = 20.0 * gGourceSettings.user_scale;
@@ -34,7 +36,9 @@ RUser::RUser(const std::string& name, vec2 pos, int tagid) : Pawn(name,pos,tagid
 
     highlighted=false;
 
-    assignUserImage();
+    if(imageName.size() == 0) imageName = name;
+
+    assignUserImage(imageName);
 
     setSelected(false);
 
@@ -177,7 +181,7 @@ void RUser::colourize() {
     usercol = colourHash(name);
 }
 
-void RUser::assignUserImage() {
+void RUser::assignUserImage(const std::string& imageName) {
     colourize();
 
     TextureResource* graphic = 0;
@@ -190,7 +194,8 @@ void RUser::assignUserImage() {
 
         std::map<std::string, std::string>::iterator findimage;
 
-        findimage = gGourceSettings.user_image_map.find(name);
+
+        findimage = gGourceSettings.user_image_map.find(imageName);
 
         //do we have this image
         if(findimage != gGourceSettings.user_image_map.end()) {
