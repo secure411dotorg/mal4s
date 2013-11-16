@@ -388,7 +388,7 @@ void GourceSettings::setGourceDefaults() {
 
     git_branch = "";
 
-    log_format  = "custom";
+    log_format  = "mal4s";
 //    log_format  = "";
 //    date_format = "%A, %d %B, %Y %X";
     date_format = "";
