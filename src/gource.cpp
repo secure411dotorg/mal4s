@@ -2723,11 +2723,7 @@ void Gource::draw(float t, float dt) {
 	}
 
 	//Create a textbox and display these elements
-        textbox.setText(
-                if(selectedUser != 0) {
-			selectedUser
-        		}
-                );  //First line of text box 
+        textbox.setText(selectedUser);  //First line of text box 
         
         textbox.addLine(display_domain + gGourceSettings.hoverLine1Label);
 	textbox.addLine(display_elems[display_elems.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
