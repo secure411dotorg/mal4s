@@ -2625,9 +2625,9 @@ void Gource::draw(float t, float dt) {
     font.roundCoordinates(true);
 
     if(splash>0.0f) {
-        int logowidth = fontlarge.getWidth("Gource");
+        int logowidth = fontlarge.getWidth("Mal4s");
         int logoheight = 100;
-        int cwidth    = font.getWidth("Software Version Control Visualization");
+        int cwidth    = font.getWidth("forked from Gource: a software Version Control Visualization");
         int awidth    = font.getWidth("(C) 2009 Andrew Caudwell");
 
         vec2 corner(display.width/2 - logowidth/2 - 30.0f, display.height/2 - 40);
@@ -2644,10 +2644,10 @@ void Gource::draw(float t, float dt) {
         glEnable(GL_TEXTURE_2D);
 
         fontlarge.setColour(vec4(1.0f));
-        fontlarge.draw(display.width/2 - logowidth/2,display.height/2 - 30, "Mal4s - forked from Gource");
+        fontlarge.draw(display.width/2 - logowidth/2,display.height/2 - 30, "Mal4s");
 
         font.setColour(vec4(1.0f));
-        font.draw(display.width/2 - cwidth/2,display.height/2 + 10, "Gource: a Software Version Control Visualization");
+        font.draw(display.width/2 - cwidth/2,display.height/2 + 10, "forked from Gource: a Software Version Control Visualization");
         font.draw(display.width/2 - awidth/2,display.height/2 + 30, "(C) 2009 Andrew Caudwell");
     }
 
@@ -2723,7 +2723,9 @@ void Gource::draw(float t, float dt) {
 	}
 
 	//Create a textbox and display these elements
-        textbox.setText(display_domain + gGourceSettings.hoverLine1Label);  //Domain name
+        textbox.setText(user->getName());  //First line of text box 
+        
+        textbox.addLine(display_domain + gGourceSettings.hoverLine1Label);
 	textbox.addLine(display_elems[display_elems.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
 
 	textbox.addLine("");  //Blank line
