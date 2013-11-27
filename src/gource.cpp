@@ -2644,10 +2644,10 @@ void Gource::draw(float t, float dt) {
         glEnable(GL_TEXTURE_2D);
 
         fontlarge.setColour(vec4(1.0f));
-        fontlarge.draw(display.width/2 - logowidth/2,display.height/2 - 30, "Gource");
+        fontlarge.draw(display.width/2 - logowidth/2,display.height/2 - 30, "Mal4s - forked from Gource");
 
         font.setColour(vec4(1.0f));
-        font.draw(display.width/2 - cwidth/2,display.height/2 + 10, "Software Version Control Visualization");
+        font.draw(display.width/2 - cwidth/2,display.height/2 + 10, "Gource: a Software Version Control Visualization");
         font.draw(display.width/2 - awidth/2,display.height/2 + 30, "(C) 2009 Andrew Caudwell");
     }
 
@@ -2724,15 +2724,15 @@ void Gource::draw(float t, float dt) {
 
 	//Create a textbox and display these elements
         textbox.setText(display_domain + gGourceSettings.hoverLine1Label);  //Domain name
-	textbox.addLine(display_elems[display_elems.size() - 2] + gGourceSettings.hoverLine2Label);  //Registration date
 	textbox.addLine(display_elems[display_elems.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
+
 	textbox.addLine("");  //Blank line
 	
 	textbox.addLine(display_elems[0] + gGourceSettings.hoverLine4Label);  //RIR
 	textbox.addLine(display_elems[1] + gGourceSettings.hoverLine5Label);  //Two letter country code
 	textbox.addLine(display_asn + gGourceSettings.hoverLine6Label);  // Autonomous System Number
 	textbox.addLine(display_address + gGourceSettings.hoverLine7Label);  //IP address
-
+	textbox.addLine(display_elems[display_elems.size() - 2] + gGourceSettings.hoverLine2Label); //element after dotted quad
 
         textbox.setColour(hoverFile->getColour());
         textbox.setPos(mousepos, true);
