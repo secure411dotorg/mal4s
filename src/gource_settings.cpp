@@ -17,6 +17,7 @@
 
 #include "gource_settings.h"
 #include "core/sdlapp.h"
+#include "file.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
@@ -25,12 +26,14 @@
 #include "core/utf8/utf8.h"
 #include <time.h>
 
+/*
 #include "formats/hg.h"
 #include "formats/git.h"
 #include "formats/bzr.h"
 #include "formats/cvs-exp.h"
 #include "formats/cvs2cl.h"
 #include "formats/svn.h"
+*/
 
 GourceSettings gGourceSettings;
 
@@ -199,16 +202,17 @@ GourceSettings::GourceSettings() {
     //command line only options
     conf_sections["help"]            = "command-line";
     conf_sections["extended-help"]   = "command-line";
-    conf_sections["log-command"]     = "command-line";
+/*    conf_sections["log-command"]     = "command-line";
     conf_sections["git-log-command"] = "command-line";
     conf_sections["cvs-exp-command"] = "command-line";
     conf_sections["cvs2cl-command"]  = "command-line";
     conf_sections["hg-log-command"]  = "command-line";
     conf_sections["bzr-log-command"] = "command-line";
     conf_sections["svn-log-command"] = "command-line";
-    conf_sections["load-config"]     = "command-line";
-    conf_sections["save-config"]     = "command-line";
     conf_sections["output-custom-log"] = "command-line";
+    conf_sections["load-config"]     = "command-line";
+*/
+    conf_sections["save-config"]     = "command-line";
     conf_sections["log-level"]         = "command-line";
 
     //boolean args
@@ -240,13 +244,13 @@ GourceSettings::GourceSettings() {
     arg_types["disable-auto-rotate"] = "bool";
     arg_types["disable-auto-skip"]   = "bool";
 
-    arg_types["git-log-command"]= "bool";
+/*    arg_types["git-log-command"]= "bool";
     arg_types["cvs-exp-command"]= "bool";
     arg_types["cvs2cl-command"] = "bool";
     arg_types["svn-log-command"]= "bool";
     arg_types["hg-log-command"] = "bool";
     arg_types["bzr-log-command"]= "bool";
-
+*/
     arg_types["bloom-intensity"]   = "float";
     arg_types["bloom-multiplier"]  = "float";
     arg_types["elasticity"]        = "float";
@@ -462,7 +466,7 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
     if(name == "log-command") {
         log_command = value;
     }
-
+/*
     if(name == "git-log-command" || log_command == "git") {
         SDLAppInfo(GitCommitLog::logCommand());
     }
@@ -495,6 +499,7 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
         output_custom_filename = value;
         return;
     }
+*/
 
     if(name == "log-level") {
         if(value == "warn") {
@@ -728,19 +733,19 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
         log_format = entry->getString();
 
-        if(log_format == "cvs") {
+/*        if(log_format == "cvs") {
             conffile.entryException(entry, "please use either 'cvs2cl' or 'cvs-exp'");
         }
-
-        if(   log_format != "git"
+*/
+        if(  log_format != "mal4s"
+           && log_format != "custom"
+/*         && log_format != "git"
            && log_format != "cvs-exp"
            && log_format != "cvs2cl"
            && log_format != "svn"
-           && log_format != "custom"
-	   && log_format != "mal4s"
            && log_format != "hg"
            && log_format != "bzr"
-           && log_format != "apache") {
+           && log_format != "apache" */) {
 
             conffile.invalidValueException(entry);
         }

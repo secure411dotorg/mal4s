@@ -18,16 +18,18 @@
 #include "logmill.h"
 #include "gource_settings.h"
 
+/*
 #include "formats/git.h"
 #include "formats/gitraw.h"
-#include "formats/custom.h"
-#include "formats/mal4s.h"
 #include "formats/hg.h"
 #include "formats/bzr.h"
 #include "formats/svn.h"
 #include "formats/apache.h"
 #include "formats/cvs-exp.h"
 #include "formats/cvs2cl.h"
+*/
+#include "formats/custom.h"
+#include "formats/mal4s.h"
 
 #include <boost/filesystem.hpp>
 
@@ -156,7 +158,7 @@ RCommitLog* RLogMill::getLog() {
     return clog;
 }
 
-bool RLogMill::findRepository(boost::filesystem::path& dir, std::string& log_format) {
+/* bool RLogMill::findRepository(boost::filesystem::path& dir, std::string& log_format) {
 
     dir = absolute(dir);
 
@@ -181,7 +183,7 @@ bool RLogMill::findRepository(boost::filesystem::path& dir, std::string& log_for
 
     return false;
 }
-
+*/
 
 RCommitLog* RLogMill::fetchLog(std::string& log_format) {
 
@@ -191,9 +193,9 @@ RCommitLog* RLogMill::fetchLog(std::string& log_format) {
     //this method allows for something strange like someone who having an svn repository inside a git repository
     //(in which case it would pick the svn directory as it would encounter that first)
 
-    if(log_format.empty() && logfile != "-") {
+    if(log_format.empty() && logfile != "-") fprintf(stderr, "FATAL: No log specified and no log read from STDIN."); //{
 
-        try {
+/*        try {
             boost::filesystem::path repo_path(logfile);
 
             if(is_directory(repo_path)) {
@@ -201,14 +203,28 @@ RCommitLog* RLogMill::fetchLog(std::string& log_format) {
                     logfile = repo_path.string();
                 }
             }
+
+
         } catch(boost::filesystem::filesystem_error& error) {
         }
     }
-
+*/
     //we've been told what format to use
     if(log_format.size() > 0) {
         debugLog("log-format = %s", log_format.c_str());
 
+        if(log_format == "mal4s") {
+            clog = new Mal4sLog(logfile);
+            if(clog->checkFormat()) return clog;
+            delete clog;
+        }
+
+        if(log_format == "custom") {
+            clog = new CustomLog(logfile);
+            if(clog->checkFormat()) return clog;
+            delete clog;
+        }
+/*
         if(log_format == "git") {
             clog = new GitCommitLog(logfile);
             if(clog->checkFormat()) return clog;
@@ -237,18 +253,6 @@ RCommitLog* RLogMill::fetchLog(std::string& log_format) {
             delete clog;
         }
 
-        if(log_format == "mal4s") {
-            clog = new Mal4sLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-        }
-
-        if(log_format == "custom") {
-            clog = new CustomLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-        }
-
         if(log_format == "apache") {
             clog = new ApacheCombinedLog(logfile);
             if(clog->checkFormat()) return clog;
@@ -266,12 +270,12 @@ RCommitLog* RLogMill::fetchLog(std::string& log_format) {
             if(clog->checkFormat()) return clog;
             delete clog;
         }
-
+*/
         return 0;
     }
 
     // try different formats until one works
-
+/*
     //git
     debugLog("trying git...");
     clog = new GitCommitLog(logfile);
@@ -321,16 +325,23 @@ RCommitLog* RLogMill::fetchLog(std::string& log_format) {
 
     delete clog;
 
-    //custom
-    debugLog("trying custom...");
-    clog = new CustomLog(logfile);
+    //apache
+    debugLog("trying apache combined...");
+    clog = new ApacheCombinedLog(logfile);
+    if(clog->checkFormat()) return clog;
+
+    delete clog;
+*/
+    //mal4s
+    debugLog("trying mal4s...");
+    clog = new Mal4sLog(logfile);
     if(clog->checkFormat()) return clog;
 
     delete clog;
 
-    //apache
-    debugLog("trying apache combined...");
-    clog = new ApacheCombinedLog(logfile);
+    //custom
+    debugLog("trying custom...");
+    clog = new CustomLog(logfile);
     if(clog->checkFormat()) return clog;
 
     delete clog;

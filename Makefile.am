@@ -31,17 +31,9 @@ mal4s_SOURCES = \
 	src/core/vectors.cpp \
 	src/dirnode.cpp \
 	src/file.cpp \
-	src/formats/apache.cpp \
-	src/formats/bzr.cpp \
 	src/formats/commitlog.cpp \
 	src/formats/custom.cpp \
 	src/formats/mal4s.cpp \
-	src/formats/cvs-exp.cpp \
-	src/formats/cvs2cl.cpp \
-	src/formats/git.cpp \
-	src/formats/gitraw.cpp \
-	src/formats/hg.cpp \
-	src/formats/svn.cpp \
 	src/gource.cpp \
 	src/gource_shell.cpp \
 	src/gource_settings.cpp \
