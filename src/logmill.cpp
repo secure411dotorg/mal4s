@@ -18,16 +18,6 @@
 #include "logmill.h"
 #include "gource_settings.h"
 
-/*
-#include "formats/git.h"
-#include "formats/gitraw.h"
-#include "formats/hg.h"
-#include "formats/bzr.h"
-#include "formats/svn.h"
-#include "formats/apache.h"
-#include "formats/cvs-exp.h"
-#include "formats/cvs2cl.h"
-*/
 #include "formats/custom.h"
 #include "formats/mal4s.h"
 
@@ -158,33 +148,6 @@ RCommitLog* RLogMill::getLog() {
     return clog;
 }
 
-/* bool RLogMill::findRepository(boost::filesystem::path& dir, std::string& log_format) {
-
-    dir = absolute(dir);
-
-    //fprintf(stderr, "find repository from initial path: %s\n", dir.string().c_str());
-
-    while(is_directory(dir)) {
-
-             if(is_directory(dir / ".git")) log_format = "git";
-        else if(is_directory(dir / ".hg"))  log_format = "hg";
-        else if(is_directory(dir / ".bzr")) log_format = "bzr";
-        else if(is_directory(dir / ".svn")) log_format = "svn";
-
-        if(!log_format.empty()) {
-            //fprintf(stderr, "found '%s' repository at: %s\n", log_format.c_str(), dir.string().c_str());
-            return true;
-        }
-
-        if(!dir.has_parent_path()) return false;
-
-        dir = dir.parent_path();
-    }
-
-    return false;
-}
-*/
-
 RCommitLog* RLogMill::fetchLog(std::string& log_format) {
 
     RCommitLog* clog = 0;
@@ -224,114 +187,10 @@ RCommitLog* RLogMill::fetchLog(std::string& log_format) {
             if(clog->checkFormat()) return clog;
             delete clog;
         }
-/*
-        if(log_format == "git") {
-            clog = new GitCommitLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-
-            clog = new GitRawCommitLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-        }
-
-        if(log_format == "hg") {
-            clog = new MercurialLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-        }
-
-        if(log_format == "bzr") {
-            clog = new BazaarLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-        }
-
-        if(log_format == "cvs") {
-            clog = new CVSEXPCommitLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-        }
-
-        if(log_format == "apache") {
-            clog = new ApacheCombinedLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-        }
-
-        if(log_format == "svn") {
-            clog = new SVNCommitLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-        }
-
-        if(log_format == "cvs2cl") {
-            clog = new CVS2CLCommitLog(logfile);
-            if(clog->checkFormat()) return clog;
-            delete clog;
-        }
-*/
         return 0;
     }
 
     // try different formats until one works
-/*
-    //git
-    debugLog("trying git...");
-    clog = new GitCommitLog(logfile);
-    if(clog->checkFormat()) return clog;
-
-    delete clog;
-
-    //mercurial
-    debugLog("trying mercurial...");
-    clog = new MercurialLog(logfile);
-    if(clog->checkFormat()) return clog;
-
-    delete clog;
-
-    //bzr
-    debugLog("trying bzr...");
-    clog = new BazaarLog(logfile);
-    if(clog->checkFormat()) return clog;
-
-    delete clog;
-
-    //git raw
-    debugLog("trying git raw...");
-    clog = new GitRawCommitLog(logfile);
-    if(clog->checkFormat()) return clog;
-
-    delete clog;
-
-    //cvs exp
-    debugLog("trying cvs-exp...");
-    clog = new CVSEXPCommitLog(logfile);
-    if(clog->checkFormat()) return clog;
-
-    delete clog;
-
-    //svn
-    debugLog("trying svn...");
-    clog = new SVNCommitLog(logfile);
-    if(clog->checkFormat()) return clog;
-
-    delete clog;
-
-    //cvs2cl
-    debugLog("trying cvs2cl...");
-    clog = new CVS2CLCommitLog(logfile);
-    if(clog->checkFormat()) return clog;
-
-    delete clog;
-
-    //apache
-    debugLog("trying apache combined...");
-    clog = new ApacheCombinedLog(logfile);
-    if(clog->checkFormat()) return clog;
-
-    delete clog;
-*/
     //mal4s
     debugLog("trying mal4s...");
     clog = new Mal4sLog(logfile);

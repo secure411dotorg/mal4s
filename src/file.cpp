@@ -24,12 +24,14 @@ std::vector<RFile*> gGourceRemovedFiles;
 FXFont file_selected_font;
 FXFont file_font;
 
-RFile::RFile(const std::string & name, const vec3 & colour, const vec2 & pos, int tagid) : Pawn(name,pos,tagid) {
+RFile::RFile(const std::string & name, const vec3 & colour, const vec2 & pos, int tagid, const std::string& fileUser, const std::vector<std::string>& displayData) : Pawn(name,pos,tagid) {
     hidden = true;
     size = gGourceFileDiameter * 1.05;
     radius = size * 0.5;
 
     setGraphic(gGourceSettings.file_graphic);
+    this->displayData = displayData;
+    this->fileUser = fileUser;
 
     speed = 5.0;
     nametime = 4.0;

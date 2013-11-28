@@ -54,8 +54,10 @@ public:
     std::string path;
     std::string fullpath;
     std::string ext;
+    std::string fileUser;
+    std::vector<std::string> displayData;
 
-    RFile(const std::string & name, const vec3 & colour, const vec2 & pos, int tagid);
+    RFile(const std::string & name, const vec3 & colour, const vec2 & pos, int tagid, const std::string& fileUser, const std::vector<std::string>& displayData);
     ~RFile();
 
     bool overlaps(const vec2& pos) const;

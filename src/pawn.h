@@ -34,6 +34,8 @@ protected:
 
     std::string name;
     std::string imageName;
+    std::vector<std::string> displayData;
+    std::string fileUser;
 
     float namewidth;
     vec2 accel;
@@ -84,6 +86,7 @@ public:
     float getSize();
     int getTagID();
 
+//    const std::string& getDisplayData() const { return displayData; }
     const std::string& getName() const { return name; }
 
     virtual void setSelected(bool selected);

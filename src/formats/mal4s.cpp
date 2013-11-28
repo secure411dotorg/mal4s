@@ -78,12 +78,18 @@ bool Mal4sLog::parseCommitEntry(RCommit& commit) {
 	commit.userimagename = entries[5];
     }
 
+    std::vector<std::string> displayData;
+
+//    displayData.push_back("Super Duper!");
+
+//fprintf(stdout, "%s\n", displayData[0].c_str());
+    
     //Extra fields for display on hover.
-/*    if(entries.size()>=7 ) {
+    if(entries.size()>=7 ) {
 	for(unsigned int it = 6;it < entries.size(); it++) {
-	fprintf(stdout, "%u %s\n", it, entries[it].c_str());
+		displayData.push_back(entries[it]);
 	}
-    } */
+    } 
 
     bool has_colour = false;
     vec3 colour;
@@ -94,9 +100,9 @@ bool Mal4sLog::parseCommitEntry(RCommit& commit) {
     }
 
     if(has_colour) {
-        commit.addFile(entries[3], action, colour);
+        commit.addFile(entries[3], action, colour, commit.username, displayData);
     } else {
-        commit.addFile(entries[3], action);
+        commit.addFile(entries[3], action, commit.username, displayData);
     }
 
     return true;

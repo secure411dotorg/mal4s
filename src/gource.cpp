@@ -1050,7 +1050,7 @@ RFile* Gource::addFile(const RCommitFile& cf) {
 
     int tagid = tag_seq++;
 
-    RFile* file = new RFile(cf.filename, cf.colour, vec2(0.0,0.0), tagid);
+    RFile* file = new RFile(cf.filename, cf.colour, vec2(0.0,0.0), tagid, cf.fileUser, cf.displayData);
 
     files[cf.filename] = file;
     tagfilemap[tagid]  = file;
@@ -2701,6 +2701,8 @@ void Gource::draw(float t, float dt) {
 	int domain_asn_elems_size = domain_asn_elems.size();
 	std::string display_asn = domain_asn_elems[--domain_asn_elems_size];
 
+	std::vector<std::string> displayData = hoverFile->displayData;
+
 	Regex asn_regex("^[a-zA-Z]{2}[0-9]+$");
 	std::vector<std::string> ignored;
 	std::string display_domain;
@@ -2723,7 +2725,7 @@ void Gource::draw(float t, float dt) {
 	}
 
 	//Create a textbox and display these elements
-        textbox.setText("User name will go here");  //First line of text box 
+        textbox.setText(hoverFile->fileUser);  //First line of text box 
         
         textbox.addLine(display_domain + gGourceSettings.hoverLine1Label);
 	textbox.addLine(display_elems[display_elems.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
@@ -2735,6 +2737,11 @@ void Gource::draw(float t, float dt) {
 	textbox.addLine(display_asn + gGourceSettings.hoverLine6Label);  // Autonomous System Number
 	textbox.addLine(display_address + gGourceSettings.hoverLine7Label);  //IP address
 	textbox.addLine(display_elems[display_elems.size() - 2] + gGourceSettings.hoverLine2Label); //element after dotted quad
+	for(unsigned int it = 0; it < displayData.size(); it++) {
+		if(displayData[it].size() > 0) textbox.addLine(displayData[it]);
+		//textbox.addLine(displayData[it]);
+	}
+
 
         textbox.setColour(hoverFile->getColour());
         textbox.setPos(mousepos, true);

@@ -81,9 +81,9 @@ bool CustomLog::parseCommitEntry(RCommit& commit) {
     }
 
     if(has_colour) {
-        commit.addFile(entries[3], action, colour);
+        commit.addFile(entries[3], action, colour, commit.username);
     } else {
-        commit.addFile(entries[3], action);
+        commit.addFile(entries[3], action, commit.username);
     }
 
     return true;
