@@ -1,15 +1,19 @@
-.TH Gource 1
+.TH Mal4s 1
 .SH NAME
-Gource - a software version control visualization
+Mal4s - Forked from Gource: a software version control visualization
 .SH SYNOPSIS
-\fIgource\fR
+\fImal4s\fR
 <options> <path>
 .SH DESCRIPTION
-\fIgource\fR is an OpenGL-based 3D visualisation tool for source control repositories.
+\fImal4s\fR is an OpenGL-based 3D visualisation tool adapted from Gource.
+
+Mal4s is actively being modified and this man page may not reflect all current changes and options.  See https://github.com/secure411dotorg/mal4s/wiki for more information.
+
+Although Mal4s is not a version control visualization tool, the original Gource is, and the terminology used to describe the function of Mal4s contained in this man page is going to remain the same until we are further along in deveolpment.
 
 The repository is displayed as a tree where the root of the repository is the centre, directories are branches and files are leaves. Contributors to the source code appear and disappear as they contribute to specific files and directories.
 .SH REQUIREMENTS
-\fIgource\fR
+\fImal4s\fR
 requires a OpenGL capable video card to run.
 .SH OPTIONS
 .TP 8
@@ -91,10 +95,10 @@ Offset position of the logo.
 Specify display date string (strftime format).
 .TP
 \fB\-\-log\-command VCS\fR
-Show the log command used by gource (git,svn,hg,bzr,cvs2cl).
+Show the log command used by mal4s (git,svn,hg,bzr,cvs2cl).
 .TP
 \fB\-\-log\-format VCS\fR
-Specify format of the log being read (git,svn,hg,bzr,cvs2cl,custom). Required when reading from STDIN.
+Specify format of the log being read (mal4s,custom). Required when reading from STDIN.
 .TP
 \fB\-\-git\-branch\fR
 Get the git log of a branch other than the current one.
@@ -234,21 +238,21 @@ Save a config file with the current options.
 \fB\-\-path PATH\fR
 .TP
 \fBpath\fR
-Either a supported version control directory, a pre-generated log file (see log commands or the custom log format), a Gource conf file or '-' to read STDIN.
+Either a supported version control directory, a pre-generated log file (see log commands or the custom log format), a Mal4s conf file or '-' to read STDIN.
 
-If path is omitted, gource will attempt to read a log from the current directory.
+If path is omitted, mal4s will attempt to read a log from the current directory.
 
 .SS Git, Bazaar, Mercurial and SVN Examples
 
 View the log of the repository in the current path:
 
 .ti 10
-\fIgource\fR
+\fImal4s\fR
 
 View the log of a project in the specified directory:
 
 .ti 10
-\fIgource\fR my\-project\-dir
+\fImal4s\fR my\-project\-dir
 
 For large projects, generating a log of the project history may take a long time. For centralized VCS like SVN, generating the log will put load on the central VCS server.
 
@@ -259,27 +263,27 @@ You can generate a log in the VCS specific log format using the \-\-log\-command
 .ti 10
 cd my\-svn\-project
 .ti 10
-\`\fIgource\fR \-\-log\-command svn\` > my\-svn\-project.log
+\`\fImal4s\fR \-\-log\-command svn\` > my\-svn\-project.log
 .ti 10
-\fIgource\fR my\-svn\-project.log
+\fImal4s\fR my\-svn\-project.log
 
-You can also have Gource write a copy of the log file in its own format:
+You can also have Mal4s write a copy of the log file in its own format:
 
 .ti 10
-\fIgource\fR \-\-output\-custom\-log my\-project\-custom.log
+\fImal4s\fR \-\-output\-custom\-log my\-project\-custom.log
 
 .SS CVS Support
 
-Use 'cvs2cl' to generate the log and then pass it to Gource:
+Use 'cvs2cl' to generate the log and then pass it to Mal4s:
 
 .ti 10
 cvs2cl \-\-chrono \-\-stdout \-\-xml \-g\-q > my\-cvs\-project.log
 .ti 10
-gource my\-cvs\-project.log
+mal4s my\-cvs\-project.log
 
 .SS Custom Log Format
 
-If you want to use Gource with something other than the supported systems, there is a pipe ('|') delimited custom log format:
+If you want to use Mal4s with something other than the supported systems, there is a pipe ('|') delimited custom log format:
 
 .ti 10
 timestamp - A unix timestamp of when the update occured.
@@ -294,7 +298,7 @@ colour    - A colour for the file in hex (FFFFFF) format. Optional.
 
 .SS Caption Log Format
 
-Gource can display captions along the timeline by specifying a caption file (using \-\-caption\-file) in the pipe ('|') delimited format below:
+Mal4s can display captions along the timeline by specifying a caption file (using \-\-caption\-file) in the pipe ('|') delimited format below:
 
 .ti 10
 timestamp - A unix timestamp of when to display the caption.
@@ -303,17 +307,17 @@ caption   - The caption
 
 .SS Recording Videos
 
-See the guide on the homepage for examples of recording videos with Gource:
+See the guide on the homepage for examples of recording videos with Mal4s:
 
 .ti 10
-http://code.google.com/p/gource/wiki/Videos
+http://code.google.com/p/mal4s/wiki/Videos
 
 .SS More Information
 
-Visit the Gource homepage for guides and examples of using Gource with various version control systems:
+Visit the Mal4s homepage for guides and examples of using Mal4s with various version control systems:
 
 .ti 10
-http://code.google.com/p/gource/
+http://code.google.com/p/mal4s/
 
 .SH INTERFACE
 The time shown in the top left of the screen is set initially from the first log entry read and is incremented according to the simulation speed (\-\-seconds\-per\-day).
@@ -333,7 +337,7 @@ Interactive keyboard commands:
 .ti 10
 (V)   Toggle camera mode
 .ti 10
-(C)   Displays Gource logo
+(C)   Displays Mal4s logo
 .ti 10
 (K)   Toggle file extension key
 .ti 10
@@ -352,9 +356,8 @@ Interactive keyboard commands:
 (ESC) Quit
 .SH AUTHOR
 .nf
- Written by Andrew Caudwell
+Gource was Written by Andrew Caudwell
 
- Project Homepage: http://gource.googlecode.com/
 .SH COPYRIGHT
 .nf
  Copyright (C) 2009 Andrew Caudwell (acaudwell@gmail.com)
@@ -376,5 +379,5 @@ Interactive keyboard commands:
 .nf
  Catalyst IT (catalyst.net.nz)
 
- For supporting the development of Gource!
+ For supporting the development of Mal4s!
 .fi
