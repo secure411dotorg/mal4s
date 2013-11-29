@@ -28,16 +28,18 @@ int main(int argc, char *argv[]) {
     ConfFile conf;
     std::vector<std::string> files;
 
-    //Test if dissect.conf exists in the working directory and make it load as the default config file.
-    if(boost::filesystem::exists("dissect.conf")) {
-	gGourceSettings.load_config = "dissect.conf";
-    }
     //convert args to a conf file
     //read the conf file
     //apply the conf file to settings
 
     try {
         gGourceSettings.parseArgs(argc, argv, conf, &files);
+
+	
+	//Test if dissect.conf exists in the working directory and make it load as the default config file.
+	if(gGourceSettings.load_config.empty() && boost::filesystem::exists("dissect.conf")) {
+		gGourceSettings.load_config = "dissect.conf";
+	}
 
         if(gGourceSettings.load_config.empty() && !files.empty()) {
             //see if file looks like a config file

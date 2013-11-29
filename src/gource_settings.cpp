@@ -202,7 +202,8 @@ GourceSettings::GourceSettings() {
     //command line only options
     conf_sections["help"]            = "command-line";
     conf_sections["extended-help"]   = "command-line";
-/*    conf_sections["log-command"]     = "command-line";
+/*
+    conf_sections["log-command"]     = "command-line";
     conf_sections["git-log-command"] = "command-line";
     conf_sections["cvs-exp-command"] = "command-line";
     conf_sections["cvs2cl-command"]  = "command-line";
@@ -210,8 +211,8 @@ GourceSettings::GourceSettings() {
     conf_sections["bzr-log-command"] = "command-line";
     conf_sections["svn-log-command"] = "command-line";
     conf_sections["output-custom-log"] = "command-line";
-    conf_sections["load-config"]     = "command-line";
 */
+    conf_sections["load-config"]     = "command-line";
     conf_sections["save-config"]     = "command-line";
     conf_sections["log-level"]         = "command-line";
 
@@ -460,13 +461,13 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
         save_config = value;
         return;
     }
-
+/*
     std::string log_command;
 
     if(name == "log-command") {
         log_command = value;
     }
-/*
+
     if(name == "git-log-command" || log_command == "git") {
         SDLAppInfo(GitCommitLog::logCommand());
     }
