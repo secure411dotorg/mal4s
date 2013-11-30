@@ -727,6 +727,13 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 			txtfile.close();
 		}
 	}
+#if SDL_VERSION_ATLEAST(2,0,0)
+	if(e->keysym.sym == SDLK_F8) {
+		if(hoverFile != 0) {
+			SDL_SetClipboardText("Clipboard test works!  Soon there will be something useful here.");
+		}
+	}
+#endif
 	if(e->keysym.sym == SDLK_F9) {
 		if(hoverFile != 0) {
 			Mix_PlayChannel( -1, cowbell, 0 );
