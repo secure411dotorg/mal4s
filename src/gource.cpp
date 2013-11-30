@@ -730,7 +730,14 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 #if SDL_VERSION_ATLEAST(2,0,0)
 	if(e->keysym.sym == SDLK_F8) {
 		if(hoverFile != 0) {
-			SDL_SetClipboardText("Clipboard test works!  Soon there will be something useful here.");
+			std::vector<std::string> parsedHoverText = parseRFileText(hoverFile);
+			std::string clipBoardText = parsedHoverText[0];
+			for(unsigned int it = 1; it < parsedHoverText.size(); it++) {
+				if(it == 3) textbox.addLine("");
+				if(parsedHoverText[it].size() > 0) clipBoardText += "\n" + parsedHoverText[it];
+			}
+
+			SDL_SetClipboardText(clipBoardText.c_str());
 		}
 	}
 #endif
@@ -2415,6 +2422,63 @@ void Gource::drawUsers(float dt) {
 
 }
 
+std::vector<std::string> Gource::parseRFileText(RFile* hoverFile) {
+
+	std::vector<std::string> parsedHoverText;
+
+	// Changed display of "path" to better represent the dataset
+        std::string display_path = hoverFile->path;
+	//Need to modify the display of "File name" to separate the autonomous system number from the domain name
+	std::string domain_asn = hoverFile->getName();
+	// Erase leading slash from the path
+        display_path.erase(0,1);
+
+	std::vector<std::string> domain_asn_elems = split(domain_asn, '.');
+	std::vector<std::string> display_elems = split(display_path, '/');
+	
+	int domain_asn_elems_size = domain_asn_elems.size();
+	std::string display_asn = domain_asn_elems[--domain_asn_elems_size];
+
+	std::vector<std::string> displayData = hoverFile->displayData;
+
+	Regex asn_regex("^[a-zA-Z]{2}[0-9]+$");
+	std::vector<std::string> ignored;
+	std::string display_domain;
+	if(asn_regex.matchAll(display_asn, &ignored)) {
+		display_asn.erase(0,2);
+		display_asn = "AS" + display_asn;
+		display_domain = domain_asn_elems[0];
+		for (auto it = &domain_asn_elems[1]; it != &domain_asn_elems[domain_asn_elems_size]; ++it)
+			display_domain += "." + *it;
+	} else {
+		display_asn = "N/A";
+		display_domain =  hoverFile->getName();
+	}
+
+	std::string display_address;
+	if(display_elems.size() >= 8) {
+		display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
+	} else {
+		display_address = "Non conforming entry";
+	}
+
+	//Create a textbox and display these elements
+	parsedHoverText.push_back(hoverFile->fileUser);
+        
+        parsedHoverText.push_back(display_domain + gGourceSettings.hoverLine1Label);
+	parsedHoverText.push_back(display_elems[display_elems.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
+
+	parsedHoverText.push_back(display_elems[0] + gGourceSettings.hoverLine4Label);  //RIR
+	parsedHoverText.push_back(display_elems[1] + gGourceSettings.hoverLine5Label);  //Two letter country code
+	parsedHoverText.push_back(display_asn + gGourceSettings.hoverLine6Label);  // Autonomous System Number
+	parsedHoverText.push_back(display_address + gGourceSettings.hoverLine7Label);  //IP address
+	parsedHoverText.push_back(display_elems[display_elems.size() - 2] + gGourceSettings.hoverLine2Label); //element after dotted quad
+	for(unsigned int it = 0; it < displayData.size(); it++) {
+		if(displayData[it].size() > 0) parsedHoverText.push_back(displayData[it]);
+		//textbox.addLine(displayData[it]);
+	}
+	return parsedHoverText;
+}
 void Gource::draw(float t, float dt) {
 
     display.mode2D();
@@ -2695,60 +2759,14 @@ void Gource::draw(float t, float dt) {
     if(hoverFile && hoverFile != selectedFile) {
 	camera.lockOn(true);
 	paused = "0";  //Pauses the motion on hover, have not found where to resume when no longer hovering.
-	// Changed display of "path" to better represent the dataset
-        std::string display_path = hoverFile->path;
-	//Need to modify the display of "File name" to separate the autonomous system number from the domain name
-	std::string domain_asn = hoverFile->getName();
-	// Erase leading slash from the path
-        display_path.erase(0,1);
 
-	std::vector<std::string> domain_asn_elems = split(domain_asn, '.');
-	std::vector<std::string> display_elems = split(display_path, '/');
-	
-	int domain_asn_elems_size = domain_asn_elems.size();
-	std::string display_asn = domain_asn_elems[--domain_asn_elems_size];
-
-	std::vector<std::string> displayData = hoverFile->displayData;
-
-	Regex asn_regex("^[a-zA-Z]{2}[0-9]+$");
-	std::vector<std::string> ignored;
-	std::string display_domain;
-	if(asn_regex.matchAll(display_asn, &ignored)) {
-		display_asn.erase(0,2);
-		display_asn = "AS" + display_asn;
-		display_domain = domain_asn_elems[0];
-		for (auto it = &domain_asn_elems[1]; it != &domain_asn_elems[domain_asn_elems_size]; ++it)
-			display_domain += "." + *it;
-	} else {
-		display_asn = "N/A";
-		display_domain =  hoverFile->getName();
+	//Line parsing now handled by parseRFileText
+	std::vector<std::string> parsedHoverText = parseRFileText(hoverFile);
+	textbox.setText(parsedHoverText[0]);
+	for(unsigned int it = 1; it < parsedHoverText.size(); it++) {
+		if(it == 3) textbox.addLine("");
+		if(parsedHoverText[it].size() > 0) textbox.addLine(parsedHoverText[it]);
 	}
-
-	std::string display_address;
-	if(display_elems.size() >= 8) {
-		display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
-	} else {
-		display_address = "Non conforming entry";
-	}
-
-	//Create a textbox and display these elements
-        textbox.setText(hoverFile->fileUser);  //First line of text box 
-        
-        textbox.addLine(display_domain + gGourceSettings.hoverLine1Label);
-	textbox.addLine(display_elems[display_elems.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
-
-	textbox.addLine("");  //Blank line
-	
-	textbox.addLine(display_elems[0] + gGourceSettings.hoverLine4Label);  //RIR
-	textbox.addLine(display_elems[1] + gGourceSettings.hoverLine5Label);  //Two letter country code
-	textbox.addLine(display_asn + gGourceSettings.hoverLine6Label);  // Autonomous System Number
-	textbox.addLine(display_address + gGourceSettings.hoverLine7Label);  //IP address
-	textbox.addLine(display_elems[display_elems.size() - 2] + gGourceSettings.hoverLine2Label); //element after dotted quad
-	for(unsigned int it = 0; it < displayData.size(); it++) {
-		if(displayData[it].size() > 0) textbox.addLine(displayData[it]);
-		//textbox.addLine(displayData[it]);
-	}
-
 
         textbox.setColour(hoverFile->getColour());
         textbox.setPos(mousepos, true);
