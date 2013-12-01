@@ -30,6 +30,7 @@ protected:
 public:
     int repo_count;
 
+    std::vector<std::string> hoverLines;
     std::string hoverLine1Label;
     std::string hoverLine2Label;
     std::string hoverLine3Label;

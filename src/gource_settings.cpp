@@ -339,8 +339,7 @@ void GourceSettings::setGourceDefaults() {
     stop_position  = 0.0f;
     stop_at_time   = -1.0f;
     stop_on_idle   = false;
-//    stop_at_end    = false;
-    stop_at_end    = true;
+    stop_at_end    = false;
     dont_stop      = false;
 
     show_key = true;
@@ -619,7 +618,86 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             }
         }
     }
-
+    if((entry = gource_settings->getEntry("hover-line-1")) != 0) {
+	if(hoverLines.size() == 0) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-2")) != 0) {
+	if(hoverLines.size() == 1) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-3")) != 0) {
+	if(hoverLines.size() == 2) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-4")) != 0) {
+	if(hoverLines.size() == 3) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-5")) != 0) {
+	if(hoverLines.size() == 4) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-6")) != 0) {
+	if(hoverLines.size() == 5) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-7")) != 0) {
+	if(hoverLines.size() == 6) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-8")) != 0) {
+	if(hoverLines.size() == 7) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-9")) != 0) {
+	if(hoverLines.size() == 8) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-10")) != 0) {
+	if(hoverLines.size() == 9) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-11")) != 0) {
+	if(hoverLines.size() == 10) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-12")) != 0) {
+	if(hoverLines.size() == 11) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-13")) != 0) {
+	if(hoverLines.size() == 12) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-14")) != 0) {
+	if(hoverLines.size() == 13) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-15")) != 0) {
+	if(hoverLines.size() == 14) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = gource_settings->getEntry("hover-line-16")) != 0) {
+	if(hoverLines.size() == 15) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
     //Hover text labels
     if((entry = gource_settings->getEntry("hover-label-1")) != 0) {
 
