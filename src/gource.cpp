@@ -2422,23 +2422,73 @@ void Gource::drawUsers(float dt) {
 
 }
 
+
 std::vector<std::string> Gource::parseRFileText(RFile* hoverFile) {
-
+/*	Regex fieldNums("1");
+//	Regex fieldNums("\\$\\{[0-9]+\\}");
+	Regex number("[0-9]+");
+	std::vector<std::string> rawFields;
+	std::vector<std::string> displayFormat = gGourceSettings.hoverLines;
+*/
 	std::vector<std::string> parsedHoverText;
+/*
+These fields are stored in a vector beginning at 0, so subtract 1
+Field 1  = user
+Field 2  = filename
+Field 3  = Non-branching field 1
+Field 4  = Non-branching field 2
+Field 5  = Non-branching field 3
+Field 6+ = Branching field X
+*/	
 
-	// Changed display of "path" to better represent the dataset
-        std::string display_path = hoverFile->path;
+        std::string path = hoverFile->path;
+	// Erase leading slash from the path
+        path.erase(0,1);
+
+	// Convert "path" to separate fields
+	std::vector<std::string> branches = split(path, '/');
+	
+/*	std::vector<std::string> nonBranching = hoverFile->displayData;
+
+	//Organize fields into their proper order
+	rawFields.push_back(hoverFile->fileUser); //First field is "User"
+	rawFields.push_back(hoverFile->getName());
+	for(unsigned int it = 0; it < 3; it++) {
+		if(nonBranching.size() > it) {
+			rawFields.push_back(nonBranching[it]);
+		} else {
+			rawFields.push_back("");
+		}
+	}
+	for(unsigned int it = 0; it < branches.size(); it++) rawFields.push_back(branches[it]);
+	
+	//Parse formatting
+	for(unsigned int it = 0; it < displayFormat.size(); it++) {
+		std::vector<std::string> fieldMatches;
+		//fieldNums.matchAll(displayFormat[it], &fieldMatches);
+		fieldNums.match("1", &fieldMatches);
+		if(fieldMatches.size() > 0) fprintf(stdout, "%s\n", fieldMatches[0].c_str());
+		for(unsigned int it_match = 0; it_match < fieldMatches.size(); it_match++) {
+			std::vector<std::string> strfnum;
+			number.match(fieldMatches[it_match], &strfnum);
+			std::string regex = "\\{" + strfnum[0] + "\\}";
+			Regex field(regex);
+			unsigned int fnum = std::stoi(strfnum[0]) - 1;
+			if(fnum < rawFields.size()) field.replace(displayFormat[it], rawFields[fnum]);
+		}
+	}
+	//These should come in handy.
+        //int = stoi(string); string to int
+	//string = std::to_string(number); string to number
+
+*/
 	//Need to modify the display of "File name" to separate the autonomous system number from the domain name
 	std::string domain_asn = hoverFile->getName();
-	// Erase leading slash from the path
-        display_path.erase(0,1);
 
 	std::vector<std::string> domain_asn_elems = split(domain_asn, '.');
-	std::vector<std::string> display_elems = split(display_path, '/');
 	
 	int domain_asn_elems_size = domain_asn_elems.size();
 	std::string display_asn = domain_asn_elems[--domain_asn_elems_size];
-
 	std::vector<std::string> displayData = hoverFile->displayData;
 
 	Regex asn_regex("^[a-zA-Z]{2}[0-9]+$");
@@ -2456,8 +2506,8 @@ std::vector<std::string> Gource::parseRFileText(RFile* hoverFile) {
 	}
 
 	std::string display_address;
-	if(display_elems.size() >= 8) {
-		display_address = display_elems[2] + "." +  display_elems[3] + "." + display_elems[4] + "." + display_elems[5];
+	if(branches.size() >= 8) {
+		display_address = branches[2] + "." +  branches[3] + "." + branches[4] + "." + branches[5];
 	} else {
 		display_address = "Non conforming entry";
 	}
@@ -2466,17 +2516,19 @@ std::vector<std::string> Gource::parseRFileText(RFile* hoverFile) {
 	parsedHoverText.push_back(hoverFile->fileUser);
         
         parsedHoverText.push_back(display_domain + gGourceSettings.hoverLine1Label);
-	parsedHoverText.push_back(display_elems[display_elems.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
+	parsedHoverText.push_back(branches[branches.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
 
-	parsedHoverText.push_back(display_elems[0] + gGourceSettings.hoverLine4Label);  //RIR
-	parsedHoverText.push_back(display_elems[1] + gGourceSettings.hoverLine5Label);  //Two letter country code
+	parsedHoverText.push_back(branches[0] + gGourceSettings.hoverLine4Label);  //RIR
+	parsedHoverText.push_back(branches[1] + gGourceSettings.hoverLine5Label);  //Two letter country code
 	parsedHoverText.push_back(display_asn + gGourceSettings.hoverLine6Label);  // Autonomous System Number
 	parsedHoverText.push_back(display_address + gGourceSettings.hoverLine7Label);  //IP address
-	parsedHoverText.push_back(display_elems[display_elems.size() - 2] + gGourceSettings.hoverLine2Label); //element after dotted quad
+	parsedHoverText.push_back(branches[branches.size() - 2] + gGourceSettings.hoverLine2Label); //element after dotted quad
 	for(unsigned int it = 0; it < displayData.size(); it++) {
 		if(displayData[it].size() > 0) parsedHoverText.push_back(displayData[it]);
 		//textbox.addLine(displayData[it]);
 	}
+//	return rawFields;
+//	return displayFormat;
 	return parsedHoverText;
 }
 void Gource::draw(float t, float dt) {
