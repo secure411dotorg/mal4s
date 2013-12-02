@@ -2421,16 +2421,10 @@ void Gource::drawUsers(float dt) {
     }
 
 }
-
-
 std::vector<std::string> Gource::parseRFileText(RFile* hoverFile) {
-/*	Regex fieldNums("1");
-//	Regex fieldNums("\\$\\{[0-9]+\\}");
-	Regex number("[0-9]+");
 	std::vector<std::string> rawFields;
 	std::vector<std::string> displayFormat = gGourceSettings.hoverLines;
-*/
-	std::vector<std::string> parsedHoverText;
+//	std::vector<std::string> parsedHoverText;
 /*
 These fields are stored in a vector beginning at 0, so subtract 1
 Field 1  = user
@@ -2441,14 +2435,14 @@ Field 5  = Non-branching field 3
 Field 6+ = Branching field X
 */	
 
-        std::string path = hoverFile->path;
+	std::string path = hoverFile->path;
 	// Erase leading slash from the path
         path.erase(0,1);
 
 	// Convert "path" to separate fields
 	std::vector<std::string> branches = split(path, '/');
 	
-/*	std::vector<std::string> nonBranching = hoverFile->displayData;
+	std::vector<std::string> nonBranching = hoverFile->displayData;
 
 	//Organize fields into their proper order
 	rawFields.push_back(hoverFile->fileUser); //First field is "User"
@@ -2461,7 +2455,27 @@ Field 6+ = Branching field X
 		}
 	}
 	for(unsigned int it = 0; it < branches.size(); it++) rawFields.push_back(branches[it]);
-	
+
+	for(unsigned int it = 0; it < displayFormat.size(); it++) {
+		bool line_complete = false;
+		while(line_complete == false) {
+			std::size_t open = displayFormat[it].find("${");
+			if(open != std::string::npos) {
+				std::size_t close = displayFormat[it].find("}", open + 2);
+				if(close != std::string::npos && displayFormat[it].substr(open + 2, close - 1).find_first_not_of("0123456789") != std::string::npos) {
+				unsigned int fieldnum = std::stoi(displayFormat[it].substr(open + 2, close - 1)) - 1;
+				displayFormat[it] = displayFormat[it].substr(0, open) + rawFields[fieldnum] + displayFormat[it].substr(close+1);
+				}
+		} else line_complete = true;
+		}
+	}
+/*
+	//Parse formatting
+	for(unsigned int it = 1; it < displayFormat.size(); it++) {
+		while(parseHoverFormat(displayFormat[it], rawFields));
+	}
+*/
+/*	
 	//Parse formatting
 	for(unsigned int it = 0; it < displayFormat.size(); it++) {
 		std::vector<std::string> fieldMatches;
@@ -2477,11 +2491,12 @@ Field 6+ = Branching field X
 			if(fnum < rawFields.size()) field.replace(displayFormat[it], rawFields[fnum]);
 		}
 	}
+*/
 	//These should come in handy.
         //int = stoi(string); string to int
 	//string = std::to_string(number); string to number
 
-*/
+/*
 	//Need to modify the display of "File name" to separate the autonomous system number from the domain name
 	std::string domain_asn = hoverFile->getName();
 
@@ -2527,9 +2542,10 @@ Field 6+ = Branching field X
 		if(displayData[it].size() > 0) parsedHoverText.push_back(displayData[it]);
 		//textbox.addLine(displayData[it]);
 	}
+*/
 //	return rawFields;
-//	return displayFormat;
-	return parsedHoverText;
+	return displayFormat;
+//	return parsedHoverText;
 }
 void Gource::draw(float t, float dt) {
 

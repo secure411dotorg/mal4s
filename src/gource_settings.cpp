@@ -418,9 +418,9 @@ void GourceSettings::setGourceDefaults() {
 
     gStringHashSeed = 31;
 
-    //hoverLines[0] is the empty field replacement in hover lines where a non-existent field is addressed.
+    //hoverUnsetField is the field replacement in hover lines where a non-existent field is addressed.
     //blank fields are not empty, this would be considered a replacement for unset and not blank.
-    hoverLines.push_back("");
+    hoverUnsetField = "";
     //Default hover text labels
     hoverLine1Label = "";
     hoverLine2Label = " (creation date)";
@@ -622,85 +622,85 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
     if((entry = gource_settings->getEntry("hover-replace-unset")) != 0) {
-		hoverLines[0] = entry->getString();
+		hoverUnsetField = entry->getString();
     }
     if((entry = gource_settings->getEntry("hover-line-1")) != 0) {
-	if(hoverLines.size() == 1) {
+	if(hoverLines.size() == 0) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-2")) != 0) {
-	if(hoverLines.size() == 2) {
+	if(hoverLines.size() == 1) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-3")) != 0) {
-	if(hoverLines.size() == 3) {
+	if(hoverLines.size() == 2) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-4")) != 0) {
-	if(hoverLines.size() == 4) {
+	if(hoverLines.size() == 3) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-5")) != 0) {
-	if(hoverLines.size() == 5) {
+	if(hoverLines.size() == 4) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-6")) != 0) {
-	if(hoverLines.size() == 6) {
+	if(hoverLines.size() == 5) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-7")) != 0) {
-	if(hoverLines.size() == 7) {
+	if(hoverLines.size() == 6) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-8")) != 0) {
-	if(hoverLines.size() == 8) {
+	if(hoverLines.size() == 7) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-9")) != 0) {
-	if(hoverLines.size() == 9) {
+	if(hoverLines.size() == 8) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-10")) != 0) {
-	if(hoverLines.size() == 10) {
+	if(hoverLines.size() == 9) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-11")) != 0) {
-	if(hoverLines.size() == 11) {
+	if(hoverLines.size() == 10) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-12")) != 0) {
-	if(hoverLines.size() == 12) {
+	if(hoverLines.size() == 11) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-13")) != 0) {
-	if(hoverLines.size() == 13) {
+	if(hoverLines.size() == 12) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-14")) != 0) {
-	if(hoverLines.size() == 14) {
+	if(hoverLines.size() == 13) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-15")) != 0) {
-	if(hoverLines.size() == 15) {
+	if(hoverLines.size() == 14) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
     if((entry = gource_settings->getEntry("hover-line-16")) != 0) {
-	if(hoverLines.size() == 16) {
+	if(hoverLines.size() == 15) {
 		hoverLines.push_back(entry->getString());
 	} 
     }
