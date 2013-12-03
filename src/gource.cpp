@@ -2424,7 +2424,7 @@ void Gource::drawUsers(float dt) {
 std::vector<std::string> Gource::parseRFileText(RFile* hoverFile) {
 	std::vector<std::string> rawFields;
 	std::vector<std::string> displayFormat = gGourceSettings.hoverLines;
-//	std::vector<std::string> parsedHoverText;
+	std::vector<std::string> parsedHoverText;
 /*
 These fields are stored in a vector beginning at 0, so subtract 1
 Field 1  = user
@@ -2456,22 +2456,44 @@ Field 6+ = Branching field X
 	}
 	for(unsigned int it = 0; it < branches.size(); it++) rawFields.push_back(branches[it]);
 
+	//Loop through lines
 	for(unsigned int it = 0; it < displayFormat.size(); it++) {
-	   for(int loop_count = 0; loop_count < 15; loop_count++) {
-		std::size_t open = displayFormat[it].find("${");
+	   //Allocate next line
+	   parsedHoverText.push_back("");
+	   //Loop though line and replace all of the ${FIELDNUM}s with the corresponding field
+	   for(std::size_t last = 0; last != std::string::npos;) {
+		std::size_t open = displayFormat[it].find("${", last);
 		if(open != std::string::npos) {
-		   std::size_t close = displayFormat[it].find("}", open + 2);
+		   std::size_t close = displayFormat[it].find("}", open);
+		   //Make sure it is only number enclosed in ${FIELDNUM}
 		   if(close != std::string::npos && displayFormat[it].substr(open + 2, close - 1).find_first_not_of("0123456789") != std::string::npos) {
+			//Convert the string to an unigned int
 			unsigned int fieldnum = std::stoi(displayFormat[it].substr(open + 2, close - 1)) - 1;
-			//FIXME Needs protection from attempting to address unallocated mem address in displayFormat[it]
+			//Test if the field is in range
 			if(rawFields.size() > fieldnum) {
-			      displayFormat[it] = displayFormat[it].substr(0, open) + rawFields[fieldnum] + displayFormat[it].substr(close+1);
+				   //Yes, append from last up to ${, and the replacement field
+				   parsedHoverText[it] += displayFormat[it].substr(last, open) + rawFields[fieldnum];
+				   last = close + 1;
 			   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
-			      displayFormat[it] = displayFormat[it].substr(0, open) + gGourceSettings.hoverUnsetField + displayFormat[it].substr(close+1);
-			   } else displayFormat[it] = displayFormat[it].substr(0, open) + displayFormat[it].substr(close+1);
-			} else break;
-		   }
-	      }
+				   //No, append from last up to ${ and the replacement for an unset field
+				   parsedHoverText[it] += displayFormat[it].substr(last, open) + gGourceSettings.hoverUnsetField;
+				   last = close + 1;
+			   } else {
+				   //No, unset field is blank, so append up to ${
+				   parsedHoverText[it] += displayFormat[it].substr(last, open);
+				   last = close + 1;
+			   }
+			} else {
+				//The formatting does not point to a field, copy raw formatting
+				parsedHoverText[it] += displayFormat[it].substr(last, close);
+				last = close + 1;
+			}
+		} else {
+			//${ was not found copy the rest of the formatting
+			parsedHoverText[it] += displayFormat[it].substr(last);
+			last = std::string::npos;
+		}
+	   }
 	}
 /*
 	//Parse formatting
@@ -2548,8 +2570,8 @@ Field 6+ = Branching field X
 	}
 */
 //	return rawFields;
-	return displayFormat;
-//	return parsedHoverText;
+//	return displayFormat;
+	return parsedHoverText;
 }
 void Gource::draw(float t, float dt) {
 
