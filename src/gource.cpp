@@ -2457,17 +2457,21 @@ Field 6+ = Branching field X
 	for(unsigned int it = 0; it < branches.size(); it++) rawFields.push_back(branches[it]);
 
 	for(unsigned int it = 0; it < displayFormat.size(); it++) {
-		bool line_complete = false;
-		while(line_complete == false) {
-			std::size_t open = displayFormat[it].find("${");
-			if(open != std::string::npos) {
-				std::size_t close = displayFormat[it].find("}", open + 2);
-				if(close != std::string::npos && displayFormat[it].substr(open + 2, close - 1).find_first_not_of("0123456789") != std::string::npos) {
-				unsigned int fieldnum = std::stoi(displayFormat[it].substr(open + 2, close - 1)) - 1;
-				displayFormat[it] = displayFormat[it].substr(0, open) + rawFields[fieldnum] + displayFormat[it].substr(close+1);
-				}
-		} else line_complete = true;
-		}
+	   for(int loop_count = 0; loop_count < 15; loop_count++) {
+		std::size_t open = displayFormat[it].find("${");
+		if(open != std::string::npos) {
+		   std::size_t close = displayFormat[it].find("}", open + 2);
+		   if(close != std::string::npos && displayFormat[it].substr(open + 2, close - 1).find_first_not_of("0123456789") != std::string::npos) {
+			unsigned int fieldnum = std::stoi(displayFormat[it].substr(open + 2, close - 1)) - 1;
+			//FIXME Needs protection from attempting to address unallocated mem address in displayFormat[it]
+			if(rawFields.size() > fieldnum) {
+			      displayFormat[it] = displayFormat[it].substr(0, open) + rawFields[fieldnum] + displayFormat[it].substr(close+1);
+			   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
+			      displayFormat[it] = displayFormat[it].substr(0, open) + gGourceSettings.hoverUnsetField + displayFormat[it].substr(close+1);
+			   } else displayFormat[it] = displayFormat[it].substr(0, open) + displayFormat[it].substr(close+1);
+			} else break;
+		   }
+	      }
 	}
 /*
 	//Parse formatting
