@@ -2466,26 +2466,27 @@ Field 6+ = Branching field X
 		if(open != std::string::npos) {
 		   std::size_t close = displayFormat[it].find("}", open);
 		   //Make sure it is only number enclosed in ${FIELDNUM}
-		   if(close != std::string::npos && displayFormat[it].substr(open + 2, close - 1).find_first_not_of("0123456789") != std::string::npos) {
+		   if(close != std::string::npos && displayFormat[it].substr(open, close - open - 1).find_first_not_of("0123456789") != std::string::npos) {
 			//Convert the string to an unigned int
-			unsigned int fieldnum = std::stoi(displayFormat[it].substr(open + 2, close - 1)) - 1;
+			unsigned int fieldnum = std::stoi(displayFormat[it].substr(open + 2, close - open - 1)) - 1;
 			//Test if the field is in range
 			if(rawFields.size() > fieldnum) {
 				   //Yes, append from last up to ${, and the replacement field
-				   parsedHoverText[it] += displayFormat[it].substr(last, open) + rawFields[fieldnum];
+				   fprintf(stdout, "Line num: %u:\n%s +(%zi) %s (%zi)+ %s\n", it + 1, parsedHoverText[it].c_str(), last, displayFormat[it].substr(last, open).c_str(), open, rawFields[fieldnum].c_str());
+				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + rawFields[fieldnum];
 				   last = close + 1;
 			   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
 				   //No, append from last up to ${ and the replacement for an unset field
-				   parsedHoverText[it] += displayFormat[it].substr(last, open) + gGourceSettings.hoverUnsetField;
+				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + gGourceSettings.hoverUnsetField;
 				   last = close + 1;
 			   } else {
 				   //No, unset field is blank, so append up to ${
-				   parsedHoverText[it] += displayFormat[it].substr(last, open);
+				   parsedHoverText[it] += displayFormat[it].substr(last, open - last);
 				   last = close + 1;
 			   }
 			} else {
 				//The formatting does not point to a field, copy raw formatting
-				parsedHoverText[it] += displayFormat[it].substr(last, close);
+				parsedHoverText[it] += displayFormat[it].substr(last, close - last);
 				last = close + 1;
 			}
 		} else {
@@ -2495,82 +2496,6 @@ Field 6+ = Branching field X
 		}
 	   }
 	}
-/*
-	//Parse formatting
-	for(unsigned int it = 1; it < displayFormat.size(); it++) {
-		while(parseHoverFormat(displayFormat[it], rawFields));
-	}
-*/
-/*	
-	//Parse formatting
-	for(unsigned int it = 0; it < displayFormat.size(); it++) {
-		std::vector<std::string> fieldMatches;
-		//fieldNums.matchAll(displayFormat[it], &fieldMatches);
-		fieldNums.match("1", &fieldMatches);
-		if(fieldMatches.size() > 0) fprintf(stdout, "%s\n", fieldMatches[0].c_str());
-		for(unsigned int it_match = 0; it_match < fieldMatches.size(); it_match++) {
-			std::vector<std::string> strfnum;
-			number.match(fieldMatches[it_match], &strfnum);
-			std::string regex = "\\{" + strfnum[0] + "\\}";
-			Regex field(regex);
-			unsigned int fnum = std::stoi(strfnum[0]) - 1;
-			if(fnum < rawFields.size()) field.replace(displayFormat[it], rawFields[fnum]);
-		}
-	}
-*/
-	//These should come in handy.
-        //int = stoi(string); string to int
-	//string = std::to_string(number); string to number
-
-/*
-	//Need to modify the display of "File name" to separate the autonomous system number from the domain name
-	std::string domain_asn = hoverFile->getName();
-
-	std::vector<std::string> domain_asn_elems = split(domain_asn, '.');
-	
-	int domain_asn_elems_size = domain_asn_elems.size();
-	std::string display_asn = domain_asn_elems[--domain_asn_elems_size];
-	std::vector<std::string> displayData = hoverFile->displayData;
-
-	Regex asn_regex("^[a-zA-Z]{2}[0-9]+$");
-	std::vector<std::string> ignored;
-	std::string display_domain;
-	if(asn_regex.matchAll(display_asn, &ignored)) {
-		display_asn.erase(0,2);
-		display_asn = "AS" + display_asn;
-		display_domain = domain_asn_elems[0];
-		for (auto it = &domain_asn_elems[1]; it != &domain_asn_elems[domain_asn_elems_size]; ++it)
-			display_domain += "." + *it;
-	} else {
-		display_asn = "N/A";
-		display_domain =  hoverFile->getName();
-	}
-
-	std::string display_address;
-	if(branches.size() >= 8) {
-		display_address = branches[2] + "." +  branches[3] + "." + branches[4] + "." + branches[5];
-	} else {
-		display_address = "Non conforming entry";
-	}
-
-	//Create a textbox and display these elements
-	parsedHoverText.push_back(hoverFile->fileUser);
-        
-        parsedHoverText.push_back(display_domain + gGourceSettings.hoverLine1Label);
-	parsedHoverText.push_back(branches[branches.size() - 1] + gGourceSettings.hoverLine3Label);  //Registrar
-
-	parsedHoverText.push_back(branches[0] + gGourceSettings.hoverLine4Label);  //RIR
-	parsedHoverText.push_back(branches[1] + gGourceSettings.hoverLine5Label);  //Two letter country code
-	parsedHoverText.push_back(display_asn + gGourceSettings.hoverLine6Label);  // Autonomous System Number
-	parsedHoverText.push_back(display_address + gGourceSettings.hoverLine7Label);  //IP address
-	parsedHoverText.push_back(branches[branches.size() - 2] + gGourceSettings.hoverLine2Label); //element after dotted quad
-	for(unsigned int it = 0; it < displayData.size(); it++) {
-		if(displayData[it].size() > 0) parsedHoverText.push_back(displayData[it]);
-		//textbox.addLine(displayData[it]);
-	}
-*/
-//	return rawFields;
-//	return displayFormat;
 	return parsedHoverText;
 }
 void Gource::draw(float t, float dt) {
@@ -2858,7 +2783,6 @@ void Gource::draw(float t, float dt) {
 	std::vector<std::string> parsedHoverText = parseRFileText(hoverFile);
 	textbox.setText(parsedHoverText[0]);
 	for(unsigned int it = 1; it < parsedHoverText.size(); it++) {
-		if(it == 3) textbox.addLine("");
 		if(parsedHoverText[it].size() > 0) textbox.addLine(parsedHoverText[it]);
 	}
 
