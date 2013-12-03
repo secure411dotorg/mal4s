@@ -2472,7 +2472,6 @@ Field 6+ = Branching field X
 			//Test if the field is in range
 			if(rawFields.size() > fieldnum) {
 				   //Yes, append from last up to ${, and the replacement field
-				   fprintf(stdout, "Line num: %u:\n%s +(%zi) %s (%zi)+ %s\n", it + 1, parsedHoverText[it].c_str(), last, displayFormat[it].substr(last, open).c_str(), open, rawFields[fieldnum].c_str());
 				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + rawFields[fieldnum];
 				   last = close + 1;
 			   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
