@@ -2782,7 +2782,7 @@ void Gource::draw(float t, float dt) {
 	std::vector<std::string> parsedHoverText = parseRFileText(hoverFile);
 	textbox.setText(parsedHoverText[0]);
 	for(unsigned int it = 1; it < parsedHoverText.size(); it++) {
-		if(parsedHoverText[it].size() > 0) textbox.addLine(parsedHoverText[it]);
+		textbox.addLine(parsedHoverText[it]);
 	}
 
         textbox.setColour(hoverFile->getColour());
