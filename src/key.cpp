@@ -212,14 +212,17 @@ void FileKey::clear() {
 void FileKey::inc(RFile* file) {
 
     FileKeyEntry* entry = 0;
-
+    //TODO Make the key field configurable:  The three lines commented out change the key.
     std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(file->ext);
+//    std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(file->displayData[0]);
 
     if(result != keymap.end()) {
         entry = result->second;
     } else {
         entry = new FileKeyEntry(font, file->ext, file->getFileColour());
+//        entry = new FileKeyEntry(font, file->displayData[0], file->getFileColour());
         keymap[file->ext] = entry;
+//        keymap[file->displayData[0]] = entry;
     }
 
     entry->inc();
