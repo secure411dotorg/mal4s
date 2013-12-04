@@ -76,7 +76,7 @@ bool Mal4sLog::parseCommitEntry(RCommit& commit) {
 
     if(entries.size()>=6 && entries[5].size()>0) {
 	commit.userimagename = entries[5];
-    }
+    } else commit.userimagename = commit.username;
 
     std::vector<std::string> displayData;
 

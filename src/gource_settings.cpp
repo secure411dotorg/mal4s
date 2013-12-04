@@ -418,6 +418,7 @@ void GourceSettings::setGourceDefaults() {
 
     gStringHashSeed = 31;
 
+    //defaultHoverLines
     //hoverUnsetField is the field replacement in hover lines where a non-existent field is addressed.
     //blank fields are not empty, this would be considered a replacement for unset and not blank.
     hoverUnsetField = "";
