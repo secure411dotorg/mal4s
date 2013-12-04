@@ -212,17 +212,20 @@ void FileKey::clear() {
 void FileKey::inc(RFile* file) {
 
     FileKeyEntry* entry = 0;
-    //TODO Make the key field configurable:  The three lines commented out change the key.
-    std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(file->ext);
-//    std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(file->displayData[0]);
+
+    //This is the label displayed in the key
+    std::string key_display = file->displayData[0];
+
+//    std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(file->ext);
+    std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(key_display);
 
     if(result != keymap.end()) {
         entry = result->second;
     } else {
-        entry = new FileKeyEntry(font, file->ext, file->getFileColour());
-//        entry = new FileKeyEntry(font, file->displayData[0], file->getFileColour());
-        keymap[file->ext] = entry;
-//        keymap[file->displayData[0]] = entry;
+//        entry = new FileKeyEntry(font, file->ext, file->getFileColour());
+        entry = new FileKeyEntry(font, key_display, file->getFileColour());
+//        keymap[file->ext] = entry;
+        keymap[key_display] = entry;
     }
 
     entry->inc();
@@ -231,8 +234,10 @@ void FileKey::inc(RFile* file) {
 
 //decrement count of extension. if drops to zero, mark it for removal
 void FileKey::dec(RFile* file) {
+    //This is what is the label displayed in the key
+    std::string key_display = file->displayData[0];
 
-    std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(file->ext);
+    std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(key_display);
 
     if(result == keymap.end()) return;
 
