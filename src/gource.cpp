@@ -2453,8 +2453,8 @@ Branching field = ${bNUM}
 		if(open != std::string::npos) {
 		   std::size_t close = displayFormat[it].find("}", open);
 		   //Make sure it is only number enclosed in ${FIELDNUM}
-		   if(close != std::string::npos && displayFormat[it].substr(open, close - open - 1).find_first_not_of("plotershldbn0123456789") != std::string::npos) {
-			fieldIdentifier = displayFormat[it].substr(open + 2, close - open - 1);
+		   if(close != std::string::npos) {
+			fieldIdentifier = displayFormat[it].substr(open + 2, close - open - 2);
 			if(fieldIdentifier.compare("plotter") == 0) {
 			   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + hoverFile->fileUser;
 			   last = close + 1;
@@ -2464,7 +2464,7 @@ Branching field = ${bNUM}
 			} else if(fieldIdentifier.compare("tld") ==0) {
 			   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + hoverFile->ext;
 			   last = close + 1;
-			} else if(fieldIdentifier.substr(0, 1).compare("n") == 0) {
+			} else if(fieldIdentifier.compare(0,1,"n") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 			   //Convert the string to an unigned int
 			   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
 			   //Test if the field is in range
@@ -2481,8 +2481,7 @@ Branching field = ${bNUM}
 				   parsedHoverText[it] += displayFormat[it].substr(last, open - last);
 				   last = close + 1;
 			   }
-			 }
-			} else if(fieldIdentifier.substr(0, 1).compare("b") == 0) {
+			} else if(fieldIdentifier.compare(0,1,"b") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 			   //Convert the string to an unigned int
 			   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
 			   //Test if the field is in range
@@ -2504,6 +2503,7 @@ Branching field = ${bNUM}
 				parsedHoverText[it] += displayFormat[it].substr(last, close - last);
 				last = close + 1;
 			}
+		   }
 		} else {
 			//${ was not found copy the rest of the formatting
 			parsedHoverText[it] += displayFormat[it].substr(last);
