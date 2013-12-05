@@ -2422,17 +2422,16 @@ void Gource::drawUsers(float dt) {
 
 }
 std::vector<std::string> Gource::parseRFileText(RFile* hoverFile) {
-	std::vector<std::string> rawFields;
+	std::string fieldIdentifier;
 	std::vector<std::string> displayFormat = gGourceSettings.hoverLines;
 	std::vector<std::string> parsedHoverText;
 /*
 These fields are stored in a vector beginning at 0, so subtract 1
-Field 1  = user
-Field 2  = filename
-Field 3  = Non-branching field 1
-Field 4  = Non-branching field 2
-Field 5  = Non-branching field 3
-Field 6+ = Branching field X
+plotter = ${plotter}
+host.tld = ${host}
+tld = ${tld}
+Non-branching field = ${nNUM}
+Branching field = ${bNUM}
 */	
 
 	std::string path = hoverFile->path;
@@ -2440,21 +2439,9 @@ Field 6+ = Branching field X
         path.erase(0,1);
 
 	// Convert "path" to separate fields
-	std::vector<std::string> branches = split(path, '/');
+	std::vector<std::string> branching = split(path, '/');
 	
 	std::vector<std::string> nonBranching = hoverFile->displayData;
-
-	//Organize fields into their proper order
-	rawFields.push_back(hoverFile->fileUser); //First field is "User"
-	rawFields.push_back(hoverFile->getName());
-	for(unsigned int it = 0; it < 3; it++) {
-		if(nonBranching.size() > it) {
-			rawFields.push_back(nonBranching[it]);
-		} else {
-			rawFields.push_back("");
-		}
-	}
-	for(unsigned int it = 0; it < branches.size(); it++) rawFields.push_back(branches[it]);
 
 	//Loop through lines
 	for(unsigned int it = 0; it < displayFormat.size(); it++) {
@@ -2466,13 +2453,42 @@ Field 6+ = Branching field X
 		if(open != std::string::npos) {
 		   std::size_t close = displayFormat[it].find("}", open);
 		   //Make sure it is only number enclosed in ${FIELDNUM}
-		   if(close != std::string::npos && displayFormat[it].substr(open, close - open - 1).find_first_not_of("0123456789") != std::string::npos) {
-			//Convert the string to an unigned int
-			unsigned int fieldnum = std::stoi(displayFormat[it].substr(open + 2, close - open - 1)) - 1;
-			//Test if the field is in range
-			if(rawFields.size() > fieldnum) {
+		   if(close != std::string::npos && displayFormat[it].substr(open, close - open - 1).find_first_not_of("plotershldbn0123456789") != std::string::npos) {
+			fieldIdentifier = displayFormat[it].substr(open + 2, close - open - 1);
+			if(fieldIdentifier.compare("plotter") == 0) {
+			   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + hoverFile->fileUser;
+			   last = close + 1;
+			} else if(fieldIdentifier.compare("host") == 0) {
+			   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + hoverFile->getName();
+			   last = close + 1;
+			} else if(fieldIdentifier.compare("tld") ==0) {
+			   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + hoverFile->ext;
+			   last = close + 1;
+			} else if(fieldIdentifier.substr(0, 1).compare("n") == 0) {
+			   //Convert the string to an unigned int
+			   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+			   //Test if the field is in range
+			   if(nonBranching.size() > fieldnum) {
 				   //Yes, append from last up to ${, and the replacement field
-				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + rawFields[fieldnum];
+				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + nonBranching[fieldnum];
+				   last = close + 1;
+			   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
+				   //No, append from last up to ${ and the replacement for an unset field
+				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + gGourceSettings.hoverUnsetField;
+				   last = close + 1;
+			   } else {
+				   //No, unset field is blank, so append up to ${
+				   parsedHoverText[it] += displayFormat[it].substr(last, open - last);
+				   last = close + 1;
+			   }
+			 }
+			} else if(fieldIdentifier.substr(0, 1).compare("b") == 0) {
+			   //Convert the string to an unigned int
+			   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+			   //Test if the field is in range
+			   if(branching.size() > fieldnum) {
+				   //Yes, append from last up to ${, and the replacement field
+				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + branching[fieldnum];
 				   last = close + 1;
 			   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
 				   //No, append from last up to ${ and the replacement for an unset field
