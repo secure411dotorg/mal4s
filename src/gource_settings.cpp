@@ -74,9 +74,9 @@ void GourceSettings::help(bool extended_help) {
 
     printf("  --key                            Show file extension key\n\n");
 
-    printf("  --user-image-dir DIRECTORY       Dir containing images to use as avatars\n");
-    printf("  --default-user-image IMAGE       Default user image file\n");
-    printf("  --colour-images                  Colourize user images\n\n");
+    printf("  --plotter-image-dir DIRECTORY       Dir containing images to use as avatars\n");
+    printf("  --default-plotter-image IMAGE       Default plotter image file\n");
+    printf("  --colour-images                  Colourize plotter images\n\n");
 
     printf("  -i, --file-idle-time SECONDS     Time files remain idle (default: 0)\n\n");
 
@@ -119,7 +119,7 @@ if(extended_help) {
     printf("  --git-branch             Get the git log of a particular branch\n\n");
 
     printf("  --hide DISPLAY_ELEMENT   bloom,date,dirnames,files,filenames,mouse,progress,\n");
-    printf("                           root,tree,users,usernames\n\n");
+    printf("                           root,tree,plotters,plotternames\n\n");
 
     printf("  --logo IMAGE             Logo to display in the foreground\n");
     printf("  --logo-offset XxY        Offset position of the logo\n\n");
@@ -128,19 +128,19 @@ if(extended_help) {
 
     printf("  --transparent            Make the background transparent\n\n");
 
-    printf("  --user-filter REGEX      Ignore usernames matching this regex\n");
+    printf("  --plotter-filter REGEX      Ignore plotternames matching this regex\n");
     printf("  --file-filter REGEX      Ignore files matching this regex\n\n");
 
-    printf("  --user-friction SECONDS  Change the rate users slow down (default: 0.67)\n");
-    printf("  --user-scale SCALE       Change scale of users (default: 1.0)\n");
-    printf("  --max-user-speed UNITS   Speed users can travel per second (default: 500)\n\n");
+    printf("  --plotter-friction SECONDS  Change the rate plotters slow down (default: 0.67)\n");
+    printf("  --plotter-scale SCALE       Change scale of plotters (default: 1.0)\n");
+    printf("  --max-plotter-speed UNITS   Speed plotters can travel per second (default: 500)\n\n");
 
-    printf("  --follow-user USER       Camera will automatically follow this user\n");
+    printf("  --follow-plotter PLOTTER       Camera will automatically follow this plotter\n");
     printf("  --highlight-dirs         Highlight the names of all directories\n");
-    printf("  --highlight-user USER    Highlight the names of a particular user\n");
-    printf("  --highlight-users        Highlight the names of all users\n\n");
-    printf("  --highlight-colour       Font colour for highlighted users in hex.\n");
-    printf("  --selection-colour       Font colour for selected users and files.\n");
+    printf("  --highlight-plotter PLOTTER    Highlight the names of a particular plotter\n");
+    printf("  --highlight-plotters        Highlight the names of all plotters\n\n");
+    printf("  --highlight-colour       Font colour for highlighted plotters in hex.\n");
+    printf("  --selection-colour       Font colour for selected plotters and files.\n");
     printf("  --dir-colour             Font colour for directories.\n\n");
 
     printf("  --caption-file FILE         Caption file\n");
@@ -197,7 +197,7 @@ GourceSettings::GourceSettings() {
     arg_aliases["background"]          = "background-colour";
     arg_aliases["disable-bloom"]       = "hide-bloom";
     arg_aliases["disable-progress"]    = "hide-progress";
-    arg_aliases["highlight-all-users"] = "highlight-users";
+    arg_aliases["highlight-all-plotters"] = "highlight-plotters";
 
     //command line only options
     conf_sections["help"]            = "command-line";
@@ -227,16 +227,16 @@ GourceSettings::GourceSettings() {
     arg_types["colour-images"]   = "bool";
     arg_types["hide-date"]       = "bool";
     arg_types["hide-files"]      = "bool";
-    arg_types["hide-users"]      = "bool";
+    arg_types["hide-plotters"]      = "bool";
     arg_types["hide-tree"]       = "bool";
-    arg_types["hide-usernames"]  = "bool";
+    arg_types["hide-plotter-names"]  = "bool";
     arg_types["hide-filenames"]  = "bool";
     arg_types["hide-dirnames"]   = "bool";
     arg_types["hide-progress"]   = "bool";
     arg_types["hide-bloom"]      = "bool";
     arg_types["hide-mouse"]      = "bool";
     arg_types["hide-root"]       = "bool";
-    arg_types["highlight-users"] = "bool";
+    arg_types["highlight-plotters"] = "bool";
     arg_types["highlight-dirs"]  = "bool";
     arg_types["file-extensions"] = "bool";
     arg_types["key"]             = "bool";
@@ -258,8 +258,8 @@ GourceSettings::GourceSettings() {
     arg_types["seconds-per-day"]   = "float";
     arg_types["auto-skip-seconds"] = "float";
     arg_types["stop-at-time"]      = "float";
-    arg_types["max-user-speed"]    = "float";
-    arg_types["user-friction"]     = "float";
+    arg_types["max-plotter-speed"]    = "float";
+    arg_types["plotter-friction"]     = "float";
     arg_types["padding"]           = "float";
     arg_types["time-scale"]        = "float";
 
@@ -267,10 +267,10 @@ GourceSettings::GourceSettings() {
     arg_types["font-size"] = "int";
     arg_types["hash-seed"] = "int";
 
-    arg_types["user-filter"]    = "multi-value";
+    arg_types["plotter-filter"]    = "multi-value";
     arg_types["file-filter"]    = "multi-value";
-    arg_types["follow-user"]    = "multi-value";
-    arg_types["highlight-user"] = "multi-value";
+    arg_types["follow-plotter"]    = "multi-value";
+    arg_types["highlight-plotter"] = "multi-value";
 
     arg_types["log-level"]          = "string";
     arg_types["background-image"]   = "string";
@@ -284,8 +284,8 @@ GourceSettings::GourceSettings() {
     arg_types["log-command"]        = "string";
     arg_types["background-colour"]  = "string";
     arg_types["file-idle-time"]     = "string";
-    arg_types["user-image-dir"]     = "string";
-    arg_types["default-user-image"] = "string";
+    arg_types["plotter-image-dir"]     = "string";
+    arg_types["default-plotter-image"] = "string";
     arg_types["date-format"]        = "string";
     arg_types["log-format"]         = "string";
     arg_types["git-branch"]         = "string";
@@ -295,7 +295,7 @@ GourceSettings::GourceSettings() {
     arg_types["crop"]               = "string";
     arg_types["hide"]               = "string";
     arg_types["max-file-lag"]       = "string";
-    arg_types["user-scale"]         = "string";
+    arg_types["plotter-scale"]         = "string";
     arg_types["camera-mode"]        = "string";
     arg_types["title"]              = "string";
     arg_types["font-colour"]        = "string";
@@ -574,10 +574,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             std::string hide_field = (*it);
 
             if(   hide_field != "date"
-               && hide_field != "users"
+               && hide_field != "plotters"
                && hide_field != "tree"
                && hide_field != "files"
-               && hide_field != "usernames"
+               && hide_field != "plotternames"
                && hide_field != "filenames"
                && hide_field != "dirnames"
                && hide_field != "bloom"
@@ -607,10 +607,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             std::string hidestr = (*it);
 
                 if(hidestr == "date")       hide_date      = true;
-            else if(hidestr == "users")     hide_users     = true;
+            else if(hidestr == "plotters")     hide_users     = true;
             else if(hidestr == "tree")      hide_tree      = true;
             else if(hidestr == "files")     hide_files     = true;
-            else if(hidestr == "usernames") hide_usernames = true;
+            else if(hidestr == "plotternames") hide_usernames = true;
             else if(hidestr == "filenames") hide_filenames = true;
             else if(hidestr == "dirnames")  hide_dirnames  = true;
             else if(hidestr == "bloom")     hide_bloom     = true;
@@ -838,16 +838,16 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("default-user-image")) != 0) {
+    if((entry = gource_settings->getEntry("default-plotter-image")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify default-user-image (image path)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify default-plotter-image (image path)");
 
         default_user_image = entry->getString();
     }
 
-    if((entry = gource_settings->getEntry("user-image-dir")) != 0) {
+    if((entry = gource_settings->getEntry("plotter-image-dir")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify user-image-dir (directory)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify plotter-image-dir (directory)");
 
         user_image_dir = entry->getString();
 
@@ -861,7 +861,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         boost::filesystem::path image_dir_path(user_image_dir);
 
         if(!is_directory(image_dir_path)) {
-             conffile.entryException(entry, "specified user-image-dir is not a directory");
+             conffile.entryException(entry, "specified plotter-image-dir is not a directory");
         }
 
         std::vector<boost::filesystem::path> image_dir_files;
@@ -869,7 +869,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         try {
             copy(boost::filesystem::directory_iterator(image_dir_path), boost::filesystem::directory_iterator(), back_inserter(image_dir_files));
         } catch(const boost::filesystem::filesystem_error& exception) {
-             conffile.entryException(entry, "error reading specified user-image-dir");
+             conffile.entryException(entry, "error reading specified plotter-image-dir");
         }
 
         for(boost::filesystem::path& p : image_dir_files) {
@@ -1179,9 +1179,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("user-idle-time")) != 0) {
+    if((entry = gource_settings->getEntry("plotter-idle-time")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify user-idle-time (seconds)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify plotter-idle-time (seconds)");
 
         user_idle_time = entry->getFloat();
 
@@ -1321,9 +1321,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("user-friction")) != 0) {
+    if((entry = gource_settings->getEntry("plotter-friction")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify user-friction (seconds)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify plotter-friction (seconds)");
 
         user_friction = entry->getFloat();
 
@@ -1334,9 +1334,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         user_friction = 1.0 / user_friction;
     }
 
-    if((entry = gource_settings->getEntry("user-scale")) != 0) {
+    if((entry = gource_settings->getEntry("plotter-scale")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify user-scale (scale)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify plotter-scale (scale)");
 
         user_scale = entry->getFloat();
 
@@ -1345,9 +1345,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("max-user-speed")) != 0) {
+    if((entry = gource_settings->getEntry("max-plotter-speed")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify max-user-speed (units)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify max-plotter-speed (units)");
 
         max_user_speed = entry->getFloat();
 
@@ -1356,8 +1356,8 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if(   gource_settings->getBool("highlight-users")
-       || gource_settings->getBool("highlight-all-users")) {
+    if(   gource_settings->getBool("highlight-plotters")
+       || gource_settings->getBool("highlight-all-plotters")) {
         highlight_all_users = true;
     }
 
@@ -1389,29 +1389,29 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
     // multi-value entries
 
-    if((entry = gource_settings->getEntry("highlight-user")) != 0) {
+    if((entry = gource_settings->getEntry("highlight-plotter")) != 0) {
 
-        ConfEntryList* highlight_user_entries = gource_settings->getEntries("highlight-user");
+        ConfEntryList* highlight_user_entries = gource_settings->getEntries("highlight-plotter");
 
         for(ConfEntryList::iterator it = highlight_user_entries->begin(); it != highlight_user_entries->end(); it++) {
 
             entry = *it;
 
-            if(!entry->hasValue()) conffile.entryException(entry, "specify highlight-user (user)");
+            if(!entry->hasValue()) conffile.entryException(entry, "specify highlight-plotter (user)");
 
             highlight_users.push_back(entry->getString());
         }
     }
 
-    if((entry = gource_settings->getEntry("follow-user")) != 0) {
+    if((entry = gource_settings->getEntry("follow-plotter")) != 0) {
 
-        ConfEntryList* follow_user_entries = gource_settings->getEntries("follow-user");
+        ConfEntryList* follow_user_entries = gource_settings->getEntries("follow-plotter");
 
         for(ConfEntryList::iterator it = follow_user_entries->begin(); it != follow_user_entries->end(); it++) {
 
             entry = *it;
 
-            if(!entry->hasValue()) conffile.entryException(entry, "specify follow-user (user)");
+            if(!entry->hasValue()) conffile.entryException(entry, "specify follow-plotter (user)");
 
             follow_users.push_back(entry->getString());
         }
@@ -1444,15 +1444,15 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("user-filter")) != 0) {
+    if((entry = gource_settings->getEntry("plotter-filter")) != 0) {
 
-        ConfEntryList* filters = gource_settings->getEntries("user-filter");
+        ConfEntryList* filters = gource_settings->getEntries("plotter-filter");
 
         for(ConfEntryList::iterator it = filters->begin(); it != filters->end(); it++) {
 
             entry = *it;
 
-            if(!entry->hasValue()) conffile.entryException(entry, "specify user-filter (regex)");
+            if(!entry->hasValue()) conffile.entryException(entry, "specify plotter-filter (regex)");
 
             std::string filter_string = entry->getString();
 
@@ -1460,7 +1460,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
             if(!r->isValid()) {
                 delete r;
-                conffile.entryException(entry, "invalid user-filter regular expression");
+                conffile.entryException(entry, "invalid plotter-filter regular expression");
             }
 
             user_filters.push_back(r);
