@@ -728,7 +728,7 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 		}
 	}
 #if SDL_VERSION_ATLEAST(2,0,0)
-	if(e->keysym.sym == SDLK_F8) {
+	if(e->keysym.sym == SDLK_c) {
 		if(hoverFile != 0) {
 			std::vector<std::string> parsedHoverText = parseRFileText(hoverFile);
 			std::string clipBoardText = parsedHoverText[0];
@@ -847,7 +847,7 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             gGourceSettings.show_key = !gGourceSettings.show_key;
         }
 
-        if(e->keysym.sym == SDLK_c) {
+        if(e->keysym.sym == SDLK_s) {
             splash = 15.0f;
         }
 
@@ -865,9 +865,9 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             gGourceGravity = !gGourceGravity;
         }
 
-        if (e->keysym.sym == SDLK_s) {
-            recolour=true;
-        }
+//        if (e->keysym.sym == SDLK_s) {
+//            recolour=true;
+//        }
 
         if(key_tab) {
             selectNextUser();
