@@ -206,6 +206,8 @@ class Gource : public SDLApp {
 
     void reset();
 
+    std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
+    std::vector<std::string> split(const std::string &s, char delim);
     RUser* addUser(const std::string& username, const std::string& imageName);
     RFile* addFile(const RCommitFile& cf);
 

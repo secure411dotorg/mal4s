@@ -148,7 +148,7 @@ Gource::Gource(FrameExporter* exporter) {
     //if recording a video or in demo mode, or multiple repos, the slider is initially hidden
     if(exporter==0 && gGourceSettings.repo_count==1) slider.show();
 }
-std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+std::vector<std::string> &Gource::split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss(s);
     std::string item;
     while (std::getline(ss, item, delim)) {
@@ -158,7 +158,7 @@ std::vector<std::string> &split(const std::string &s, char delim, std::vector<st
 }
 
 
-std::vector<std::string> split(const std::string &s, char delim) {
+std::vector<std::string> Gource::split(const std::string &s, char delim) {
     std::vector<std::string> elems;
     split(s, delim, elems);
     return elems;

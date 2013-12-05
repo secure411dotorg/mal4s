@@ -18,7 +18,25 @@
 #include "mal4s.h"
 
 //Regex mal4s_regex("^(?:\\xEF\\xBB\\xBF)?(-?[0-9]+)\\|([^|]*)\\|([ADM]?)\\|([^|]+)(?:\\|([A-F0-9]{6})\\|([^|]*)\\|([^|]*)\\|([^|]*)\\|([^|]*)\\|([^|]*))?");
-Regex mal4s_regex("^(?:\\xEF\\xBB\\xBF)?(-?[0-9]+)\\|([^|]*)\\|([ADM]?)\\|([^|]+)(?:\\|([A-F0-9]{6})\\|([^|\\n]*)\\|#?([^|\\n]*)\\|#?([^|\\n]*)\\|#?([^|\\n]*))?");
+//Regex mal4s_regex("^(?:\\xEF\\xBB\\xBF)?(-?[0-9]+)\\|([^|]*)\\|([ADM]?)\\|([^|]+)(?:\\|([A-F0-9]{6})\\|([^|\\n]*)\\|#?([^|\\n]*)\\|#?([^|\\n]*)\\|#?([^|\\n]*))?");
+Regex mal4s_regex("^(?:\\xEF\\xBB\\xBF)?(-?[0-9]+)\\|([^|]*)\\|([ADM]?)\\|([^|]+)\\|([A-F0-9]{6})\\|([^|\\n]*)(?:\\|#?([^\\n]*))?");
+
+std::vector<std::string> &Mal4sLog::split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+
+std::vector<std::string> Mal4sLog::split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
 
 Mal4sLog::Mal4sLog(const std::string& logfile) : RCommitLog(logfile) {
 }
@@ -78,7 +96,7 @@ bool Mal4sLog::parseCommitEntry(RCommit& commit) {
 	commit.userimagename = entries[5];
     } else commit.userimagename = commit.username;
 
-    std::vector<std::string> displayData;
+      std::vector<std::string> displayData;
 
 //    displayData.push_back("Super Duper!");
 
@@ -86,10 +104,11 @@ bool Mal4sLog::parseCommitEntry(RCommit& commit) {
     
     //Extra fields for display on hover.
     if(entries.size()>=7 ) {
-	for(unsigned int it = 6;it < entries.size(); it++) {
-		displayData.push_back(entries[it]);
-	}
-    } 
+//	for(unsigned int it = 6;it < entries.size(); it++) {
+//		displayData.push_back(entries[it]);
+//	}
+	displayData = split(entries[6], '|');
+    }
 
     bool has_colour = false;
     vec3 colour;

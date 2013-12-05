@@ -27,6 +27,8 @@ protected:
     vec3 parseColour(const std::string& cstr);
 public:
     Mal4sLog(const std::string& logfile);
+    std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
+    std::vector<std::string> split(const std::string &s, char delim);
 };
 
 #endif
