@@ -14,7 +14,7 @@ FileKeyEntry::FileKeyEntry(const FXFont& font, const std::string& ext, const vec
 
     shadow      = vec2(3.0, 3.0);
 
-    width       = 90.0f;
+    width       = gGourceSettings.keyWidth;
     height      = 18.0f;
     left_margin = 20.0f;
     count       = 0;
