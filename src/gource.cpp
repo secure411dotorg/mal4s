@@ -24,7 +24,6 @@ int   gGourceMaxQuadTreeDepth = 6;
 
 int gGourceUserInnerLoops = 0;
 
-
 Gource::Gource(FrameExporter* exporter) {
 
     this->logfile = gGourceSettings.path;
@@ -693,21 +692,12 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             screenshot();
         }
 
-	if(f5 == NULL) {
-		std::string pathfilename;
-		pathfilename = texturemanager.getDir() + "f5.wav";
-		f5 = Mix_LoadWAV(pathfilename.c_str());
-		pathfilename = texturemanager.getDir() + "f7.wav";
-		f7 = Mix_LoadWAV(pathfilename.c_str());
-		pathfilename = texturemanager.getDir() + "f9.wav";
-		f9 = Mix_LoadWAV(pathfilename.c_str());
-		pathfilename = texturemanager.getDir() + "copy-click.wav";
-		copy_click = Mix_LoadWAV(pathfilename.c_str());
-	}
 
 	//FIXME Text output of file name of hoverFile
 	if(e->keysym.sym == SDLK_F5) {
 		if(hoverFile != 0) {
+			std::string pathfilename = texturemanager.getDir() + "f5.wav";
+			f5 = Mix_LoadWAV(pathfilename.c_str());
 			Mix_PlayChannel( -1, f5, 0 );
 			std::ofstream txtfile;
 			txtfile.open("malhost-f5.txt", std::ios::app);
@@ -718,6 +708,8 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 	}
 	if(e->keysym.sym == SDLK_F7) {
 		if(hoverFile != 0) {
+			std::string pathfilename = texturemanager.getDir() + "f7.wav";
+			f7 = Mix_LoadWAV(pathfilename.c_str());
 			Mix_PlayChannel( -1, f7, 0 );
 			std::ofstream txtfile;
 			txtfile.open("malhost-f7.txt", std::ios::app);
@@ -737,12 +729,16 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 			}
 
 			SDL_SetClipboardText(clipBoardText.c_str());
+			std::string pathfilename = texturemanager.getDir() + "copy-click.wav";
+			copy_click = Mix_LoadWAV(pathfilename.c_str());
 			Mix_PlayChannel( -1, copy_click, 0 );
 		}
 	}
 #endif
 	if(e->keysym.sym == SDLK_F9) {
 		if(hoverFile != 0) {
+			std::string pathfilename = texturemanager.getDir() + "f9.wav";
+			f9 = Mix_LoadWAV(pathfilename.c_str());
 			Mix_PlayChannel( -1, f9, 0 );
 			std::ofstream txtfile;
 			txtfile.open("malhost-f9.txt", std::ios::app);
@@ -1997,10 +1993,8 @@ void Gource::mousetrace(float dt) {
             camera.lockOn(false);
             selectFile(hoverFile);
 
-		if(copy_click == NULL) {
-			std::string pathfilename =  texturemanager.getDir() + "copy-click.wav";
-			copy_click = Mix_LoadWAV(pathfilename.c_str());
-		}
+		std::string pathfilename =  texturemanager.getDir() + "copy-click.wav";
+		copy_click = Mix_LoadWAV(pathfilename.c_str());
 		Mix_PlayChannel( -1, copy_click, 0 );
 				
 		std::ofstream txtfile;
