@@ -577,6 +577,17 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
     if((entry = gource_settings->getEntry("key-format")) != 0) {
 		keyFormat = entry->getString();
     }
+    if((entry = gource_settings->getEntry("key-width")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify key-width (float)");
+
+        keyWidth = entry->getFloat();
+
+        if(keyWidth<=0.0f) {
+            conffile.invalidValueException(entry);
+        }
+    }
+
     if((entry = gource_settings->getEntry("hover-replace-unset")) != 0) {
 		hoverUnsetField = entry->getString();
     }

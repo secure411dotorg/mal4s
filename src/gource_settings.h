@@ -34,6 +34,7 @@ public:
     std::string hoverUnsetField;
     std::vector<std::string> hoverLines;
     std::string keyFormat;
+    float keyWidth;
 
     bool hide_date;
     bool hide_users;
