@@ -422,15 +422,7 @@ void GourceSettings::setGourceDefaults() {
     //hoverUnsetField is the field replacement in hover lines where a non-existent field is addressed.
     //blank fields are not empty, this would be considered a replacement for unset and not blank.
     hoverUnsetField = "";
-    //Default hover text labels
-    hoverLine1Label = "";
-    hoverLine2Label = " (creation date)";
-    hoverLine3Label = " (registrar)";
-    hoverLine4Label = "";
-    hoverLine5Label = " (country)";
-    hoverLine6Label = "";
-    hoverLine7Label = "";
-
+    keyFormat = "${n1}";
     //delete file filters
     for(std::vector<Regex*>::iterator it = file_filters.begin(); it != file_filters.end(); it++) {
         delete (*it);
@@ -464,46 +456,6 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
         save_config = value;
         return;
     }
-/*
-    std::string log_command;
-
-    if(name == "log-command") {
-        log_command = value;
-    }
-
-    if(name == "git-log-command" || log_command == "git") {
-        SDLAppInfo(GitCommitLog::logCommand());
-    }
-
-    if(name == "cvs-exp-command" || log_command == "cvs-exp") {
-        SDLAppInfo(CVSEXPCommitLog::logCommand());
-    }
-
-    if(log_command == "cvs") {
-        throw ConfFileException("please use either 'cvs2cl' or 'cvs-exp'", "", 0);
-    }
-
-    if(name == "cvs2cl-command" || log_command == "cvs2cl") {
-        SDLAppInfo(CVS2CLCommitLog::logCommand());
-    }
-
-    if(name == "svn-log-command" || log_command == "svn") {
-        SDLAppInfo(SVNCommitLog::logCommand());
-    }
-
-    if(name == "hg-log-command" || log_command == "hg") {
-        SDLAppInfo(MercurialLog::logCommand());
-    }
-
-    if(name == "bzr-log-command" || log_command == "bzr") {
-        SDLAppInfo(BazaarLog::logCommand());
-    }
-
-    if(name == "output-custom-log" && value.size() > 0) {
-        output_custom_filename = value;
-        return;
-    }
-*/
 
     if(name == "log-level") {
         if(value == "warn") {
@@ -622,6 +574,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             }
         }
     }
+    if((entry = gource_settings->getEntry("key-format")) != 0) {
+		keyFormat = entry->getString();
+    }
     if((entry = gource_settings->getEntry("hover-replace-unset")) != 0) {
 		hoverUnsetField = entry->getString();
     }
@@ -704,69 +659,6 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 	if(hoverLines.size() == 15) {
 		hoverLines.push_back(entry->getString());
 	} 
-    }
-    //Hover text labels
-    if((entry = gource_settings->getEntry("hover-label-1")) != 0) {
-
-        if(!entry->hasValue()) {
-		hoverLine1Label = "";
-	} else {
-		hoverLine1Label = " " + entry->getString();
-	}
-    }
-
-    if((entry = gource_settings->getEntry("hover-label-2")) != 0) {
-
-        if(!entry->hasValue()) {
-		hoverLine2Label = "";
-	} else {
-		hoverLine2Label = " " + entry->getString();
-	}
-    }
-
-    if((entry = gource_settings->getEntry("hover-label-3")) != 0) {
-
-        if(!entry->hasValue()) {
-		hoverLine3Label = "";
-	} else {
-		hoverLine3Label = " " + entry->getString();
-	}
-    }
-
-    if((entry = gource_settings->getEntry("hover-label-4")) != 0) {
-
-        if(!entry->hasValue()) {
-		hoverLine4Label = "";
-	} else {
-		hoverLine4Label = " " + entry->getString();
-	}
-    }
-
-    if((entry = gource_settings->getEntry("hover-label-5")) != 0) {
-
-        if(!entry->hasValue()) {
-		hoverLine5Label = "";
-	} else {
-		hoverLine5Label = " " + entry->getString();
-	}
-    }
-
-    if((entry = gource_settings->getEntry("hover-label-6")) != 0) {
-
-        if(!entry->hasValue()) {
-		hoverLine6Label = "";
-	} else {
-		hoverLine6Label = " " + entry->getString();
-	}
-    }
-
-    if((entry = gource_settings->getEntry("hover-label-7")) != 0) {
-
-        if(!entry->hasValue()) {
-		hoverLine7Label = "";
-	} else {
-		hoverLine7Label = " " + entry->getString();
-	}
     }
 
     if((entry = gource_settings->getEntry("date-format")) != 0) {

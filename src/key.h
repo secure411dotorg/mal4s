@@ -25,6 +25,7 @@
 #include "file.h"
 
 #include <vector>
+#include <string>
 #include <algorithm>
 
 class FileKeyEntry {   
@@ -89,6 +90,10 @@ public:
     void clear();
 
     void colourize();
+
+    std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
+    std::vector<std::string> split(const std::string &s, char delim);
+    std::string parseKey(RFile* file);
     
     void inc(RFile* file);
     void dec(RFile* file);

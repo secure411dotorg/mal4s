@@ -209,12 +209,117 @@ void FileKey::clear() {
     interval_remaining = 0.0f;
 }
 
+std::vector<std::string> &FileKey::split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+
+std::vector<std::string> FileKey::split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
+std::string FileKey::parseKey(RFile* file) {
+	std::string fieldIdentifier;
+	std::string keyFormat = gGourceSettings.keyFormat;
+	std::string parsedKeyEntry;
+/*
+These fields are stored in a vector beginning at 0, so subtract 1
+plotter = ${plotter}
+host.tld = ${host}
+tld = ${tld}
+Non-branching field = ${nNUM}
+Branching field = ${bNUM}
+*/	
+
+	std::string path = file->path;
+	// Erase leading slash from the path
+        path.erase(0,1);
+
+	// Convert "path" to separate fields
+	std::vector<std::string> branching = split(path, '/');
+	
+	std::vector<std::string> nonBranching = file->displayData;
+
+   //Loop though line and replace all of the ${FIELDNUM}s with the corresponding field
+   for(std::size_t last = 0; last != std::string::npos;) {
+	std::size_t open = keyFormat.find("${", last);
+	if(open != std::string::npos) {
+	   std::size_t close = keyFormat.find("}", open);
+	   //Make sure it is only number enclosed in ${FIELDNUM}
+	   if(close != std::string::npos) {
+		fieldIdentifier = keyFormat.substr(open + 2, close - open - 2);
+		if(fieldIdentifier.compare("plotter") == 0) {
+		   parsedKeyEntry += keyFormat.substr(last, open - last) + file->fileUser;
+		   last = close + 1;
+		} else if(fieldIdentifier.compare("host") == 0) {
+		   parsedKeyEntry += keyFormat.substr(last, open - last) + file->getName();
+		   last = close + 1;
+		} else if(fieldIdentifier.compare("tld") ==0) {
+		   parsedKeyEntry += keyFormat.substr(last, open - last) + file->ext;
+		   last = close + 1;
+		} else if(fieldIdentifier.compare(0,1,"n") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
+		   //Convert the string to an unigned int
+		   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+		   //Test if the field is in range
+		   if(nonBranching.size() > fieldnum) {
+			   //Yes, append from last up to ${, and the replacement field
+			   parsedKeyEntry += keyFormat.substr(last, open - last) + nonBranching[fieldnum];
+			   last = close + 1;
+		   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
+			   //No, append from last up to ${ and the replacement for an unset field
+			   parsedKeyEntry += keyFormat.substr(last, open - last) + gGourceSettings.hoverUnsetField;
+			   last = close + 1;
+		   } else {
+			   //No, unset field is blank, so append up to ${
+			   parsedKeyEntry += keyFormat.substr(last, open - last);
+			   last = close + 1;
+		   }
+		} else if(fieldIdentifier.compare(0,1,"b") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
+		   //Convert the string to an unigned int
+		   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+		   //Test if the field is in range
+		   if(branching.size() > fieldnum) {
+			   //Yes, append from last up to ${, and the replacement field
+			   parsedKeyEntry += keyFormat.substr(last, open - last) + branching[fieldnum];
+			   last = close + 1;
+		   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
+			   //No, append from last up to ${ and the replacement for an unset field
+			   parsedKeyEntry += keyFormat.substr(last, open - last) + gGourceSettings.hoverUnsetField;
+			   last = close + 1;
+		   } else {
+			   //No, unset field is blank, so append up to ${
+			   parsedKeyEntry += keyFormat.substr(last, open - last);
+			   last = close + 1;
+		   }
+		} else {
+			//The formatting does not point to a field, copy raw formatting
+			parsedKeyEntry += keyFormat.substr(last, close - last);
+			last = close + 1;
+		}
+	   }
+	} else {
+		//${ was not found copy the rest of the formatting
+		parsedKeyEntry += keyFormat.substr(last);
+		last = std::string::npos;
+	}
+   }
+
+	return parsedKeyEntry;
+}
+
 void FileKey::inc(RFile* file) {
 
     FileKeyEntry* entry = 0;
 
     //This is the label displayed in the key
-    std::string key_display = file->displayData[0];
+    std::string key_display = parseKey(file);
 
 //    std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(file->ext);
     std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(key_display);
@@ -235,7 +340,7 @@ void FileKey::inc(RFile* file) {
 //decrement count of extension. if drops to zero, mark it for removal
 void FileKey::dec(RFile* file) {
     //This is what is the label displayed in the key
-    std::string key_display = file->displayData[0];
+    std::string key_display = parseKey(file);
 
     std::map<std::string, FileKeyEntry*>::iterator result = keymap.find(key_display);
 

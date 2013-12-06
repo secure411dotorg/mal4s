@@ -33,13 +33,7 @@ public:
     std::vector<std::string> defaultHoverLines;
     std::string hoverUnsetField;
     std::vector<std::string> hoverLines;
-    std::string hoverLine1Label;
-    std::string hoverLine2Label;
-    std::string hoverLine3Label;
-    std::string hoverLine4Label;
-    std::string hoverLine5Label;
-    std::string hoverLine6Label;
-    std::string hoverLine7Label;
+    std::string keyFormat;
 
     bool hide_date;
     bool hide_users;
