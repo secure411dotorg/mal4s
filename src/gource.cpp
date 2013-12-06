@@ -148,6 +148,7 @@ Gource::Gource(FrameExporter* exporter) {
     //if recording a video or in demo mode, or multiple repos, the slider is initially hidden
     if(exporter==0 && gGourceSettings.repo_count==1) slider.show();
 }
+
 std::vector<std::string> &Gource::split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss(s);
     std::string item;
@@ -652,20 +653,6 @@ void Gource::selectNextUser() {
 void Gource::keyPress(SDL_KeyboardEvent *e) {
     if (e->type == SDL_KEYUP) return;
 
-    Mix_Chunk *cowbell = NULL;
-    std::string tmpCowbellFile = texturemanager.getDir() + "cowbell.wav";
-    const char* cowbellFile = tmpCowbellFile.c_str();
-    cowbell = Mix_LoadWAV(cowbellFile);
-
-    Mix_Chunk *hihat = NULL;
-    std::string tmpHihatFile = texturemanager.getDir() + "hihat.wav";
-    const char* hihatFile = tmpHihatFile.c_str();
-    hihat = Mix_LoadWAV(hihatFile);
-
-    Mix_Chunk *clap = NULL;
-    std::string tmpClapFile = texturemanager.getDir() + "clap.wav";
-    const char* clapFile = tmpClapFile.c_str();
-    clap = Mix_LoadWAV(clapFile);
 
     if (e->type == SDL_KEYDOWN) {
 
@@ -706,10 +693,22 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             screenshot();
         }
 
+	if(f5 == NULL) {
+		std::string pathfilename;
+		pathfilename = texturemanager.getDir() + "f5.wav";
+		f5 = Mix_LoadWAV(pathfilename.c_str());
+		pathfilename = texturemanager.getDir() + "f7.wav";
+		f7 = Mix_LoadWAV(pathfilename.c_str());
+		pathfilename = texturemanager.getDir() + "f9.wav";
+		f9 = Mix_LoadWAV(pathfilename.c_str());
+		pathfilename = texturemanager.getDir() + "copy-click.wav";
+		copy_click = Mix_LoadWAV(pathfilename.c_str());
+	}
+
 	//FIXME Text output of file name of hoverFile
 	if(e->keysym.sym == SDLK_F5) {
 		if(hoverFile != 0) {
-			Mix_PlayChannel( -1, clap, 0 );
+			Mix_PlayChannel( -1, f5, 0 );
 			std::ofstream txtfile;
 			txtfile.open("malhost-f5.txt", std::ios::app);
 			std::string domain_asn = hoverFile->getName();
@@ -719,7 +718,7 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 	}
 	if(e->keysym.sym == SDLK_F7) {
 		if(hoverFile != 0) {
-			Mix_PlayChannel( -1, hihat, 0 );
+			Mix_PlayChannel( -1, f7, 0 );
 			std::ofstream txtfile;
 			txtfile.open("malhost-f7.txt", std::ios::app);
 			std::string domain_asn = hoverFile->getName();
@@ -738,12 +737,13 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 			}
 
 			SDL_SetClipboardText(clipBoardText.c_str());
+			Mix_PlayChannel( -1, copy_click, 0 );
 		}
 	}
 #endif
 	if(e->keysym.sym == SDLK_F9) {
 		if(hoverFile != 0) {
-			Mix_PlayChannel( -1, cowbell, 0 );
+			Mix_PlayChannel( -1, f9, 0 );
 			std::ofstream txtfile;
 			txtfile.open("malhost-f9.txt", std::ios::app);
 			std::string domain_asn = hoverFile->getName();
@@ -1997,11 +1997,11 @@ void Gource::mousetrace(float dt) {
             camera.lockOn(false);
             selectFile(hoverFile);
 
-		Mix_Chunk *bassdrum = NULL;
-		std::string tmpBassdrumFile = texturemanager.getDir() + "bassdrum.wav";
-	    	const char* bassdrumFile = tmpBassdrumFile.c_str();
-		bassdrum = Mix_LoadWAV(bassdrumFile);
-		Mix_PlayChannel( -1, bassdrum, 0 );
+		if(copy_click == NULL) {
+			std::string pathfilename =  texturemanager.getDir() + "copy-click.wav";
+			copy_click = Mix_LoadWAV(pathfilename.c_str());
+		}
+		Mix_PlayChannel( -1, copy_click, 0 );
 				
 		std::ofstream txtfile;
 		txtfile.open("malhost.txt", std::ios::app);

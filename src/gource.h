@@ -111,6 +111,7 @@ class Gource : public SDLApp {
     RFile* hoverFile;
     RFile* selectedFile;
 
+
     RUser* hoverUser;
     RUser* selectedUser;
 
@@ -275,6 +276,12 @@ class Gource : public SDLApp {
     
     void grabMouse(bool grab_mouse);
 public:
+
+    Mix_Chunk *f5;
+    Mix_Chunk *f7;
+    Mix_Chunk *f9;
+    Mix_Chunk *copy_click;
+    
     Gource(FrameExporter* frameExporter = 0);
     ~Gource();
 
