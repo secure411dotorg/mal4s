@@ -649,6 +649,95 @@ void Gource::selectNextUser() {
     selectUser(newSelectedUser);
 }
 
+std::string Gource::parseSystemCommand(RFile* file) {
+	std::string fieldIdentifier;
+	std::string systemCommandFormat = gGourceSettings.systemCommand;
+	std::string parsedSystemCommand;
+/*
+These fields are stored in a vector beginning at 0, so subtract 1
+plotter = ${plotter}
+host.tld = ${host}
+tld = ${tld}
+Non-branching field = ${nNUM}
+Branching field = ${bNUM}
+*/	
+
+	std::string path = file->path;
+	// Erase leading slash from the path
+        path.erase(0,1);
+
+	// Convert "path" to separate fields
+	std::vector<std::string> branching = split(path, '/');
+	
+	std::vector<std::string> nonBranching = file->displayData;
+
+   //Loop though line and replace all of the ${FIELDNUM}s with the corresponding field
+   for(std::size_t last = 0; last != std::string::npos;) {
+	std::size_t open = systemCommandFormat.find("${", last);
+	if(open != std::string::npos) {
+	   std::size_t close = systemCommandFormat.find("}", open);
+	   //Make sure it is only number enclosed in ${FIELDNUM}
+	   if(close != std::string::npos) {
+		fieldIdentifier = systemCommandFormat.substr(open + 2, close - open - 2);
+		if(fieldIdentifier.compare("plotter") == 0) {
+		   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + file->fileUser;
+		   last = close + 1;
+		} else if(fieldIdentifier.compare("host") == 0) {
+		   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + file->getName();
+		   last = close + 1;
+		} else if(fieldIdentifier.compare("tld") ==0) {
+		   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + file->ext;
+		   last = close + 1;
+		} else if(fieldIdentifier.compare(0,1,"n") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
+		   //Convert the string to an unigned int
+		   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+		   //Test if the field is in range
+		   if(nonBranching.size() > fieldnum) {
+			   //Yes, append from last up to ${, and the replacement field
+			   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + nonBranching[fieldnum];
+			   last = close + 1;
+		   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
+			   //No, append from last up to ${ and the replacement for an unset field
+			   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + gGourceSettings.hoverUnsetField;
+			   last = close + 1;
+		   } else {
+			   //No, unset field is blank, so append up to ${
+			   parsedSystemCommand += systemCommandFormat.substr(last, open - last);
+			   last = close + 1;
+		   }
+		} else if(fieldIdentifier.compare(0,1,"b") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
+		   //Convert the string to an unigned int
+		   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+		   //Test if the field is in range
+		   if(branching.size() > fieldnum) {
+			   //Yes, append from last up to ${, and the replacement field
+			   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + branching[fieldnum];
+			   last = close + 1;
+		   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
+			   //No, append from last up to ${ and the replacement for an unset field
+			   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + gGourceSettings.hoverUnsetField;
+			   last = close + 1;
+		   } else {
+			   //No, unset field is blank, so append up to ${
+			   parsedSystemCommand += systemCommandFormat.substr(last, open - last);
+			   last = close + 1;
+		   }
+		} else {
+			//The formatting does not point to a field, copy raw formatting
+			parsedSystemCommand += systemCommandFormat.substr(last, close - last);
+			last = close + 1;
+		}
+	   }
+	} else {
+		//${ was not found copy the rest of the formatting
+		parsedSystemCommand += systemCommandFormat.substr(last);
+		last = std::string::npos;
+	}
+   }
+
+	return parsedSystemCommand;
+}
+
 void Gource::keyPress(SDL_KeyboardEvent *e) {
     if (e->type == SDL_KEYUP) return;
 
@@ -692,8 +781,14 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             screenshot();
         }
 
+	if(e->keysym.sym == SDLK_o) {
+            if(!gGourceSettings.systemCommand.empty() && hoverFile != 0) {
+		std::string parsedSystemCommand = parseSystemCommand(hoverFile);
+		system(parsedSystemCommand.c_str());
+	    }
+        }
 
-	//FIXME Text output of file name of hoverFile
+	//Text output of file name of hoverFile
 	if(e->keysym.sym == SDLK_F5) {
 		if(hoverFile != 0) {
 			std::string pathfilename = texturemanager.getDir() + "f5.wav";
