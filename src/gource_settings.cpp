@@ -476,6 +476,101 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
     throw ConfFileException(invalid_error, "", 0);
 }
 
+void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_settings) {
+    if(text_settings == 0) text_settings = conffile.getSection("text");
+
+    if(text_settings == 0) {
+        text_settings = conffile.addSection("text");
+    }
+
+    ConfEntry* entry = 0;
+
+    if((entry = text_settings->getEntry("hover-replace-unset")) != 0) {
+		hoverUnsetField = entry->getString();
+    }
+    if((entry = text_settings->getEntry("hover-line-1")) != 0) {
+	if(hoverLines.size() == 0) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-2")) != 0) {
+	if(hoverLines.size() == 1) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-3")) != 0) {
+	if(hoverLines.size() == 2) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-4")) != 0) {
+	if(hoverLines.size() == 3) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-5")) != 0) {
+	if(hoverLines.size() == 4) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-6")) != 0) {
+	if(hoverLines.size() == 5) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-7")) != 0) {
+	if(hoverLines.size() == 6) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-8")) != 0) {
+	if(hoverLines.size() == 7) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-9")) != 0) {
+	if(hoverLines.size() == 8) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-10")) != 0) {
+	if(hoverLines.size() == 9) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-11")) != 0) {
+	if(hoverLines.size() == 10) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-12")) != 0) {
+	if(hoverLines.size() == 11) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-13")) != 0) {
+	if(hoverLines.size() == 12) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-14")) != 0) {
+	if(hoverLines.size() == 13) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-15")) != 0) {
+	if(hoverLines.size() == 14) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+    if((entry = text_settings->getEntry("hover-line-16")) != 0) {
+	if(hoverLines.size() == 15) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+}
+
 /*
 #ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
@@ -587,7 +682,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             conffile.invalidValueException(entry);
         }
     }
-
+/*
     if((entry = gource_settings->getEntry("hover-replace-unset")) != 0) {
 		hoverUnsetField = entry->getString();
     }
@@ -671,7 +766,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 		hoverLines.push_back(entry->getString());
 	} 
     }
-
+*/
     if((entry = gource_settings->getEntry("date-format")) != 0) {
 
         if(!entry->hasValue()) conffile.missingValueException(entry);

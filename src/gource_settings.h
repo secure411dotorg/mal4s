@@ -152,6 +152,7 @@ public:
     void setGourceDefaults();
 
     void importGourceSettings(ConfFile& conf, ConfSection* gource_settings = 0);
+    void importTextSettings(ConfFile& conf, ConfSection* text_settings = 0);
 
     void help(bool extended_help=false);
 };
