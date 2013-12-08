@@ -37,6 +37,8 @@ public:
     std::string keyFormat;
     float keyWidth;
 
+    bool screenshot_at_end;
+
     bool hide_date;
     bool hide_users;
     bool hide_tree;

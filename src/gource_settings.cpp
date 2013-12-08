@@ -220,6 +220,7 @@ GourceSettings::GourceSettings() {
     arg_types["help"]            = "bool";
     arg_types["extended-help"]   = "bool";
     arg_types["stop-on-idle"]    = "bool";
+    arg_types["screenshot-at-end"]     = "bool";
     arg_types["stop-at-end"]     = "bool";
     arg_types["dont-stop"]       = "bool";
     arg_types["loop"]            = "bool";
@@ -340,6 +341,7 @@ void GourceSettings::setGourceDefaults() {
     stop_position  = 0.0f;
     stop_at_time   = -1.0f;
     stop_on_idle   = false;
+    screenshot_at_end = false;
     stop_at_end    = false;
     dont_stop      = false;
 
@@ -1325,6 +1327,11 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
     if(gource_settings->getBool("dont-stop")) {
         dont_stop = true;
+    }
+
+    if(gource_settings->getBool("screenshot-at-end")) {
+        screenshot_at_end = true;
+	stop_at_end = true;
     }
 
     if(gource_settings->getBool("stop-at-end")) {

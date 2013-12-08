@@ -271,12 +271,12 @@ class Gource : public SDLApp {
     void drawUsers(float dt);
     void drawBloom(float dt);
 
-    void screenshot();
 
     void changeColours();
     
     void grabMouse(bool grab_mouse);
 public:
+    void screenshot();
 
     Mix_Chunk *f5;
     Mix_Chunk *f7;
