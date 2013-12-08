@@ -26,9 +26,9 @@ int main(int argc, char *argv[]) {
 #endif
 
     ConfFile conf;
-//    ConfFile textConf;
+    ConfFile textConf;
     std::vector<std::string> files;
-//    std::string textConfFile;
+    std::string textConfFile;
 
     //convert args to a conf file
     //read the conf file
@@ -36,26 +36,43 @@ int main(int argc, char *argv[]) {
 
     try {
         gGourceSettings.parseArgs(argc, argv, conf, &files);
-/*
+        Logger::getDefault()->setLevel(gGourceSettings.log_level);
+
 	if(!files.empty()) {
 		size_t conf_marker = files[0].find_last_of("--");
 		if(conf_marker != std::string::npos) {
 			size_t conf_end_marker = files[0].find_last_of(".");
 			if(conf_end_marker != std::string::npos) {
 				textConfFile = files[0].substr(conf_marker + 1, conf_end_marker - conf_marker - 1) + ".conf";
-				if(boost::filesystem::exists(textConfFile.c_str())) {
-					fprintf(stdout, "%s\n", textConfFile.c_str());
-				} else {
-					textConfFile = texturemanager.getDir() + textConfFile;
-					if(!boost::filesystem::exists(textConfFile.c_str())) {
-						fprintf(stdout, "Failed to locate text config, expected in: %s.\n", textConfFile.c_str());
-						textConfFile.clear();
+				if(!boost::filesystem::exists(textConfFile.c_str())) {
+					if(!gGourceSettings.textConfDir.empty()) {
+						std::string testforconfig = gGourceSettings.textConfDir + textConfFile;
+						if(boost::filesystem::exists(testforconfig.c_str())) {
+							textConfFile = testforconfig;
+						} else {
+							textConfFile = texturemanager.getDir() + textConfFile;
+							if(!boost::filesystem::exists(textConfFile.c_str())) {
+								textConfFile.clear();
+							}
+						}
+					} else {
+						textConfFile = texturemanager.getDir() + textConfFile;
+							if(!boost::filesystem::exists(textConfFile.c_str())) {
+								textConfFile.clear();
+							}
 					}
 				}
 			}
 		}
 	}
-*/
+
+	//apply text formatting
+	if(!textConfFile.empty()) {
+		fprintf(stdout, "Using text config from: %s.\n", textConfFile.c_str());
+		textConf.load(textConfFile);
+		gGourceSettings.parseArgs(argc, argv, textConf);
+	}
+
 	//Test if dissect.conf exists in the working directory and make it load as the default config file.
 	if(gGourceSettings.load_config.empty() && boost::filesystem::exists("dissect.conf")) {
 		gGourceSettings.load_config = "dissect.conf";
@@ -105,10 +122,6 @@ int main(int argc, char *argv[]) {
             conf.clear();
             conf.load(gGourceSettings.load_config);
 
-	    //apply text formatting
-//	    if(!textConfFile.empty()) {
-//            	textConf.load(textConfFile);
-//	    }
 
             //apply args to loaded conf file
             gGourceSettings.parseArgs(argc, argv, conf);
@@ -132,7 +145,10 @@ int main(int argc, char *argv[]) {
         //apply the config / see if its valid
         gGourceSettings.importDisplaySettings(conf);
         gGourceSettings.importGourceSettings(conf);
-//        gGourceSettings.importTextSettings(conf);
+
+	if(!textConfFile.empty()) {
+	        gGourceSettings.importTextSettings(textConf);
+	} else gGourceSettings.importTextSettings(conf);
 
         //save config
         if(!gGourceSettings.save_config.empty()) {
