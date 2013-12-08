@@ -5,6 +5,8 @@
 .objs
 /gource
 /gource.exe
+/mal4s.exe
+/mal4s
 gource.win32.depend
 gource.win32.layout
 debug.log
@@ -27,3 +29,4 @@ logs/*
 *.d
 .deps
 .dirstamp
+/dissect.conf

@@ -244,6 +244,7 @@ void GourceShell::update(float t, float dt) {
     //copy last frame
     if( (next|| gource->isFinished()) && transition_texture!=0) {
 
+        if(gGourceSettings.screenshot_at_end) gource->screenshot();
         glEnable(GL_TEXTURE_2D);
         transition_texture->bind();
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, display.width, display.height, 0);
