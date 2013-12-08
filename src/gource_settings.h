@@ -30,6 +30,7 @@ protected:
 public:
     int repo_count;
 
+    std::string systemCommand;
     std::string textConfDir;
     std::vector<std::string> defaultHoverLines;
     std::string hoverUnsetField;
