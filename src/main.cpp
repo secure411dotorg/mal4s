@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 #ifdef _WIN32
         SDLApp::initConsole();
 #endif
-
+    ConfFile textConf;
     ConfFile conf;
     std::vector<std::string> files;
 
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
         if(!gGourceSettings.load_config.empty()) {
             conf.clear();
             conf.load(gGourceSettings.load_config);
-
+	    textConf.load("/usr/local/share/mal4s/conftest.conf");
             //apply args to loaded conf file
             gGourceSettings.parseArgs(argc, argv, conf);
         }
