@@ -212,9 +212,11 @@ GourceSettings::GourceSettings() {
     conf_sections["svn-log-command"] = "command-line";
     conf_sections["output-custom-log"] = "command-line";
 */
+    conf_sections["load-text-config"]     = "command-line";
     conf_sections["load-config"]     = "command-line";
     conf_sections["save-config"]     = "command-line";
     conf_sections["log-level"]         = "command-line";
+    conf_sections["text-config-dir"]	= "command-line";
 
     //boolean args
     arg_types["help"]            = "bool";
@@ -279,6 +281,7 @@ GourceSettings::GourceSettings() {
     arg_types["logo-offset"]        = "string";
     arg_types["log-command"]        = "string";
     arg_types["text-config-dir"]    = "string";
+    arg_types["load-text-config"]        = "string";
     arg_types["load-config"]        = "string";
     arg_types["save-config"]        = "string";
     arg_types["output-custom-log"]  = "string";
@@ -449,6 +452,11 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
 
     if(name == "extended-help") {
         help(true);
+    }
+
+    if(name == "load-text-config" && value.size() > 0) {
+        load_text_config = value;
+        return;
     }
 
     if(name == "load-config" && value.size() > 0) {

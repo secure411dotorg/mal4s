@@ -56,6 +56,7 @@ public:
 
     bool show_key;
 
+    std::string load_text_config;
     std::string load_config;
     std::string save_config;
     std::string path;
