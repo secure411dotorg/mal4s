@@ -154,6 +154,7 @@ public:
 
     GourceSettings();
 
+    void setTextDefaults();
     void setGourceDefaults();
 
     void importGourceSettings(ConfFile& conf, ConfSection* gource_settings = 0);
