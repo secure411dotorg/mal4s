@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.61)
 
-AC_INIT(Mal4s, 0.41, [https://github.com/secure411dotorg/OpenGL-Malicious-Host-Finder/])
+AC_INIT(Mal4s, 1.0.0, [https://github.com/secure411dotorg/mal4s/])
 AC_CONFIG_SRCDIR([src/main.h])
 
 AM_INIT_AUTOMAKE([dist-bzip2 foreign subdir-objects])
