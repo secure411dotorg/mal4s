@@ -18,7 +18,7 @@
 #ifndef GOURCE_SETTINGS_H
 #define GOURCE_SETTINGS_H
 
-#define GOURCE_VERSION "0.41"
+#define GOURCE_VERSION "1.0.0"
 
 #include "core/texture.h"
 #include "core/settings.h"
@@ -56,6 +56,7 @@ public:
 
     bool show_key;
 
+    std::string load_text_config;
     std::string load_config;
     std::string save_config;
     std::string path;
@@ -153,6 +154,7 @@ public:
 
     GourceSettings();
 
+    void setTextDefaults();
     void setGourceDefaults();
 
     void importGourceSettings(ConfFile& conf, ConfSection* gource_settings = 0);

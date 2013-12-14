@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
         gGourceSettings.parseArgs(argc, argv, conf, &files);
         Logger::getDefault()->setLevel(gGourceSettings.log_level);
 
-	if(!files.empty()) {
+	if(!files.empty() && gGourceSettings.load_text_config.empty()) {
 		size_t conf_marker = files[0].find_last_of("--");
 		if(conf_marker != std::string::npos) {
 			size_t conf_end_marker = files[0].find_last_of(".");
@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
+	if(!gGourceSettings.load_text_config.empty()) textConfFile = gGourceSettings.load_text_config;
 
 	//apply text formatting
 	if(!textConfFile.empty()) {

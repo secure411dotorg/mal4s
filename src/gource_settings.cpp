@@ -212,9 +212,11 @@ GourceSettings::GourceSettings() {
     conf_sections["svn-log-command"] = "command-line";
     conf_sections["output-custom-log"] = "command-line";
 */
+    conf_sections["load-text-config"]     = "command-line";
     conf_sections["load-config"]     = "command-line";
     conf_sections["save-config"]     = "command-line";
     conf_sections["log-level"]         = "command-line";
+    conf_sections["text-config-dir"]	= "command-line";
 
     //boolean args
     arg_types["help"]            = "bool";
@@ -279,6 +281,7 @@ GourceSettings::GourceSettings() {
     arg_types["logo-offset"]        = "string";
     arg_types["log-command"]        = "string";
     arg_types["text-config-dir"]    = "string";
+    arg_types["load-text-config"]        = "string";
     arg_types["load-config"]        = "string";
     arg_types["save-config"]        = "string";
     arg_types["output-custom-log"]  = "string";
@@ -314,6 +317,15 @@ GourceSettings::GourceSettings() {
 
 }
 
+void GourceSettings::setTextDefaults() {
+
+    //defaultHoverLines
+    //hoverUnsetField is the field replacement in hover lines where a non-existent field is addressed.
+    //blank fields are not empty, this would be considered a replacement for unset and not blank.
+    hoverUnsetField = "";
+    keyFormat = "${n1}";
+    keyWidth = 90.0f;
+}
 void GourceSettings::setGourceDefaults() {
 
     path = "-";
@@ -421,12 +433,6 @@ void GourceSettings::setGourceDefaults() {
 
     gStringHashSeed = 31;
 
-    //defaultHoverLines
-    //hoverUnsetField is the field replacement in hover lines where a non-existent field is addressed.
-    //blank fields are not empty, this would be considered a replacement for unset and not blank.
-    hoverUnsetField = "";
-    keyFormat = "${n1}";
-    keyWidth = 90.0f;
     //delete file filters
     for(std::vector<Regex*>::iterator it = file_filters.begin(); it != file_filters.end(); it++) {
         delete (*it);
@@ -449,6 +455,11 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
 
     if(name == "extended-help") {
         help(true);
+    }
+
+    if(name == "load-text-config" && value.size() > 0) {
+        load_text_config = value;
+        return;
     }
 
     if(name == "load-config" && value.size() > 0) {
@@ -485,6 +496,8 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
 }
 
 void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_settings) {
+    setTextDefaults();
+
     if(text_settings == 0) text_settings = conffile.getSection("text");
 
     if(text_settings == 0) {
@@ -494,6 +507,7 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
     ConfEntry* entry = 0;
 
     if((entry = text_settings->getEntry("key-format")) != 0) {
+		keyFormat.clear();
 		keyFormat = entry->getString();
     }
 
@@ -709,123 +723,12 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("key-format")) != 0) {
-		keyFormat = entry->getString();
-    }
-
-    if((entry = gource_settings->getEntry("key-width")) != 0) {
-
-        if(!entry->hasValue()) conffile.entryException(entry, "specify key-width (float)");
-
-        keyWidth = entry->getFloat();
-
-        if(keyWidth<=0.0f) {
-            conffile.invalidValueException(entry);
-        }
-    }
-
     if((entry = gource_settings->getEntry("system-command")) != 0) {
 	systemCommand = entry->getString();
     }
 
     if((entry = gource_settings->getEntry("hover-replace-unset")) != 0) {
 	hoverUnsetField = entry->getString();
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-1")) != 0) {
-	if(hoverLines.size() == 0) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-2")) != 0) {
-	if(hoverLines.size() == 1) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-3")) != 0) {
-	if(hoverLines.size() == 2) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-4")) != 0) {
-	if(hoverLines.size() == 3) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-5")) != 0) {
-	if(hoverLines.size() == 4) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-6")) != 0) {
-	if(hoverLines.size() == 5) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-7")) != 0) {
-	if(hoverLines.size() == 6) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-8")) != 0) {
-	if(hoverLines.size() == 7) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-9")) != 0) {
-	if(hoverLines.size() == 8) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-10")) != 0) {
-	if(hoverLines.size() == 9) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-11")) != 0) {
-	if(hoverLines.size() == 10) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-12")) != 0) {
-	if(hoverLines.size() == 11) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-13")) != 0) {
-	if(hoverLines.size() == 12) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-14")) != 0) {
-	if(hoverLines.size() == 13) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-15")) != 0) {
-	if(hoverLines.size() == 14) {
-		hoverLines.push_back(entry->getString());
-	} 
-    }
-
-    if((entry = gource_settings->getEntry("hover-line-16")) != 0) {
-	if(hoverLines.size() == 15) {
-		hoverLines.push_back(entry->getString());
-	} 
     }
 
     if((entry = gource_settings->getEntry("date-format")) != 0) {
