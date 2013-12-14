@@ -649,10 +649,11 @@ void Gource::selectNextUser() {
     selectUser(newSelectedUser);
 }
 
-std::string Gource::parseSystemCommand(RFile* file) {
+bool Gource::execAction(RFile* file, const std::string action) {
 	std::string fieldIdentifier;
-	std::string systemCommandFormat = gGourceSettings.systemCommand;
+	std::string systemCommandFormat = action;
 	std::string parsedSystemCommand;
+	bool err = false;
 /*
 These fields are stored in a vector beginning at 0, so subtract 1
 plotter = ${plotter}
@@ -735,7 +736,10 @@ Branching field = ${bNUM}
 	}
    }
 
-	return parsedSystemCommand;
+	if(!err) {
+		int exit_status = system(parsedSystemCommand.c_str());
+		return err;
+	} else return err;
 }
 
 void Gource::keyPress(SDL_KeyboardEvent *e) {
@@ -782,9 +786,12 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
         }
 
 	if(e->keysym.sym == SDLK_o) {
-            if(!gGourceSettings.systemCommand.empty() && hoverFile != 0) {
-		std::string parsedSystemCommand = parseSystemCommand(hoverFile);
-		system(parsedSystemCommand.c_str());
+            if(!gGourceSettings.browser_command.empty() && hoverFile != 0 && !gGourceSettings.disable_browser) {
+		bool err;
+		std::string full_browser_command = gGourceSettings.browser_command + " '" + gGourceSettings.browser_url + "'";
+		//fprintf(stdout, "%s\n", full_browser_command.c_str());
+		err = execAction(hoverFile, full_browser_command);
+		//if(err) fprintf(stdout, "True\n");
 	    }
         }
 

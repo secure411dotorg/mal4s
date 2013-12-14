@@ -48,115 +48,110 @@ void GourceSettings::help(bool extended_help) {
 
     printf("Mal4s v%s\n", GOURCE_VERSION);
 
-    printf("Usage: mal4s [OPTIONS] [PATH]\n");
+    printf("Usage: mal4s [OPTIONS] [LOGFILE]\n");
     printf("\nOptions:\n");
-    printf("  -h, --help                       Help\n\n");
-    printf("  -WIDTHxHEIGHT, --viewport        Set viewport size\n");
-    printf("  -f, --fullscreen                 Fullscreen\n");
-    printf("      --multi-sampling             Enable multi-sampling\n");
-    printf("      --no-vsync                   Disable vsync\n\n");
+    printf("  -h, --help			Help\n\n");
+    printf("  -WIDTHxHEIGHT, --viewport		Set viewport size\n");
+    printf("  -f, --fullscreen			Fullscreen\n");
+    printf("      --multi-sampling		Enable multi-sampling\n");
+    printf("      --no-vsync			Disable vsync\n\n");
 
-    printf("      --start-date YYYY-MM-DD      Date to start from\n");
-    printf("  -p, --start-position POSITION    Begin at some position (0.0-1.0 or 'random')\n");
-    printf("      --stop-position  POSITION    Stop at some position\n");
-    printf("  -t, --stop-at-time SECONDS       Stop after a specified number of seconds\n");
-    printf("      --stop-at-end                Stop at end of the log\n");
-    printf("      --dont-stop                  Keep running after the end of the log\n");
-    printf("      --loop                       Loop at the end of the log\n\n");
+    printf("      --disable-exec		Disable command execution (excludes browser).\n");
+    printf("      --disable-browser		Disable browser and URL opening.\n\n");
 
-    printf("  -a, --auto-skip-seconds SECONDS  Auto skip to next entry if nothing happens\n");
-    printf("                                   for a number of seconds (default: 3)\n");
-    printf("      --disable-auto-skip          Disable auto skip\n");
-    printf("  -s, --seconds-per-day SECONDS    Speed in seconds per day (default: 10)\n");
-    printf("      --realtime                   Realtime playback speed\n");
-    printf("  -c, --time-scale SCALE           Change simulation time scale (default: 1.0)\n");
-    printf("  -e, --elasticity FLOAT           Elasticity of nodes (default: 0.0)\n\n");
+    printf("      --start-date YYYY-MM-DD	Date to start from\n");
+    printf("  -p, --start-position POSITION	Begin at some position (0.0-1.0 or 'random')\n");
+    printf("      --stop-position  POSITION	Stop at some position\n");
+    printf("  -t, --stop-at-time SECONDS	Stop after a specified number of seconds\n");
+    printf("      --stop-at-end			Stop at end of the log\n");
+    printf("      --dont-stop			Keep running after the end of the log\n");
+    printf("      --loop			Loop at the end of the log\n\n");
 
-    printf("  --key                            Show file extension key\n\n");
+    printf("  -a, --auto-skip-seconds SECONDS	Auto skip to next entry if nothing happens\n");
+    printf("					for a number of seconds (default: 3)\n");
+    printf("      --disable-auto-skip		Disable auto skip\n");
+    printf("  -s, --seconds-per-day SECONDS	Speed in seconds per day (default: 10)\n");
+    printf("      --realtime			Realtime playback speed\n");
+    printf("  -c, --time-scale SCALE		Change simulation time scale (default: 1.0)\n");
+    printf("  -e, --elasticity FLOAT		Elasticity of nodes (default: 0.0)\n\n");
 
-    printf("  --plotter-image-dir DIRECTORY       Dir containing images to use as avatars\n");
-    printf("  --default-plotter-image IMAGE       Default plotter image file\n");
-    printf("  --colour-images                  Colourize plotter images\n\n");
+    printf("  --key-off				Hide key\n\n");
 
-    printf("  -i, --file-idle-time SECONDS     Time files remain idle (default: 0)\n\n");
+    printf("  --plotter-image-dir DIRECTORY	Dir containing images to use as avatars\n");
+    printf("  --default-plotter-image IMAGE	Default plotter image file\n");
+    printf("  --colour-images			Colourize plotter images\n\n");
 
-    printf("  --max-files NUMBER       Max number of files or 0 for no limit\n");
-    printf("  --max-file-lag SECONDS   Max time files of a commit can take to appear\n\n");
+    printf("  -i, --host-idle-time SECONDS	Time hosts remain idle (default: 0)\n\n");
 
-    printf("  --log-command VCS        Show the VCS log command (git,svn,hg,bzr,cvs2cl)\n");
-    printf("  --log-format  VCS        Specify the log format (git,svn,hg,bzr,cvs2cl,custom)\n\n");
+    printf("  --max-hosts NUMBER		Max number of hosts or 0 for no limit\n");
+    printf("  --max-host-lag SECONDS		Max time hosts of a commit can take to appear\n\n");
 
-    printf("  --load-config CONF_FILE  Load a config file\n");
-    printf("  --save-config CONF_FILE  Save a config file with the current options\n\n");
+    printf("  --load-config CONF_FILE		Load a config file\n");
+    printf("  --load-text-config CONF_FILE	Load a text config file\n");
+    printf("  --text-config-dir DIRECTORY	Path to text configs (matched with file--TEXTCONF.mal4s)\n");
+    printf("  --save-config CONF_FILE		Save a config file with the current options\n\n");
 
-    printf("  -o, --output-ppm-stream FILE    Output PPM stream to a file ('-' for STDOUT)\n");
-    printf("  -r, --output-framerate  FPS     Framerate of output (25,30,60)\n\n");
+    printf("  -o, --output-ppm-stream FILE	Output PPM stream to a file ('-' for STDOUT)\n");
+    printf("  -r, --output-framerate  FPS	Framerate of output (25,30,60)\n\n");
 
 if(extended_help) {
     printf("Extended Options:\n\n");
 
-    printf("  --output-custom-log FILE  Output a custom format log file ('-' for STDOUT).\n\n");
+    printf("  --output-custom-log FILE		Output a custom format log file ('-' for STDOUT).\n\n");
 
-    printf("  -b, --background-colour  FFFFFF    Background colour in hex\n");
-    printf("      --background-image   IMAGE     Set a background image\n\n");
+    printf("  -b, --background-colour FFFFFF	Background colour in hex\n");
+    printf("      --background-image IMAGE	Set a background image\n\n");
 
-    printf("  --bloom-multiplier       Adjust the amount of bloom (default: 1.0)\n");
-    printf("  --bloom-intensity        Adjust the intensity of the bloom (default: 0.75)\n\n");
+    printf("  --bloom-multiplier		Adjust the amount of bloom (default: 1.0)\n");
+    printf("  --bloom-intensity			Adjust the intensity of the bloom (default: 0.75)\n\n");
 
-    printf("  --camera-mode MODE       Camera mode (overview,track)\n");
-    printf("  --crop AXIS              Crop view on an axis (vertical,horizontal)\n");
-    printf("  --padding FLOAT          Camera view padding (default: 1.1)\n\n");
+    printf("  --camera-mode MODE		Camera mode (overview,track)\n");
+    printf("  --crop AXIS			Crop view on an axis (vertical,horizontal)\n");
+    printf("  --padding FLOAT			Camera view padding (default: 1.1)\n\n");
 
-    printf("  --disable-auto-rotate    Disable automatic camera rotation\n\n");
+    printf("  --disable-auto-rotate		Disable automatic camera rotation\n\n");
 
-    printf("  --date-format FORMAT     Specify display date string (strftime format)\n\n");
+    printf("  --date-format FORMAT		Specify display date string (strftime format)\n\n");
 
-    printf("  --font-size SIZE         Font size used by date and title\n");
-    printf("  --font-colour FFFFFF     Font colour used by date and title in hex\n\n");
+    printf("  --font-size SIZE			Font size used by date and title\n");
+    printf("  --font-colour FFFFFF		Font colour used by date and title in hex\n\n");
 
-    printf("  --file-extensions        Show filename extensions only\n\n");
+    printf("  --show-tld-only			Show tld only\n\n");
 
-    printf("  --git-branch             Get the git log of a particular branch\n\n");
+    printf("  --hide DISPLAY_ELEMENT		bloom,date,branchnames,hostss,hostnames,mouse,progress,\n");
+    printf("					root,tree,plotters,plotternames\n\n");
 
-    printf("  --hide DISPLAY_ELEMENT   bloom,date,dirnames,files,filenames,mouse,progress,\n");
-    printf("                           root,tree,plotters,plotternames\n\n");
+    printf("  --logo IMAGE			Logo to display in the foreground\n");
+    printf("  --logo-offset XxY			Offset position of the logo\n\n");
 
-    printf("  --logo IMAGE             Logo to display in the foreground\n");
-    printf("  --logo-offset XxY        Offset position of the logo\n\n");
+    printf("  --title TITLE			Set a title\n\n");
 
-    printf("  --title TITLE            Set a title\n\n");
+    printf("  --transparent			Make the background transparent\n\n");
 
-    printf("  --transparent            Make the background transparent\n\n");
+    printf("  --plotter-filter REGEX		Ignore plotternames matching this regex\n");
+    printf("  --host-filter REGEX		Ignore hosts matching this regex\n\n");
 
-    printf("  --plotter-filter REGEX      Ignore plotternames matching this regex\n");
-    printf("  --file-filter REGEX      Ignore files matching this regex\n\n");
+    printf("  --plotter-friction SECONDS	Change the rate plotters slow down (default: 0.67)\n");
+    printf("  --plotter-scale SCALE		Change scale of plotters (default: 1.0)\n");
+    printf("  --max-plotter-speed UNITS		Speed plotters can travel per second (default: 500)\n\n");
 
-    printf("  --plotter-friction SECONDS  Change the rate plotters slow down (default: 0.67)\n");
-    printf("  --plotter-scale SCALE       Change scale of plotters (default: 1.0)\n");
-    printf("  --max-plotter-speed UNITS   Speed plotters can travel per second (default: 500)\n\n");
+    printf("  --follow-plotter PLOTTER		Camera will automatically follow this plotter\n");
+    printf("  --highlight-branches		Highlight the names of all branches\n");
+    printf("  --highlight-plotter PLOTTER	Highlight the names of a particular plotter\n");
+    printf("  --highlight-plotters		Highlight the names of all plotters\n\n");
+    printf("  --highlight-colour		Font colour for highlighted plotters in hex.\n");
+    printf("  --selection-colour		Font colour for selected plotters and hosts.\n");
+    printf("  --branch-colour			Font colour for branches.\n\n");
 
-    printf("  --follow-plotter PLOTTER       Camera will automatically follow this plotter\n");
-    printf("  --highlight-dirs         Highlight the names of all directories\n");
-    printf("  --highlight-plotter PLOTTER    Highlight the names of a particular plotter\n");
-    printf("  --highlight-plotters        Highlight the names of all plotters\n\n");
-    printf("  --highlight-colour       Font colour for highlighted plotters in hex.\n");
-    printf("  --selection-colour       Font colour for selected plotters and files.\n");
-    printf("  --dir-colour             Font colour for directories.\n\n");
+    printf("  --caption-file FILE		Caption file\n");
+    printf("  --caption-size SIZE		Caption font size\n");
+    printf("  --caption-colour FFFFFF		Caption colour in hex\n");
+    printf("  --caption-duration SECONDS	Caption duration (default: 10.0)\n");
+    printf("  --caption-offset X		Caption horizontal offset\n\n");
 
-    printf("  --caption-file FILE         Caption file\n");
-    printf("  --caption-size SIZE         Caption font size\n");
-    printf("  --caption-colour FFFFFF     Caption colour in hex\n");
-    printf("  --caption-duration SECONDS  Caption duration (default: 10.0)\n");
-    printf("  --caption-offset X          Caption horizontal offset\n\n");
+    printf("  --hash-seed SEED			Change the seed of hash function.\n\n");
 
-    printf("  --hash-seed SEED         Change the seed of hash function.\n\n");
-
-    printf("  --path PATH\n\n");
 }
-
-    printf("PATH may be a supported version control directory, a log file, a gource config\n");
-    printf("file, or '-' to read STDIN. If omitted, gource will attempt to generate a log\n");
-    printf("from the current directory.\n\n");
 
     if(!extended_help) {
         printf("To see the full command line options use '-H'\n\n");
@@ -183,97 +178,80 @@ GourceSettings::GourceSettings() {
     default_section_name = "gource";
 
     //translate args
-    arg_aliases["p"] = "start-position";
-    arg_aliases["a"] = "auto-skip-seconds";
-    arg_aliases["s"] = "seconds-per-day";
-    arg_aliases["t"] = "stop-at-time";
-    arg_aliases["i"] = "file-idle-time";
-    arg_aliases["e"] = "elasticity";
-    arg_aliases["h"] = "help";
-    arg_aliases["?"] = "help";
-    arg_aliases["H"] = "extended-help";
-    arg_aliases["b"] = "background-colour";
-    arg_aliases["c"] = "time-scale";
-    arg_aliases["background"]          = "background-colour";
-    arg_aliases["disable-bloom"]       = "hide-bloom";
-    arg_aliases["disable-progress"]    = "hide-progress";
+    arg_aliases["p"]                = "start-position";
+    arg_aliases["a"]                = "auto-skip-seconds";
+    arg_aliases["s"]                = "seconds-per-day";
+    arg_aliases["t"]                = "stop-at-time";
+    arg_aliases["i"]                = "host-idle-time";
+    arg_aliases["e"]                = "elasticity";
+    arg_aliases["h"]                = "help";
+    arg_aliases["?"]                = "help";
+    arg_aliases["H"]                = "extended-help";
+    arg_aliases["b"]                = "background-colour";
+    arg_aliases["c"]                = "time-scale";
+    arg_aliases["background"]       = "background-colour";
+    arg_aliases["disable-bloom"]    = "hide-bloom";
+    arg_aliases["disable-progress"] = "hide-progress";
     arg_aliases["highlight-all-plotters"] = "highlight-plotters";
 
     //command line only options
-    conf_sections["help"]            = "command-line";
-    conf_sections["extended-help"]   = "command-line";
-/*
-    conf_sections["log-command"]     = "command-line";
-    conf_sections["git-log-command"] = "command-line";
-    conf_sections["cvs-exp-command"] = "command-line";
-    conf_sections["cvs2cl-command"]  = "command-line";
-    conf_sections["hg-log-command"]  = "command-line";
-    conf_sections["bzr-log-command"] = "command-line";
-    conf_sections["svn-log-command"] = "command-line";
-    conf_sections["output-custom-log"] = "command-line";
-*/
-    conf_sections["load-text-config"]     = "command-line";
-    conf_sections["load-config"]     = "command-line";
-    conf_sections["save-config"]     = "command-line";
-    conf_sections["log-level"]         = "command-line";
-    conf_sections["text-config-dir"]	= "command-line";
+    conf_sections["help"]           = "command-line";
+    conf_sections["extended-help"]  = "command-line";
+    conf_sections["load-text-config"]  = "command-line";
+    conf_sections["load-config"]    = "command-line";
+    conf_sections["save-config"]    = "command-line";
+    conf_sections["log-level"]      = "command-line";
+    conf_sections["text-config-dir"] = "command-line";
 
     //boolean args
-    arg_types["help"]            = "bool";
-    arg_types["extended-help"]   = "bool";
-    arg_types["stop-on-idle"]    = "bool";
-    arg_types["screenshot-at-end"]     = "bool";
-    arg_types["stop-at-end"]     = "bool";
-    arg_types["dont-stop"]       = "bool";
-    arg_types["loop"]            = "bool";
-    arg_types["realtime"]        = "bool";
-    arg_types["colour-images"]   = "bool";
-    arg_types["hide-date"]       = "bool";
-    arg_types["hide-files"]      = "bool";
+    arg_types["help"]               = "bool";
+    arg_types["extended-help"]      = "bool";
+    arg_types["stop-on-idle"]       = "bool";
+    arg_types["screenshot-at-end"]  = "bool";
+    arg_types["stop-at-end"]        = "bool";
+    arg_types["dont-stop"]          = "bool";
+    arg_types["loop"]               = "bool";
+    arg_types["realtime"]           = "bool";
+    arg_types["colour-images"]      = "bool";
+    arg_types["hide-date"]          = "bool";
+    arg_types["hide-hosts"]         = "bool";
     arg_types["hide-plotters"]      = "bool";
-    arg_types["hide-tree"]       = "bool";
-    arg_types["hide-plotter-names"]  = "bool";
-    arg_types["hide-filenames"]  = "bool";
-    arg_types["hide-dirnames"]   = "bool";
-    arg_types["hide-progress"]   = "bool";
-    arg_types["hide-bloom"]      = "bool";
-    arg_types["hide-mouse"]      = "bool";
-    arg_types["hide-root"]       = "bool";
+    arg_types["hide-tree"]          = "bool";
+    arg_types["hide-plotter-names"] = "bool";
+    arg_types["hide-hostnames"]     = "bool";
+    arg_types["hide-branch-names"]  = "bool";
+    arg_types["hide-progress"]      = "bool";
+    arg_types["hide-bloom"]         = "bool";
+    arg_types["hide-mouse"]         = "bool";
+    arg_types["hide-root"]          = "bool";
     arg_types["highlight-plotters"] = "bool";
-    arg_types["highlight-dirs"]  = "bool";
-    arg_types["file-extensions"] = "bool";
-    arg_types["key"]             = "bool";
-    arg_types["ffp"]             = "bool";
+    arg_types["highlight-branches"] = "bool";
+    arg_types["show-tld-only"]      = "bool";
+    arg_types["key-off"]            = "bool";
+    arg_types["ffp"]                = "bool";
 
     arg_types["disable-auto-rotate"] = "bool";
-    arg_types["disable-auto-skip"]   = "bool";
+    arg_types["disable-auto-skip"]  = "bool";
 
-/*    arg_types["git-log-command"]= "bool";
-    arg_types["cvs-exp-command"]= "bool";
-    arg_types["cvs2cl-command"] = "bool";
-    arg_types["svn-log-command"]= "bool";
-    arg_types["hg-log-command"] = "bool";
-    arg_types["bzr-log-command"]= "bool";
-*/
-    arg_types["bloom-intensity"]   = "float";
-    arg_types["bloom-multiplier"]  = "float";
-    arg_types["elasticity"]        = "float";
-    arg_types["seconds-per-day"]   = "float";
-    arg_types["auto-skip-seconds"] = "float";
-    arg_types["stop-at-time"]      = "float";
-    arg_types["max-plotter-speed"]    = "float";
-    arg_types["plotter-friction"]     = "float";
-    arg_types["padding"]           = "float";
-    arg_types["time-scale"]        = "float";
+    arg_types["bloom-intensity"]    = "float";
+    arg_types["bloom-multiplier"]   = "float";
+    arg_types["elasticity"]         = "float";
+    arg_types["seconds-per-day"]    = "float";
+    arg_types["auto-skip-seconds"]  = "float";
+    arg_types["stop-at-time"]       = "float";
+    arg_types["max-plotter-speed"]  = "float";
+    arg_types["plotter-friction"]   = "float";
+    arg_types["padding"]            = "float";
+    arg_types["time-scale"]         = "float";
 
-    arg_types["max-files"] = "int";
-    arg_types["font-size"] = "int";
-    arg_types["hash-seed"] = "int";
+    arg_types["max-hosts"]          = "int";
+    arg_types["font-size"]          = "int";
+    arg_types["hash-seed"]          = "int";
 
-    arg_types["plotter-filter"]    = "multi-value";
-    arg_types["file-filter"]    = "multi-value";
-    arg_types["follow-plotter"]    = "multi-value";
-    arg_types["highlight-plotter"] = "multi-value";
+    arg_types["plotter-filter"]     = "multi-value";
+    arg_types["host-filter"]        = "multi-value";
+    arg_types["follow-plotter"]     = "multi-value";
+    arg_types["highlight-plotter"]  = "multi-value";
 
     arg_types["log-level"]          = "string";
     arg_types["background-image"]   = "string";
@@ -281,32 +259,35 @@ GourceSettings::GourceSettings() {
     arg_types["logo-offset"]        = "string";
     arg_types["log-command"]        = "string";
     arg_types["text-config-dir"]    = "string";
-    arg_types["load-text-config"]        = "string";
+    arg_types["load-text-config"]   = "string";
     arg_types["load-config"]        = "string";
     arg_types["save-config"]        = "string";
     arg_types["output-custom-log"]  = "string";
     arg_types["path"]               = "string";
     arg_types["log-command"]        = "string";
     arg_types["background-colour"]  = "string";
-    arg_types["file-idle-time"]     = "string";
-    arg_types["plotter-image-dir"]     = "string";
+    arg_types["host-idle-time"]     = "string";
+    arg_types["plotter-image-dir"]  = "string";
     arg_types["default-plotter-image"] = "string";
     arg_types["date-format"]        = "string";
     arg_types["log-format"]         = "string";
-    arg_types["git-branch"]         = "string";
+
+    arg_types["disable-browser"]    = "bool";
+    arg_types["disable-exec"]       = "bool";
+    arg_types["browser-command"]    = "string";
     arg_types["start-position"]     = "string";
     arg_types["start-date"]         = "string";
     arg_types["stop-position"]      = "string";
     arg_types["crop"]               = "string";
     arg_types["hide"]               = "string";
-    arg_types["max-file-lag"]       = "string";
-    arg_types["plotter-scale"]         = "string";
+    arg_types["max-host-lag"]       = "string";
+    arg_types["plotter-scale"]      = "string";
     arg_types["camera-mode"]        = "string";
     arg_types["title"]              = "string";
     arg_types["font-colour"]        = "string";
     arg_types["highlight-colour"]   = "string";
     arg_types["selection-colour"]   = "string";
-    arg_types["dir-colour"]         = "string";
+    arg_types["branch-colour"]      = "string";
 
     arg_types["caption-file"]       = "string";
     arg_types["caption-size"]       = "int";
@@ -319,34 +300,34 @@ GourceSettings::GourceSettings() {
 
 void GourceSettings::setTextDefaults() {
 
-    //defaultHoverLines
     //hoverUnsetField is the field replacement in hover lines where a non-existent field is addressed.
-    //blank fields are not empty, this would be considered a replacement for unset and not blank.
+    //blank fields are not "empty", this would be considered a replacement for unset and not blank.
     hoverUnsetField = "";
-    keyFormat = "${n1}";
-    keyWidth = 90.0f;
+    keyFormat       = "${n1}";
+    keyWidth        = 90.0f;
+    show_key        = true;
+    hide_date       = false;
 }
 void GourceSettings::setGourceDefaults() {
 
-    path = "-";
-    default_path = true;
+    path           = "-";
+    default_path   = true;
 
-    ffp = false;
+    ffp            = false;
 
-    hide_date      = false;
     hide_users     = false;
     hide_tree      = false;
     hide_files     = false;
     hide_usernames = false;
-//    hide_filenames = false;
     hide_filenames = true;
-//    hide_dirnames  = false;
     hide_dirnames  = true;
-//    hide_progress  = false;
     hide_progress  = true;
     hide_bloom     = false;
     hide_mouse     = false;
     hide_root      = false;
+
+    disable_exec   = false;
+    disable_browser = false;
 
     start_timestamp = 0;
     start_position = 0.0f;
@@ -357,12 +338,9 @@ void GourceSettings::setGourceDefaults() {
     stop_at_end    = false;
     dont_stop      = false;
 
-    show_key = true;
-//    show_key = false;
 
     disable_auto_rotate = false;
 
-//    auto_skip_seconds = 3.0f;
     auto_skip_seconds = 1.0f;
     days_per_second   = 0.1f; // TODO: check this is right
     file_idle_time    = 0.0f;
@@ -370,7 +348,7 @@ void GourceSettings::setGourceDefaults() {
 
     loop = false;
 
-    logo = "";
+    logo        = "";
     logo_offset = vec2(20.0f,20.0f);
 
     colour_user_images = false;
@@ -389,7 +367,6 @@ void GourceSettings::setGourceDefaults() {
     crop_horizontal = false;
 
     bloom_multiplier = 1.0f;
-//    bloom_intensity  = 0.75f;
     bloom_intensity  = 0.025f;
 
     background_colour = vec3(0.1f, 0.1f, 0.1f);
@@ -408,7 +385,6 @@ void GourceSettings::setGourceDefaults() {
     git_branch = "";
 
     log_format  = "mal4s";
-//    log_format  = "";
 //    date_format = "%A, %d %B, %Y %X";
     date_format = "";
 
@@ -506,9 +482,29 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
 
     ConfEntry* entry = 0;
 
-    if((entry = text_settings->getEntry("key-format")) != 0) {
+   if((entry = text_settings->getEntry("f5-action")) != 0) {
+		f5_action = entry->getString();
+    }
+
+   if((entry = text_settings->getEntry("f7-action")) != 0) {
+		f7_action = entry->getString();
+    }
+
+   if((entry = text_settings->getEntry("f9-action")) != 0) {
+		f9_action = entry->getString();
+    }
+
+   if((entry = text_settings->getEntry("browser-url")) != 0) {
+		browser_url = entry->getString();
+    }
+
+   if((entry = text_settings->getEntry("key-format")) != 0) {
 		keyFormat.clear();
 		keyFormat = entry->getString();
+    }
+
+    if(text_settings->getBool("key-off")) {
+        show_key = false;
     }
 
     if((entry = text_settings->getEntry("key-width")) != 0) {
@@ -676,10 +672,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             if(   hide_field != "date"
                && hide_field != "plotters"
                && hide_field != "tree"
-               && hide_field != "files"
+               && hide_field != "hosts"
                && hide_field != "plotternames"
-               && hide_field != "filenames"
-               && hide_field != "dirnames"
+               && hide_field != "hostnames"
+               && hide_field != "branchnames"
                && hide_field != "bloom"
                && hide_field != "progress"
                && hide_field != "mouse"
@@ -709,10 +705,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
                 if(hidestr == "date")       hide_date      = true;
             else if(hidestr == "plotters")     hide_users     = true;
             else if(hidestr == "tree")      hide_tree      = true;
-            else if(hidestr == "files")     hide_files     = true;
+            else if(hidestr == "hosts")     hide_files     = true;
             else if(hidestr == "plotternames") hide_usernames = true;
-            else if(hidestr == "filenames") hide_filenames = true;
-            else if(hidestr == "dirnames")  hide_dirnames  = true;
+            else if(hidestr == "hostnames") hide_filenames = true;
+            else if(hidestr == "branchnames")  hide_dirnames  = true;
             else if(hidestr == "bloom")     hide_bloom     = true;
             else if(hidestr == "progress")  hide_progress  = true;
             else if(hidestr == "root")      hide_root      = true;
@@ -723,8 +719,8 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("system-command")) != 0) {
-	systemCommand = entry->getString();
+    if((entry = gource_settings->getEntry("browser-command")) != 0) {
+	browser_command = entry->getString();
     }
 
     if((entry = gource_settings->getEntry("hover-replace-unset")) != 0) {
@@ -736,6 +732,14 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         if(!entry->hasValue()) conffile.missingValueException(entry);
 
         date_format = entry->getString();
+    }
+
+    if(gource_settings->getBool("disable-browser")) {
+        disable_browser=true;
+    }
+
+    if(gource_settings->getBool("disable-exec")) {
+        disable_exec=true;
     }
 
     if(gource_settings->getBool("disable-auto-rotate")) {
@@ -782,20 +786,8 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
         log_format = entry->getString();
 
-/*        if(log_format == "cvs") {
-            conffile.entryException(entry, "please use either 'cvs2cl' or 'cvs-exp'");
-        }
-*/
         if(  log_format != "mal4s"
-           && log_format != "custom"
-/*         && log_format != "git"
-           && log_format != "cvs-exp"
-           && log_format != "cvs2cl"
-           && log_format != "svn"
-           && log_format != "hg"
-           && log_format != "bzr"
-           && log_format != "apache" */) {
-
+           && log_format != "custom") {
             conffile.invalidValueException(entry);
         }
     }
@@ -1047,7 +1039,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("dir-colour")) != 0) {
+    if((entry = gource_settings->getEntry("branch-colour")) != 0) {
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify dir colour (FFFFFF)");
 
@@ -1128,9 +1120,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("file-idle-time")) != 0) {
+    if((entry = gource_settings->getEntry("host-idle-time")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify file-idle-time (seconds)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify host-idle-time (seconds)");
 
         std::string file_idle_str = entry->getString();
 
@@ -1236,10 +1228,6 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if(gource_settings->getBool("key")) {
-        show_key = true;
-    }
-
     if(gource_settings->getBool("ffp")) {
         ffp = true;
     }
@@ -1266,9 +1254,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         stop_on_idle = true;
     }
 
-    if((entry = gource_settings->getEntry("max-files")) != 0) {
+    if((entry = gource_settings->getEntry("max-hosts")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify max-files (number)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify max-hosts (number)");
 
         max_files = entry->getInt();
 
@@ -1277,9 +1265,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("max-file-lag")) != 0) {
+    if((entry = gource_settings->getEntry("max-host-lag")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify max-file-lag (seconds)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify max-host-lag (seconds)");
 
         max_file_lag = entry->getFloat();
 
@@ -1328,7 +1316,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         highlight_all_users = true;
     }
 
-    if(gource_settings->getBool("highlight-dirs")) {
+    if(gource_settings->getBool("highlight-branches")) {
         highlight_dirs = true;
     }
 
@@ -1384,19 +1372,19 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if(gource_settings->getBool("file-extensions")) {
+    if(gource_settings->getBool("show-tld-only")) {
         file_extensions=true;
     }
 
-    if((entry = gource_settings->getEntry("file-filter")) != 0) {
+    if((entry = gource_settings->getEntry("host-filter")) != 0) {
 
-        ConfEntryList* filters = gource_settings->getEntries("file-filter");
+        ConfEntryList* filters = gource_settings->getEntries("host-filter");
 
         for(ConfEntryList::iterator it = filters->begin(); it != filters->end(); it++) {
 
             entry = *it;
 
-            if(!entry->hasValue()) conffile.entryException(entry, "specify file-filter (regex)");
+            if(!entry->hasValue()) conffile.entryException(entry, "specify host-filter (regex)");
 
             std::string filter_string = entry->getString();
 
@@ -1404,7 +1392,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
             if(!r->isValid()) {
                 delete r;
-                conffile.entryException(entry, "invalid file-filter regular expression");
+                conffile.entryException(entry, "invalid host-filter regular expression");
             }
 
             file_filters.push_back(r);

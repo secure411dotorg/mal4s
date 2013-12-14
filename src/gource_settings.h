@@ -30,13 +30,20 @@ protected:
 public:
     int repo_count;
 
-    std::string systemCommand;
+    std::string browser_command;
+    std::string browser_url;
+    std::string f5_action;
+    std::string f7_action;
+    std::string f9_action;
+
     std::string textConfDir;
     std::vector<std::string> defaultHoverLines;
     std::string hoverUnsetField;
     std::vector<std::string> hoverLines;
     std::string keyFormat;
     float keyWidth;
+    bool disable_exec;
+    bool disable_browser;
 
     bool screenshot_at_end;
 
