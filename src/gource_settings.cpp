@@ -494,6 +494,10 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
 		f9_action = entry->getString();
     }
 
+   if((entry = text_settings->getEntry("mouseclick-action")) != 0) {
+		mouseclick_action = entry->getString();
+    }
+
    if((entry = text_settings->getEntry("browser-url")) != 0) {
 		browser_url = entry->getString();
     }

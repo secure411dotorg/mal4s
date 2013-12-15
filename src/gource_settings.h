@@ -18,7 +18,7 @@
 #ifndef GOURCE_SETTINGS_H
 #define GOURCE_SETTINGS_H
 
-#define GOURCE_VERSION "1.0.0"
+#define GOURCE_VERSION "1.1.0"
 
 #include "core/texture.h"
 #include "core/settings.h"
@@ -35,6 +35,7 @@ public:
     std::string f5_action;
     std::string f7_action;
     std::string f9_action;
+    std::string mouseclick_action;
 
     std::string textConfDir;
     std::vector<std::string> defaultHoverLines;

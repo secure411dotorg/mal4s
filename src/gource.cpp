@@ -649,11 +649,12 @@ void Gource::selectNextUser() {
     selectUser(newSelectedUser);
 }
 
-bool Gource::execAction(RFile* file, const std::string action) {
+bool Gource::execAction(RFile* file, const std::string action_in) {
 	std::string fieldIdentifier;
-	std::string systemCommandFormat = action;
-	std::string parsedSystemCommand;
-	bool err = false;
+	std::string out_file;
+	std::string action_type;
+	std::string action = action_in;
+	std::string parsedAction;
 /*
 These fields are stored in a vector beginning at 0, so subtract 1
 plotter = ${plotter}
@@ -662,6 +663,32 @@ tld = ${tld}
 Non-branching field = ${nNUM}
 Branching field = ${bNUM}
 */	
+
+	if(action.size() > 2) {
+		if(action.substr(0, 2) == "#!") {
+			action_type = "command";
+		} else if(action.substr(0, 2) == "#>") {
+			action_type = "output-to-file";
+		} else return true;
+	} else return true;
+
+	action.erase(0,2);
+
+	if(action_type == "command" && action.size() > 0) {
+		if(action.size() > 10) {
+			if(action.substr(0,10) == "${browser}") {
+				if(!gGourceSettings.disable_browser && !gGourceSettings.browser_command.empty()) {
+					action = gGourceSettings.browser_command + action.substr(10);
+				}
+			} else if(gGourceSettings.disable_exec) return true;
+		} else if(gGourceSettings.disable_exec) return true;
+	} else if(action_type == "output-to-file") {
+		size_t end_filename = action.find(" ");
+		if(end_filename != std::string::npos) {
+			out_file = action.substr(0, end_filename);
+			action.erase(0, end_filename + 1);
+		} else return true;
+	} else return true;
 
 	std::string path = file->path;
 	// Erase leading slash from the path
@@ -674,20 +701,20 @@ Branching field = ${bNUM}
 
    //Loop though line and replace all of the ${FIELDNUM}s with the corresponding field
    for(std::size_t last = 0; last != std::string::npos;) {
-	std::size_t open = systemCommandFormat.find("${", last);
+	std::size_t open = action.find("${", last);
 	if(open != std::string::npos) {
-	   std::size_t close = systemCommandFormat.find("}", open);
+	   std::size_t close = action.find("}", open);
 	   //Make sure it is only number enclosed in ${FIELDNUM}
 	   if(close != std::string::npos) {
-		fieldIdentifier = systemCommandFormat.substr(open + 2, close - open - 2);
+		fieldIdentifier = action.substr(open + 2, close - open - 2);
 		if(fieldIdentifier.compare("plotter") == 0) {
-		   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + file->fileUser;
+		   parsedAction += action.substr(last, open - last) + file->fileUser;
 		   last = close + 1;
 		} else if(fieldIdentifier.compare("host") == 0) {
-		   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + file->getName();
+		   parsedAction += action.substr(last, open - last) + file->getName();
 		   last = close + 1;
 		} else if(fieldIdentifier.compare("tld") ==0) {
-		   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + file->ext;
+		   parsedAction += action.substr(last, open - last) + file->ext;
 		   last = close + 1;
 		} else if(fieldIdentifier.compare(0,1,"n") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 		   //Convert the string to an unigned int
@@ -695,15 +722,15 @@ Branching field = ${bNUM}
 		   //Test if the field is in range
 		   if(nonBranching.size() > fieldnum) {
 			   //Yes, append from last up to ${, and the replacement field
-			   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + nonBranching[fieldnum];
+			   parsedAction += action.substr(last, open - last) + nonBranching[fieldnum];
 			   last = close + 1;
 		   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
 			   //No, append from last up to ${ and the replacement for an unset field
-			   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + gGourceSettings.hoverUnsetField;
+			   parsedAction += action.substr(last, open - last) + gGourceSettings.hoverUnsetField;
 			   last = close + 1;
 		   } else {
 			   //No, unset field is blank, so append up to ${
-			   parsedSystemCommand += systemCommandFormat.substr(last, open - last);
+			   parsedAction += action.substr(last, open - last);
 			   last = close + 1;
 		   }
 		} else if(fieldIdentifier.compare(0,1,"b") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
@@ -712,34 +739,42 @@ Branching field = ${bNUM}
 		   //Test if the field is in range
 		   if(branching.size() > fieldnum) {
 			   //Yes, append from last up to ${, and the replacement field
-			   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + branching[fieldnum];
+			   parsedAction += action.substr(last, open - last) + branching[fieldnum];
 			   last = close + 1;
 		   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
 			   //No, append from last up to ${ and the replacement for an unset field
-			   parsedSystemCommand += systemCommandFormat.substr(last, open - last) + gGourceSettings.hoverUnsetField;
+			   parsedAction += action.substr(last, open - last) + gGourceSettings.hoverUnsetField;
 			   last = close + 1;
 		   } else {
 			   //No, unset field is blank, so append up to ${
-			   parsedSystemCommand += systemCommandFormat.substr(last, open - last);
+			   parsedAction += action.substr(last, open - last);
 			   last = close + 1;
 		   }
 		} else {
 			//The formatting does not point to a field, copy raw formatting
-			parsedSystemCommand += systemCommandFormat.substr(last, close - last);
+			parsedAction += action.substr(last, close - last);
 			last = close + 1;
 		}
 	   }
 	} else {
 		//${ was not found copy the rest of the formatting
-		parsedSystemCommand += systemCommandFormat.substr(last);
+		parsedAction += action.substr(last);
 		last = std::string::npos;
 	}
    }
 
-	if(!err) {
-		int exit_status = system(parsedSystemCommand.c_str());
-		return err;
-	} else return err;
+   if(action_type == "output-to-file" && !out_file.empty()) {
+	   std::ofstream txtfile;
+	   txtfile.open(out_file.c_str(), std::ios::app);
+	   txtfile << parsedAction << "\n";
+	   txtfile.close();
+	   return false;
+   } else if(action_type == "command" && !parsedAction.empty()) {
+	int exit_status = system(parsedAction.c_str());
+	return false;
+   }
+
+   return true;
 }
 
 void Gource::keyPress(SDL_KeyboardEvent *e) {
@@ -785,40 +820,29 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             screenshot();
         }
 
-	if(e->keysym.sym == SDLK_o) {
-            if(!gGourceSettings.browser_command.empty() && hoverFile != 0 && !gGourceSettings.disable_browser) {
-		bool err;
-		std::string full_browser_command = gGourceSettings.browser_command + " '" + gGourceSettings.browser_url + "'";
+	if(e->keysym.sym == SDLK_o && hoverFile != 0 && !gGourceSettings.browser_url.empty()) {
+		std::string full_browser_command = "#!${browser} '" + gGourceSettings.browser_url + "'";
+		bool err = execAction(hoverFile, full_browser_command);
 		//fprintf(stdout, "%s\n", full_browser_command.c_str());
-		err = execAction(hoverFile, full_browser_command);
 		//if(err) fprintf(stdout, "True\n");
-	    }
         }
 
 	//Text output of file name of hoverFile
-	if(e->keysym.sym == SDLK_F5) {
-		if(hoverFile != 0) {
-			std::string pathfilename = texturemanager.getDir() + "f5.wav";
-			f5 = Mix_LoadWAV(pathfilename.c_str());
-			Mix_PlayChannel( -1, f5, 0 );
-			std::ofstream txtfile;
-			txtfile.open("malhost-f5.txt", std::ios::app);
-			std::string domain_asn = hoverFile->getName();
-			txtfile << domain_asn << "\n";
-			txtfile.close();
-		}
+	if(e->keysym.sym == SDLK_F5 && hoverFile != 0 && !gGourceSettings.f5_action.empty()) {
+		std::string pathfilename = texturemanager.getDir() + "f5.wav";
+		f5 = Mix_LoadWAV(pathfilename.c_str());
+		Mix_PlayChannel( -1, f5, 0 );
+		bool err = execAction(hoverFile, gGourceSettings.f5_action);
+		//fprintf(stdout, "%s\n", gGourceSettings.f5_action.c_str());
+		//if(err) fprintf(stdout, "True\n");
 	}
-	if(e->keysym.sym == SDLK_F7) {
-		if(hoverFile != 0) {
-			std::string pathfilename = texturemanager.getDir() + "f7.wav";
-			f7 = Mix_LoadWAV(pathfilename.c_str());
-			Mix_PlayChannel( -1, f7, 0 );
-			std::ofstream txtfile;
-			txtfile.open("malhost-f7.txt", std::ios::app);
-			std::string domain_asn = hoverFile->getName();
-			txtfile << domain_asn << "\n";
-			txtfile.close();
-		}
+	if(e->keysym.sym == SDLK_F7 && hoverFile != 0 && !gGourceSettings.f7_action.empty()) {
+		std::string pathfilename = texturemanager.getDir() + "f7.wav";
+		f7 = Mix_LoadWAV(pathfilename.c_str());
+		Mix_PlayChannel( -1, f7, 0 );
+		bool err = execAction(hoverFile, gGourceSettings.f7_action);
+		//fprintf(stdout, "%s\n", gGourceSettings.f7_action.c_str());
+		//if(err) fprintf(stdout, "True\n");
 	}
 #if SDL_VERSION_ATLEAST(2,0,0)
 	if(e->keysym.sym == SDLK_c) {
@@ -837,17 +861,13 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
 		}
 	}
 #endif
-	if(e->keysym.sym == SDLK_F9) {
-		if(hoverFile != 0) {
-			std::string pathfilename = texturemanager.getDir() + "f9.wav";
-			f9 = Mix_LoadWAV(pathfilename.c_str());
-			Mix_PlayChannel( -1, f9, 0 );
-			std::ofstream txtfile;
-			txtfile.open("malhost-f9.txt", std::ios::app);
-			std::string domain_asn = hoverFile->getName();
-			txtfile << domain_asn << "\n";
-			txtfile.close();
-		}
+	if(e->keysym.sym == SDLK_F9 && hoverFile != 0 && !gGourceSettings.f9_action.empty()) {
+		std::string pathfilename = texturemanager.getDir() + "f9.wav";
+		f9 = Mix_LoadWAV(pathfilename.c_str());
+		Mix_PlayChannel( -1, f9, 0 );
+		bool err = execAction(hoverFile, gGourceSettings.f9_action);
+		//fprintf(stdout, "%s\n", gGourceSettings.f9_action.c_str());
+		//if(err) fprintf(stdout, "True\n");
 	}
 
         if (e->keysym.sym == SDLK_q) {
@@ -2098,12 +2118,12 @@ void Gource::mousetrace(float dt) {
 		std::string pathfilename =  texturemanager.getDir() + "copy-click.wav";
 		copy_click = Mix_LoadWAV(pathfilename.c_str());
 		Mix_PlayChannel( -1, copy_click, 0 );
-				
-		std::ofstream txtfile;
-		txtfile.open("malhost.txt", std::ios::app);
-		std::string domain_asn = selectedFile->getName();
-		txtfile << domain_asn << "\n";
-		txtfile.close();
+
+		if(!gGourceSettings.mouseclick_action.empty()) {
+			bool err = execAction(hoverFile, gGourceSettings.mouseclick_action);
+			//fprintf(stdout, "%s\n", gGourceSettings.click_action.c_str());
+			//if(err) fprintf(stdout, "True\n");
+		}		
         } else {
             selectBackground();
         }
