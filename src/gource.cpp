@@ -662,7 +662,7 @@ host.tld = ${host}
 tld = ${tld}
 Non-branching field = ${nNUM}
 Branching field = ${bNUM}
-*/	
+*/
 
 	if(action.size() > 2) {
 		if(action.substr(0, 2) == "#!") {
@@ -696,7 +696,7 @@ Branching field = ${bNUM}
 
 	// Convert "path" to separate fields
 	std::vector<std::string> branching = split(path, '/');
-	
+
 	std::vector<std::string> nonBranching = file->displayData;
 
    //Loop though line and replace all of the ${FIELDNUM}s with the corresponding field
@@ -718,8 +718,15 @@ Branching field = ${bNUM}
 		   last = close + 1;
 		} else if(fieldIdentifier.compare(0,1,"n") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 		   //Convert the string to an unigned int
+#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
 		   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
-		   //Test if the field is in range
+#else
+           unsigned int fieldnum;
+           std::stringstream ss(fieldIdentifier.substr(1).c_str());
+           ss >> fieldnum;
+           fieldnum = fieldnum - 1;
+#endif
+           //Test if the field is in range
 		   if(nonBranching.size() > fieldnum) {
 			   //Yes, append from last up to ${, and the replacement field
 			   parsedAction += action.substr(last, open - last) + nonBranching[fieldnum];
@@ -735,7 +742,14 @@ Branching field = ${bNUM}
 		   }
 		} else if(fieldIdentifier.compare(0,1,"b") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 		   //Convert the string to an unigned int
+#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
 		   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+#else
+           unsigned int fieldnum;
+           std::stringstream ss(fieldIdentifier.substr(1).c_str());
+           ss >> fieldnum;
+           fieldnum = fieldnum - 1;
+#endif
 		   //Test if the field is in range
 		   if(branching.size() > fieldnum) {
 			   //Yes, append from last up to ${, and the replacement field
@@ -813,7 +827,7 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             quit();
         }
 
-	
+
         if(commitlog==0) return;
 
         if(e->keysym.sym == SDLK_F12) {
@@ -2123,7 +2137,7 @@ void Gource::mousetrace(float dt) {
 			bool err = execAction(hoverFile, gGourceSettings.mouseclick_action);
 			//fprintf(stdout, "%s\n", gGourceSettings.click_action.c_str());
 			//if(err) fprintf(stdout, "True\n");
-		}		
+		}
         } else {
             selectBackground();
         }
@@ -2548,7 +2562,7 @@ host.tld = ${host}
 tld = ${tld}
 Non-branching field = ${nNUM}
 Branching field = ${bNUM}
-*/	
+*/
 
 	std::string path = hoverFile->path;
 	// Erase leading slash from the path
@@ -2556,7 +2570,7 @@ Branching field = ${bNUM}
 
 	// Convert "path" to separate fields
 	std::vector<std::string> branching = split(path, '/');
-	
+
 	std::vector<std::string> nonBranching = hoverFile->displayData;
 
 	//Loop through lines
@@ -2582,7 +2596,14 @@ Branching field = ${bNUM}
 			   last = close + 1;
 			} else if(fieldIdentifier.compare(0,1,"n") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 			   //Convert the string to an unigned int
+#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
 			   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+#else
+			   unsigned int fieldnum;
+			   std::stringstream ss(fieldIdentifier.substr(1).c_str());
+			   ss >> fieldnum;
+			   fieldnum = fieldnum - 1;
+#endif
 			   //Test if the field is in range
 			   if(nonBranching.size() > fieldnum) {
 				   //Yes, append from last up to ${, and the replacement field
@@ -2599,7 +2620,14 @@ Branching field = ${bNUM}
 			   }
 			} else if(fieldIdentifier.compare(0,1,"b") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 			   //Convert the string to an unigned int
-			   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+               unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+#else
+               unsigned int fieldnum;
+               std::stringstream ss(fieldIdentifier.substr(1).c_str());
+               ss >> fieldnum;
+               fieldnum = fieldnum - 1;
+#endif
 			   //Test if the field is in range
 			   if(branching.size() > fieldnum) {
 				   //Yes, append from last up to ${, and the replacement field
