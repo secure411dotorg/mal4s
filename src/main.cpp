@@ -19,7 +19,7 @@
 
 int main(int argc, char *argv[]) {
 
-    SDLAppInit("Gource", "gource");
+    SDLAppInit("Mal4s", "mal4s");
 
 #ifdef _WIN32
         SDLApp::initConsole();

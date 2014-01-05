@@ -444,7 +444,15 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
     }
 
     if(name == "text-config-dir" && value.size() > 0) {
-	textConfDir = value;
+#ifdef _WIN32
+	std::string dir_delim = "\\";
+#else
+	std::string dir_delim = "/";
+#endif
+	if(value.substr(value.size() - 1) == dir_delim) {
+		textConfDir = value;
+	} else textConfDir = value + dir_delim;
+	return;
     }
 
     if(name == "save-config" && value.size() > 0) {
