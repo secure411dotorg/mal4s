@@ -29,13 +29,22 @@ int main(int argc, char *argv[]) {
     ConfFile textConf;
     std::vector<std::string> files;
     std::string textConfFile;
+    std::string demoFile = texturemanager.getDir() + "sample--newns.mal4s";
+    int demoindex = 2;
+    char* demo[2];
+    demo[0] = argv[0];
+    demo[1] = strdup(demoFile.c_str());
 
     //convert args to a conf file
     //read the conf file
     //apply the conf file to settings
-
     try {
-        gGourceSettings.parseArgs(argc, argv, conf, &files);
+        if(argc == 1) {
+		printf("No arguments supplied, using sample file: %s.\n", demoFile.c_str());
+		gGourceSettings.parseArgs(demoindex, demo, conf, &files);
+	} else {
+	        gGourceSettings.parseArgs(argc, argv, conf, &files);
+	}
         Logger::getDefault()->setLevel(gGourceSettings.log_level);
 
 	if(!files.empty() && gGourceSettings.load_text_config.empty()) {
@@ -189,7 +198,7 @@ int main(int argc, char *argv[]) {
 
     try {
 
-        display.init("Gource", gGourceSettings.display_width, gGourceSettings.display_height, gGourceSettings.fullscreen);
+        display.init("Mal4s", gGourceSettings.display_width, gGourceSettings.display_height, gGourceSettings.fullscreen);
 
 #if SDL_VERSION_ATLEAST(2,0,0)
         SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0");
