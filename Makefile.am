@@ -58,8 +58,8 @@ dist_shaders_DATA = data/shaders/shadow.vert data/shaders/shadow.frag data/shade
 #	$(MKDIR_P) $(DESTDIR)$(mandir)/man1
 #	gzip -cf9 $(srcdir)/data/mal4s.1 > $(DESTDIR)$(mandir)/man1/mal4s.1.gz
 
-uninstall-hook:
-	rm -f $(DESTDIR)$(mandir)/man1/gource.1.gz
+#uninstall-hook:
+#	rm -f $(DESTDIR)$(mandir)/man1/gource.1.gz
 
 
 if USE_BUNDLED_TINYXML
