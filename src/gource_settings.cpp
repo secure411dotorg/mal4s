@@ -630,6 +630,107 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
 	} 
     }
 
+    if((entry = text_settings->getEntry("hover-line-17")) != 0) {
+	if(hoverLines.size() == 16) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-18")) != 0) {
+	if(hoverLines.size() == 17) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-19")) != 0) {
+	if(hoverLines.size() == 18) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-20")) != 0) {
+	if(hoverLines.size() == 19) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-21")) != 0) {
+	if(hoverLines.size() == 20) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-22")) != 0) {
+	if(hoverLines.size() == 21) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-23")) != 0) {
+	if(hoverLines.size() == 22) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-24")) != 0) {
+	if(hoverLines.size() == 23) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-25")) != 0) {
+	if(hoverLines.size() == 24) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-26")) != 0) {
+	if(hoverLines.size() == 25) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-27")) != 0) {
+	if(hoverLines.size() == 26) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-28")) != 0) {
+	if(hoverLines.size() == 27) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-29")) != 0) {
+	if(hoverLines.size() == 28) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-30")) != 0) {
+	if(hoverLines.size() == 29) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-31")) != 0) {
+	if(hoverLines.size() == 30) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+    if((entry = text_settings->getEntry("hover-line-32")) != 0) {
+	if(hoverLines.size() == 31) {
+		hoverLines.push_back(entry->getString());
+	} 
+    }
+
+   //If there is no formatted hover lines, mal4s crashes on hover.
+   if(hoverLines.size() == 0) {
+	hoverLines.push_back("${host}");
+   }
+
 }
 
 /*
