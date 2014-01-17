@@ -91,6 +91,10 @@ void GourceSettings::help(bool extended_help) {
     printf("  --text-config-dir DIRECTORY	Path to text configs (matched with file--TEXTCONF.mal4s)\n");
     printf("  --save-config CONF_FILE		Save a config file with the current options\n\n");
 
+    printf("  --wrap-max-lines LINES		Max number of lines a hover line can wrap before truncating\n");
+    printf("  --truncate-hover-lines		Do not wrap hover lines by default\n");
+    printf("  --wrap-hover-lines		Wrap hover lines by default\n\n");
+
     printf("  -o, --output-ppm-stream FILE	Output PPM stream to a file ('-' for STDOUT)\n");
     printf("  -r, --output-framerate  FPS	Framerate of output (25,30,60)\n\n");
 
@@ -229,6 +233,9 @@ GourceSettings::GourceSettings() {
     arg_types["show-tld-only"]      = "bool";
     arg_types["key-off"]            = "bool";
     arg_types["ffp"]                = "bool";
+    arg_types["truncate-hover-lines"] = "bool";
+    arg_types["wrap-hover-lines"]   = "bool";
+    arg_types["wrap-max-lines"]     = "int";
 
     arg_types["disable-auto-rotate"] = "bool";
     arg_types["disable-auto-skip"]  = "bool";
@@ -314,6 +321,10 @@ void GourceSettings::setGourceDefaults() {
     default_path   = true;
 
     ffp            = false;
+
+    wrap_truncate  = "wrap";
+    wrap_max_lines = 3;
+    wrap_truncate_chars = 50;
 
     hide_users     = false;
     hide_tree      = false;
@@ -728,7 +739,7 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
 
    //If there is no formatted hover lines, mal4s crashes on hover.
    if(hoverLines.size() == 0) {
-	hoverLines.push_back("${host}");
+	hoverLines.push_back("hover-line-1 not configured");
    }
 
 }
@@ -845,6 +856,20 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         if(!entry->hasValue()) conffile.missingValueException(entry);
 
         date_format = entry->getString();
+    }
+
+    if(gource_settings->getBool("truncate-hover-lines")) {
+        wrap_truncate = "truncate";
+    }
+
+    if(gource_settings->getBool("wrap-hover-lines")) {
+        wrap_truncate = "wrap";
+    }
+
+    if((entry = gource_settings->getEntry("wrap-max-lines")) != 0) {
+        if(!entry->hasValue()) conffile.entryException(entry, "specify max number of lines to wrap on hover");
+
+        wrap_max_lines = entry->getInt();
     }
 
     if(gource_settings->getBool("disable-browser")) {

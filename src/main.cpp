@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
     ConfFile textConf;
     std::vector<std::string> files;
     std::string textConfFile;
+    std::string captionFile;
     std::string demoFile = texturemanager.getDir() + "sample--newns.mal4s";
     int demoindex = 2;
     char* demo[2];
@@ -71,6 +72,18 @@ int main(int argc, char *argv[]) {
 							}
 					}
 				}
+			}
+		}
+	}
+
+	//Automatic captions file selection
+	if(!files.empty() && gGourceSettings.caption_file.empty()) {
+		size_t ext_marker = files[0].find_last_of(".");
+		if(ext_marker != std::string::npos) {
+			captionFile = files[0].substr(0, ext_marker + 1) + "captions";
+			if(boost::filesystem::exists(captionFile.c_str())) {
+				gGourceSettings.caption_file = captionFile;
+				printf("Using captions from: %s\n", gGourceSettings.caption_file.c_str());
 			}
 		}
 	}

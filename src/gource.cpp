@@ -2573,10 +2573,39 @@ Branching field = ${bNUM}
 
 	std::vector<std::string> nonBranching = hoverFile->displayData;
 
+        std::string wrap_truncate = gGourceSettings.wrap_truncate;
+        int wrap_truncate_chars = gGourceSettings.wrap_truncate_chars;
+        int wrap_max_lines = gGourceSettings.wrap_max_lines;
+	int wrapped_lines = 0;
 	//Loop through lines
-	for(unsigned int it = 0; it < displayFormat.size(); it++) {
+	for(unsigned int it = 0; it <= displayFormat.size(); it++) {
+	   unsigned int vector_it = it + wrapped_lines;
+	   //wrap or truncate previous line as needed
+	   if(it > 0 && parsedHoverText[vector_it - 1].size() > wrap_truncate_chars) {
+		if(wrap_truncate == "truncate") {
+		    parsedHoverText[vector_it - 1] = parsedHoverText[vector_it - 1].substr(0, wrap_truncate_chars - 1);
+		} else {
+		    for(int wrap_lines = 0; wrap_lines < wrap_max_lines; wrap_lines++) {
+			//When wrap_lines reaches wrap_max_lines truncate if larger than wrap_truncate_chars
+			if(wrap_lines + 1 == wrap_max_lines) {
+			    if(parsedHoverText[vector_it + wrap_lines - 1].size() > wrap_truncate_chars) {
+				parsedHoverText[vector_it + wrap_lines - 1].erase(wrap_truncate_chars);
+			    }
+			} else {
+			    if(parsedHoverText[vector_it + wrap_lines - 1].size() > wrap_truncate_chars) {
+				parsedHoverText.push_back(parsedHoverText[vector_it + wrap_lines - 1].substr(wrap_truncate_chars));
+				parsedHoverText[vector_it + wrap_lines - 1].erase(wrap_truncate_chars);
+				wrapped_lines++;
+			    } else break;
+			}
+		    }
+		}
+	   }
+	   if(it == displayFormat.size()) break;
+	   vector_it = it + wrapped_lines;
 	   //Allocate next line
 	   parsedHoverText.push_back("");
+	   wrap_truncate = gGourceSettings.wrap_truncate;
 	   //Loop though line and replace all of the ${FIELDNUM}s with the corresponding field
 	   for(std::size_t last = 0; last != std::string::npos;) {
 		std::size_t open = displayFormat[it].find("${", last);
@@ -2585,14 +2614,18 @@ Branching field = ${bNUM}
 		   //Make sure it is only number enclosed in ${FIELDNUM}
 		   if(close != std::string::npos) {
 			fieldIdentifier = displayFormat[it].substr(open + 2, close - open - 2);
-			if(fieldIdentifier.compare("plotter") == 0) {
-			   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + hoverFile->fileUser;
+			if(fieldIdentifier.compare("wrap") == 0) {
+			   wrap_truncate = "wrap";
+			} else if(fieldIdentifier.compare("truncate") == 0) {
+			   wrap_truncate = "truncate";
+			} else if(fieldIdentifier.compare("plotter") == 0) {
+			   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last) + hoverFile->fileUser;
 			   last = close + 1;
 			} else if(fieldIdentifier.compare("host") == 0) {
-			   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + hoverFile->getName();
+			   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last) + hoverFile->getName();
 			   last = close + 1;
 			} else if(fieldIdentifier.compare("tld") ==0) {
-			   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + hoverFile->ext;
+			   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last) + hoverFile->ext;
 			   last = close + 1;
 			} else if(fieldIdentifier.compare(0,1,"n") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 			   //Convert the string to an unigned int
@@ -2607,50 +2640,50 @@ Branching field = ${bNUM}
 			   //Test if the field is in range
 			   if(nonBranching.size() > fieldnum) {
 				   //Yes, append from last up to ${, and the replacement field
-				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + nonBranching[fieldnum];
+				   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last) + nonBranching[fieldnum];
 				   last = close + 1;
 			   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
 				   //No, append from last up to ${ and the replacement for an unset field
-				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + gGourceSettings.hoverUnsetField;
+				   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last) + gGourceSettings.hoverUnsetField;
 				   last = close + 1;
 			   } else {
 				   //No, unset field is blank, so append up to ${
-				   parsedHoverText[it] += displayFormat[it].substr(last, open - last);
+				   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last);
 				   last = close + 1;
 			   }
 			} else if(fieldIdentifier.compare(0,1,"b") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 			   //Convert the string to an unigned int
 #ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
-               unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+		           unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
 #else
-               unsigned int fieldnum;
-               std::stringstream ss(fieldIdentifier.substr(1).c_str());
-               ss >> fieldnum;
-               fieldnum = fieldnum - 1;
+		           unsigned int fieldnum;
+		           std::stringstream ss(fieldIdentifier.substr(1).c_str());
+		           ss >> fieldnum;
+		           fieldnum = fieldnum - 1;
 #endif
 			   //Test if the field is in range
 			   if(branching.size() > fieldnum) {
 				   //Yes, append from last up to ${, and the replacement field
-				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + branching[fieldnum];
+				   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last) + branching[fieldnum];
 				   last = close + 1;
 			   } else if(gGourceSettings.hoverUnsetField.size() != 0) {
 				   //No, append from last up to ${ and the replacement for an unset field
-				   parsedHoverText[it] += displayFormat[it].substr(last, open - last) + gGourceSettings.hoverUnsetField;
+				   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last) + gGourceSettings.hoverUnsetField;
 				   last = close + 1;
 			   } else {
 				   //No, unset field is blank, so append up to ${
-				   parsedHoverText[it] += displayFormat[it].substr(last, open - last);
+				   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last);
 				   last = close + 1;
 			   }
 			} else {
 				//The formatting does not point to a field, copy raw formatting
-				parsedHoverText[it] += displayFormat[it].substr(last, close - last);
+				parsedHoverText[vector_it] += displayFormat[it].substr(last, close - last);
 				last = close + 1;
 			}
 		   }
 		} else {
 			//${ was not found copy the rest of the formatting
-			parsedHoverText[it] += displayFormat[it].substr(last);
+			parsedHoverText[vector_it] += displayFormat[it].substr(last);
 			last = std::string::npos;
 		}
 	   }
