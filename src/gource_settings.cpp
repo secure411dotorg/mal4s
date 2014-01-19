@@ -93,7 +93,8 @@ void GourceSettings::help(bool extended_help) {
 
     printf("  --wrap-max-lines LINES		Max number of lines a hover line can wrap before truncating\n");
     printf("  --truncate-hover-lines		Do not wrap hover lines by default\n");
-    printf("  --wrap-hover-lines		Wrap hover lines by default\n\n");
+    printf("  --wrap-hover-lines		Wrap hover lines by default\n");
+    printf("  --hover-line-length CHARS		Max number of characters on a hover line.\n\n");
 
     printf("  -o, --output-ppm-stream FILE	Output PPM stream to a file ('-' for STDOUT)\n");
     printf("  -r, --output-framerate  FPS	Framerate of output (25,30,60)\n\n");
@@ -236,6 +237,7 @@ GourceSettings::GourceSettings() {
     arg_types["truncate-hover-lines"] = "bool";
     arg_types["wrap-hover-lines"]   = "bool";
     arg_types["wrap-max-lines"]     = "int";
+    arg_types["hover-line-length"]  = "int";
 
     arg_types["disable-auto-rotate"] = "bool";
     arg_types["disable-auto-skip"]  = "bool";
@@ -864,6 +866,12 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
     if(gource_settings->getBool("wrap-hover-lines")) {
         wrap_truncate = "wrap";
+    }
+
+    if((entry = gource_settings->getEntry("hover-line-length")) != 0) {
+        if(!entry->hasValue()) conffile.entryException(entry, "specify max hover line length");
+
+    	wrap_truncate_chars = entry->getInt();
     }
 
     if((entry = gource_settings->getEntry("wrap-max-lines")) != 0) {

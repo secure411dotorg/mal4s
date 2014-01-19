@@ -2583,7 +2583,7 @@ Branching field = ${bNUM}
 	   //wrap or truncate previous line as needed
 	   if(it > 0 && parsedHoverText[vector_it - 1].size() > wrap_truncate_chars) {
 		if(wrap_truncate == "truncate") {
-		    parsedHoverText[vector_it - 1] = parsedHoverText[vector_it - 1].substr(0, wrap_truncate_chars - 1);
+		    parsedHoverText[vector_it - 1] = parsedHoverText[vector_it - 1].substr(0, wrap_truncate_chars);
 		} else {
 		    for(int wrap_lines = 0; wrap_lines < wrap_max_lines; wrap_lines++) {
 			//When wrap_lines reaches wrap_max_lines truncate if larger than wrap_truncate_chars
