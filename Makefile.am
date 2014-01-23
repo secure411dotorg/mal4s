@@ -49,7 +49,7 @@ mal4s_SOURCES = \
 
 AM_CPPFLAGS = -DSDLAPP_RESOURCE_DIR=\"$(pkgdatadir)\"
 
-dist_pkgdata_DATA = data/beam.png data/bloom.tga data/bloom_alpha.tga data/file.png data/user.png data/gource.style data/f5.wav data/f7.wav data/f9.wav data/copy-click.wav data/dissectcyber.png data/newns.conf data/httpm.conf data/dnsm.conf data/sample--newns.mal4s data/apwg.conf
+dist_pkgdata_DATA = data/beam.png data/bloom.tga data/bloom_alpha.tga data/file.png data/user.png data/gource.style data/f5.wav data/f7.wav data/f9.wav data/copy-click.wav data/dissectcyber.png data/newns.conf data/httpm.conf data/dnsm.conf data/sample--newns.mal4s data/sample--newns.captions data/apwg.conf
 
 shadersdir = $(pkgdatadir)/shaders
 dist_shaders_DATA = data/shaders/shadow.vert data/shaders/shadow.frag data/shaders/bloom.vert data/shaders/bloom.frag data/shaders/text.vert data/shaders/text.frag

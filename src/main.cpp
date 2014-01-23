@@ -29,12 +29,18 @@ int main(int argc, char *argv[]) {
     ConfFile textConf;
     std::vector<std::string> files;
     std::string textConfFile;
-    std::string captionFile;
     std::string demoFile = texturemanager.getDir() + "sample--newns.mal4s";
-    int demoindex = 2;
-    char* demo[2];
+    //captionFile will be re-used if a file name is specified at the command prompt
+    std::string captionFile = texturemanager.getDir() + "sample--newns.captions";
+    std::string captionArg = "--caption-file";
+    bool isDemo = false;
+    int replacementArgc = argc;
+    int demoindex = 4;
+    char* demo[demoindex];
     demo[0] = argv[0];
-    demo[1] = strdup(demoFile.c_str());
+    demo[1] = strdup(captionArg.c_str());
+    demo[2] = strdup(captionFile.c_str());
+    demo[3] = strdup(demoFile.c_str());
 
     //convert args to a conf file
     //read the conf file
@@ -42,6 +48,7 @@ int main(int argc, char *argv[]) {
     try {
         if(argc == 1) {
 		printf("No arguments supplied, using sample file: %s.\n", demoFile.c_str());
+		isDemo = true;
 		gGourceSettings.parseArgs(demoindex, demo, conf, &files);
 	} else {
 	        gGourceSettings.parseArgs(argc, argv, conf, &files);
@@ -82,25 +89,53 @@ int main(int argc, char *argv[]) {
 		if(ext_marker != std::string::npos) {
 			captionFile = files[0].substr(0, ext_marker + 1) + "captions";
 			if(boost::filesystem::exists(captionFile.c_str())) {
-				gGourceSettings.caption_file = captionFile;
-				printf("Using captions from: %s\n", gGourceSettings.caption_file.c_str());
-			}
+				printf("Using captions from: %s\n", captionFile.c_str());
+				replacementArgc += 2;
+			} else captionFile.clear();
 		}
 	}
+
+    	char* replacementArgv[replacementArgc];
+	int replacementIt = 0;
+	for(int it = 0; it < replacementArgc; it++) {
+		if(it == 0 && replacementArgc == argc) {
+			replacementArgv[0] = argv[0];
+			replacementIt = 1;
+		} else if(it == 0) {
+			//printf("\ncaptionFile = %s\n\n", captionFile.c_str());
+			replacementArgv[0] = argv[0];
+			replacementArgv[1] = strdup(captionArg.c_str());
+			replacementArgv[2] = strdup(captionFile.c_str());
+			replacementIt = 3;
+		} else {
+			replacementArgv[replacementIt] = argv[it];
+			replacementIt++;
+		}
+	}
+	if(!isDemo) {
+		files.clear();
+		conf.clear();
+		gGourceSettings.caption_file = captionFile;
+		gGourceSettings.parseArgs(replacementArgc, replacementArgv, conf, &files);
+	}
+
 	if(!gGourceSettings.load_text_config.empty()) textConfFile = gGourceSettings.load_text_config;
 
 	//apply text formatting
 	if(!textConfFile.empty()) {
 		fprintf(stdout, "Using text config from: %s.\n", textConfFile.c_str());
 		textConf.load(textConfFile);
-		gGourceSettings.parseArgs(argc, argv, textConf);
+		if(isDemo) {
+			gGourceSettings.parseArgs(demoindex, demo, textConf);
+		} else gGourceSettings.parseArgs(replacementArgc, replacementArgv, textConf);
+		
 	}
 
 	//Test if dissect.conf exists in the working directory and make it load as the default config file.
 	if(gGourceSettings.load_config.empty() && boost::filesystem::exists("dissect.conf")) {
 		gGourceSettings.load_config = "dissect.conf";
 	}
-
+	
         if(gGourceSettings.load_config.empty() && !files.empty()) {
             //see if file looks like a config file
             for(std::vector<std::string>::iterator fit = files.begin(); fit != files.end(); fit++) {
@@ -142,12 +177,14 @@ int main(int argc, char *argv[]) {
 
         //load config
         if(!gGourceSettings.load_config.empty()) {
-            conf.clear();
-            conf.load(gGourceSettings.load_config);
+		conf.clear();
+		conf.load(gGourceSettings.load_config);
 
 
-            //apply args to loaded conf file
-            gGourceSettings.parseArgs(argc, argv, conf);
+                //apply args to loaded conf file
+		if(isDemo) {
+			gGourceSettings.parseArgs(demoindex, demo, textConf);
+		} else gGourceSettings.parseArgs(replacementArgc, replacementArgv, textConf);
         }
 
         //set path
@@ -168,6 +205,7 @@ int main(int argc, char *argv[]) {
         //apply the config / see if its valid
         gGourceSettings.importDisplaySettings(conf);
         gGourceSettings.importGourceSettings(conf);
+	printf("caption_file = %s\n", gGourceSettings.caption_file.c_str());
 
 	if(!textConfFile.empty()) {
 	        gGourceSettings.importTextSettings(textConf);
