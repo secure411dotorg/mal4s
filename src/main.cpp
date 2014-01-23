@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
     	char* replacementArgv[replacementArgc];
 	int replacementIt;
 	for(int it = 0; it < replacementArgc; it++) {
-		if(it == 0 && replacmentArgc > argc) {
+		if(it == 0 && replacementArgc > argc) {
 			replacementArgv[0] = argv[0];
 			replacementArgv[1] = strdup(captionArg.c_str());
 			replacementArgv[2] = strdup(captionFile.c_str());
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
 			replacementIt = 1;
 		} else {
 			replacementArgv[replacementIt] = argv[it];
-			replacementIt++
+			replacementIt++;
 		}
 	}
 			
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
                 //apply args to loaded conf file
 		if(isDemo) {
 			gGourceSettings.parseArgs(demoindex, demo, textConf);
-		} else gGourceSettings.parseArgs(replacementArgc, replacmentArgv, textConf);
+		} else gGourceSettings.parseArgs(replacementArgc, replacementArgv, textConf);
         }
 
         //set path
