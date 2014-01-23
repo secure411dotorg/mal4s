@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     std::string captionFile = texturemanager.getDir() + "sample--newns.captions";
     std::string captionArg = "--caption-file";
     bool isDemo = false;
-    int replacementArgc;
+    int replacementArgc = argc;
     int demoindex = 4;
     char* demo[demoindex];
     demo[0] = argv[0];
@@ -84,12 +84,12 @@ int main(int argc, char *argv[]) {
 	}
 
 	//Automatic captions file selection
-	if(!files.empty() && gGourceSettings.caption_file.empty() && ! isDemo) {
+	if(!files.empty() && gGourceSettings.caption_file.empty() && !isDemo) {
 		size_t ext_marker = files[0].find_last_of(".");
 		if(ext_marker != std::string::npos) {
 			captionFile = files[0].substr(0, ext_marker + 1) + "captions";
 			if(boost::filesystem::exists(captionFile.c_str())) {
-				printf("Using captions from: %s\n", gGourceSettings.caption_file.c_str());
+				printf("Using captions from: %s\n", captionFile.c_str());
 				replacementArgc += 2;
 			} else captionFile.clear();
 		}
@@ -98,14 +98,14 @@ int main(int argc, char *argv[]) {
     	char* replacementArgv[replacementArgc];
 	int replacementIt;
 	for(int it = 0; it < replacementArgc; it++) {
-		if(it == 0 && replacementArgc > argc) {
+		if(it == 0 && replacementArgc == argc) {
+			replacementArgv[0] = argv[0];
+			replacementIt = 1;
+		} else if(it == 0) {
 			replacementArgv[0] = argv[0];
 			replacementArgv[1] = strdup(captionArg.c_str());
 			replacementArgv[2] = strdup(captionFile.c_str());
 			replacementIt = 3;
-		} else if(it == 0) {
-			replacementArgv[0] = argv[0];
-			replacementIt = 1;
 		} else {
 			replacementArgv[replacementIt] = argv[it];
 			replacementIt++;
