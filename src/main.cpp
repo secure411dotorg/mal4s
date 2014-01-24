@@ -127,35 +127,6 @@ int main(int argc, char *argv[]) {
 		gGourceSettings.load_config = "dissect.conf";
 	}
 	
-        if(gGourceSettings.load_config.empty() && !files.empty()) {
-            //see if file looks like a config file
-            for(std::vector<std::string>::iterator fit = files.begin(); fit != files.end(); fit++) {
-                std::string file = *fit;
-
-                int file_length = file.size();
-
-                if(   (file.rfind(".conf") == (file_length-5) && file_length > 5)
-                   || (file.rfind(".cfg")  == (file_length-4) && file_length > 4)
-                   || (file.rfind(".ini")  == (file_length-4) && file_length > 4) ) {
-
-                    bool is_conf=true;
-
-                    try {
-                        ConfFile conftest;
-                        conftest.load(file);
-                    } catch(ConfFileException& exception) {
-                        is_conf = false;
-                    }
-
-                    if(is_conf) {
-                        gGourceSettings.load_config = file;
-                        files.erase(fit);
-                        break;
-                    }
-                }
-            }
-        }
-
         //set log level
         Logger::getDefault()->setLevel(gGourceSettings.log_level);
 
@@ -193,11 +164,12 @@ int main(int argc, char *argv[]) {
             }
         }
 
-	if(!isDemo) {
-		files.clear();
+	files.clear();
+	if(isDemo) {
+		gGourceSettings.parseArgs(demoindex, demo, conf, &files);
+	} else {
 		gGourceSettings.parseArgs(replacementArgc, replacementArgv, conf, &files);
 	}
-
 
         //apply the config / see if its valid
         gGourceSettings.importDisplaySettings(conf);
