@@ -89,7 +89,6 @@ int main(int argc, char *argv[]) {
 		if(ext_marker != std::string::npos) {
 			captionFile = files[0].substr(0, ext_marker + 1) + "captions";
 			if(boost::filesystem::exists(captionFile.c_str())) {
-				printf("Using captions from: %s\n", captionFile.c_str());
 				replacementArgc += 2;
 			} else captionFile.clear();
 		}
@@ -102,7 +101,6 @@ int main(int argc, char *argv[]) {
 			replacementArgv[0] = argv[0];
 			replacementIt = 1;
 		} else if(it == 0) {
-			//printf("\ncaptionFile = %s\n\n", captionFile.c_str());
 			replacementArgv[0] = argv[0];
 			replacementArgv[1] = strdup(captionArg.c_str());
 			replacementArgv[2] = strdup(captionFile.c_str());
@@ -112,13 +110,6 @@ int main(int argc, char *argv[]) {
 			replacementIt++;
 		}
 	}
-	if(!isDemo) {
-		files.clear();
-		conf.clear();
-		gGourceSettings.caption_file = captionFile;
-		gGourceSettings.parseArgs(replacementArgc, replacementArgv, conf, &files);
-	}
-
 	if(!gGourceSettings.load_text_config.empty()) textConfFile = gGourceSettings.load_text_config;
 
 	//apply text formatting
@@ -202,10 +193,16 @@ int main(int argc, char *argv[]) {
             }
         }
 
+	if(!isDemo) {
+		files.clear();
+		gGourceSettings.parseArgs(replacementArgc, replacementArgv, conf, &files);
+	}
+
+
         //apply the config / see if its valid
         gGourceSettings.importDisplaySettings(conf);
         gGourceSettings.importGourceSettings(conf);
-	printf("caption_file = %s\n", gGourceSettings.caption_file.c_str());
+	if(!gGourceSettings.caption_file.empty()) printf("Using captions from: %s\n", gGourceSettings.caption_file.c_str());
 
 	if(!textConfFile.empty()) {
 	        gGourceSettings.importTextSettings(textConf);
