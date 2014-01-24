@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	//Automatic captions file selection
-	if(!files.empty() && gGourceSettings.caption_file.empty() && !isDemo) {
+	if(!files.empty() && gGourceSettings.caption_file.empty()) {
 		size_t ext_marker = files[0].find_last_of(".");
 		if(ext_marker != std::string::npos) {
 			captionFile = files[0].substr(0, ext_marker + 1) + "captions";
@@ -96,12 +96,13 @@ int main(int argc, char *argv[]) {
 	}
 
     	char* replacementArgv[replacementArgc];
-	int replacementIt;
+	int replacementIt = 0;
 	for(int it = 0; it < replacementArgc; it++) {
 		if(it == 0 && replacementArgc == argc) {
 			replacementArgv[0] = argv[0];
 			replacementIt = 1;
 		} else if(it == 0) {
+			//printf("\ncaptionFile = %s\n\n", captionFile.c_str());
 			replacementArgv[0] = argv[0];
 			replacementArgv[1] = strdup(captionArg.c_str());
 			replacementArgv[2] = strdup(captionFile.c_str());
@@ -111,7 +112,13 @@ int main(int argc, char *argv[]) {
 			replacementIt++;
 		}
 	}
-			
+	if(!isDemo) {
+		files.clear();
+		conf.clear();
+		gGourceSettings.caption_file = captionFile;
+		gGourceSettings.parseArgs(replacementArgc, replacementArgv, conf, &files);
+	}
+
 	if(!gGourceSettings.load_text_config.empty()) textConfFile = gGourceSettings.load_text_config;
 
 	//apply text formatting
@@ -128,7 +135,7 @@ int main(int argc, char *argv[]) {
 	if(gGourceSettings.load_config.empty() && boost::filesystem::exists("dissect.conf")) {
 		gGourceSettings.load_config = "dissect.conf";
 	}
-
+	
         if(gGourceSettings.load_config.empty() && !files.empty()) {
             //see if file looks like a config file
             for(std::vector<std::string>::iterator fit = files.begin(); fit != files.end(); fit++) {
@@ -198,6 +205,7 @@ int main(int argc, char *argv[]) {
         //apply the config / see if its valid
         gGourceSettings.importDisplaySettings(conf);
         gGourceSettings.importGourceSettings(conf);
+	printf("caption_file = %s\n", gGourceSettings.caption_file.c_str());
 
 	if(!textConfFile.empty()) {
 	        gGourceSettings.importTextSettings(textConf);
