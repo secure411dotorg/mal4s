@@ -383,7 +383,9 @@ void GourceSettings::setGourceDefaults() {
     bloom_intensity  = 0.025f;
 
     background_colour = vec3(0.1f, 0.1f, 0.1f);
-    background_image  = texturemanager.getDir() + "dissectcyber.png";
+
+    //relocated default background_image to the top of importGourceSettings to fix Windows build.
+    background_image  = "";
 
     title             = "";
 
@@ -754,6 +756,11 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
 void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gource_settings) {
 
     setGourceDefaults();
+
+    //This default can not be set for windows builds in setGourceDefaults with the texturemanger.getDir() function
+    if(background_image.empty()) {
+	    background_image  = texturemanager.getDir() + "dissectcyber.png";
+    }
 
     if(gource_settings == 0) gource_settings = conffile.getSection(default_section_name);
 
