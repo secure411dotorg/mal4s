@@ -24,7 +24,7 @@
  
 RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
  
-InstallDir "\${APPNAME}"
+InstallDir "C:\${APPNAME}"
  
 # rtf or txt file - remember if it is txt, it must be in the DOS text format (\r\n)
 LicenseData "license.rtf"
@@ -80,6 +80,7 @@ section "install"
 	file "smpeg2.dll"
 	file "zlib1.dll"
 	# data directory
+	setOutPath "$INSTDIR\data"
 	file "data\always-open-chrome.png"
 	file "data\apwg.conf"
 	file "data\beam.png"
@@ -99,9 +100,11 @@ section "install"
 	file "data\sample--newns.mal4s"
 	file "data\user.png"
 	# data\fonts
+	setOutPath "$INSTDIR\data\fonts"
 	file "data\fonts\FreeSans.ttf"
 	file "data\fonts\README"
 	# data\shaders
+	setOutPath "$INSTDIR\data\shaders"
 	file "data\shaders\bloom.frag"
 	file "data\shaders\bloom.vert"
 	file "data\shaders\shadow.frag"
