@@ -34,7 +34,7 @@ Icon "mal4s.ico"
 outFile "Mal4s-${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}.exe"
  
 !include LogicLib.nsh
- 
+
 # Just three pages - license agreement, install location, and installation
 page license
 page directory
@@ -56,6 +56,7 @@ function .onInit
 functionEnd
  
 section "install"
+	
 	# Files for the install directory - to build the installer, these should be in the same directory as the install script (this file)
 	setOutPath $INSTDIR
 	# Files added here should be removed by the uninstaller (see section "uninstall")
@@ -112,10 +113,17 @@ section "install"
 	file "data\shaders\text.frag"
 	file "data\shaders\text.vert"
 	# Add any other files for the install directory (license files, app data, etc) here
- 
+
+	# Register extension
+	WriteRegStr HKLM "Software\Classes\.mal4s" "" "Mal4s_mal4s"
+	WriteRegStr HKLM "Software\Classes\.mal4s\OpenWithProgIds" "txtfile" ""
+	WriteRegStr HKLM "Software\Classes\Mal4s_mal4s" "" "Mal4s file"
+	WriteRegStr HKLM "Software\Classes\Mal4s_mal4s\DefaultIcon" "" "$INSTDIR\mal4s.ico"
+	WriteRegStr HKLM "Software\Classes\Mal4s_mal4s\shell\Open\Command" "" '"$INSTDIR\mal4s.exe" "%1"' 
+
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\uninstall.exe"
- 
+
 	# Start Menu
 	createDirectory "$SMPROGRAMS\${COMPANYNAME}"
 	createShortCut "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk" "$INSTDIR\mal4s.exe" "" "$INSTDIR\mal4s.ico"
@@ -214,8 +222,16 @@ section "uninstall"
 	delete $INSTDIR\uninstall.exe
  
 	# Try to remove the install directory - this will only happen if it is empty
-	rmDir $INSTDIR
+	rmDir "$INSTDIR\data\shaders"
+	rmDir "$INSTDIR\data\fonts"
+	rmDir "$INSTDIR\data"
+	rmDir "$INSTDIR"
  
+	# Remove File assosciations
+	DeleteRegKey HKLM "Software\Classes\.mal4s"
+	DeleteRegKey HKLM "Software\Classes\Mal4s_mal4s"
+
 	# Remove uninstaller information from the registry
 	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}"
 sectionEnd
+
