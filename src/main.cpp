@@ -29,6 +29,9 @@ int main(int argc, char *argv[]) {
     ConfFile textConf;
     std::vector<std::string> files;
     std::string textConfFile;
+    //Default path to search for the main config file in when no config is specified at the command line
+    std::string defaultMainConfig = texturemanager.getDir() + "mal4s.conf";
+
     std::string demoFile = texturemanager.getDir() + "sample--newns.mal4s";
     //captionFile will be re-used if a file name is specified at the command prompt
     std::string captionFile = texturemanager.getDir() + "sample--newns.captions";
@@ -122,9 +125,9 @@ int main(int argc, char *argv[]) {
 		
 	}
 
-	//Test if dissect.conf exists in the working directory and make it load as the default config file.
-	if(gGourceSettings.load_config.empty() && boost::filesystem::exists("dissect.conf")) {
-		gGourceSettings.load_config = "dissect.conf";
+	//Test if defaultMainConfig file exists and no other config was specified at the command line
+	if(gGourceSettings.load_config.empty() && boost::filesystem::exists(defaultMainConfig)) {
+		gGourceSettings.load_config = defaultMainConfig;
 	}
 	
         //set log level

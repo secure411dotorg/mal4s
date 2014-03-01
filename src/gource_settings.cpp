@@ -56,6 +56,9 @@ void GourceSettings::help(bool extended_help) {
     printf("      --multi-sampling		Enable multi-sampling\n");
     printf("      --no-vsync			Disable vsync\n\n");
 
+    printf("     --enable-exec                  Enable command execution (includes browser)\n");
+    printf("     --enable-browser               Enable browser command only.\n\n");
+
     printf("      --disable-exec		Disable command execution (excludes browser).\n");
     printf("      --disable-browser		Disable browser and URL opening.\n\n");
 
@@ -209,6 +212,8 @@ GourceSettings::GourceSettings() {
     conf_sections["text-config-dir"] = "command-line";
 
     //boolean args
+    arg_types["enable-exec"]        = "bool";
+    arg_types["enable-browser"]     = "bool";
     arg_types["help"]               = "bool";
     arg_types["extended-help"]      = "bool";
     arg_types["stop-on-idle"]       = "bool";
@@ -339,8 +344,8 @@ void GourceSettings::setGourceDefaults() {
     hide_mouse     = false;
     hide_root      = false;
 
-    disable_exec   = false;
-    disable_browser = false;
+    disable_exec   = true;
+    disable_browser = true;
 
     start_timestamp = 0;
     start_position = 0.0f;
@@ -885,6 +890,15 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         if(!entry->hasValue()) conffile.entryException(entry, "specify max number of lines to wrap on hover");
 
         wrap_max_lines = entry->getInt();
+    }
+
+    if(gource_settings->getBool("enable-exec")) {
+	disable_browser=false;
+	disable_exec=false;
+    }
+
+    if(gource_settings->getBool("enable-browser")) {
+	disable_browser=false;
     }
 
     if(gource_settings->getBool("disable-browser")) {
