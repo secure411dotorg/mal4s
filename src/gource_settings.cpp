@@ -50,114 +50,114 @@ void GourceSettings::help(bool extended_help) {
 
     printf("Usage: mal4s [OPTIONS] [LOGFILE]\n");
     printf("\nOptions:\n");
-    printf("  -h, --help			Help\n\n");
-    printf("  -WIDTHxHEIGHT, --viewport		Set viewport size\n");
-    printf("  -f, --fullscreen			Fullscreen\n");
-    printf("      --multi-sampling		Enable multi-sampling\n");
-    printf("      --no-vsync			Disable vsync\n\n");
+    printf("  -h, --help                          Help\n\n");
+    printf("  -WIDTHxHEIGHT, --viewport           Set viewport size\n");
+    printf("  -f, --fullscreen                    Fullscreen\n");
+    printf("      --multi-sampling                Enable multi-sampling\n");
+    printf("      --no-vsync                      Disable vsync\n\n");
 
-    printf("     --enable-exec                  Enable command execution (includes browser)\n");
-    printf("     --enable-browser               Enable browser command only.\n\n");
+    printf("      --enable-exec                   Enable command execution (includes browser)\n");
+    printf("      --enable-browser                Enable browser command only.\n\n");
 
-    printf("      --disable-exec		Disable command execution (excludes browser).\n");
-    printf("      --disable-browser		Disable browser and URL opening.\n\n");
+    printf("      --disable-exec                  Disable command execution (excludes browser).\n");
+    printf("      --disable-browser               Disable browser and URL opening.\n\n");
 
-    printf("      --start-date YYYY-MM-DD	Date to start from\n");
-    printf("  -p, --start-position POSITION	Begin at some position (0.0-1.0 or 'random')\n");
-    printf("      --stop-position  POSITION	Stop at some position\n");
-    printf("  -t, --stop-at-time SECONDS	Stop after a specified number of seconds\n");
-    printf("      --stop-at-end			Stop at end of the log\n");
-    printf("      --dont-stop			Keep running after the end of the log\n");
-    printf("      --loop			Loop at the end of the log\n\n");
+    printf("      --start-date YYYY-MM-DD         Date to start from\n");
+    printf("  -p, --start-position POSITION       Begin at some position (0.0-1.0 or 'random')\n");
+    printf("      --stop-position  POSITION       Stop at some position\n");
+    printf("  -t, --stop-at-time SECONDS          Stop after a specified number of seconds\n");
+    printf("      --stop-at-end                   Stop at end of the log\n");
+    printf("      --dont-stop                     Keep running after the end of the log\n");
+    printf("      --loop                          Loop at the end of the log\n\n");
 
-    printf("  -a, --auto-skip-seconds SECONDS	Auto skip to next entry if nothing happens\n");
-    printf("					for a number of seconds (default: 3)\n");
-    printf("      --disable-auto-skip		Disable auto skip\n");
-    printf("  -s, --seconds-per-day SECONDS	Speed in seconds per day (default: 10)\n");
-    printf("      --realtime			Realtime playback speed\n");
-    printf("  -c, --time-scale SCALE		Change simulation time scale (default: 1.0)\n");
-    printf("  -e, --elasticity FLOAT		Elasticity of nodes (default: 0.0)\n\n");
+    printf("  -a, --auto-skip-seconds SECONDS     Auto skip to next entry if nothing happens\n");
+    printf("                                      for a number of seconds (default: 3)\n");
+    printf("      --disable-auto-skip             Disable auto skip\n");
+    printf("  -s, --seconds-per-day SECONDS       Speed in seconds per day (default: 10)\n");
+    printf("      --realtime                      Realtime playback speed\n");
+    printf("  -c, --time-scale SCALE              Change simulation time scale (default: 1.0)\n");
+    printf("  -e, --elasticity FLOAT              Elasticity of nodes (default: 0.0)\n\n");
 
-    printf("  --key-off				Hide key\n\n");
+    printf("      --key-off                       Hide key\n\n");
 
-    printf("  --plotter-image-dir DIRECTORY	Dir containing images to use as avatars\n");
-    printf("  --default-plotter-image IMAGE	Default plotter image file\n");
-    printf("  --colour-images			Colourize plotter images\n\n");
+    printf("      --plotter-image-dir DIRECTORY   Dir containing images to use as avatars\n");
+    printf("      --default-plotter-image IMAGE	  Default plotter image file\n");
+    printf("      --colour-images                 Colourize plotter images\n\n");
 
-    printf("  -i, --host-idle-time SECONDS	Time hosts remain idle (default: 0)\n\n");
+    printf("  -i, --host-idle-time SECONDS        Time hosts remain idle (default: 0)\n\n");
 
-    printf("  --max-hosts NUMBER		Max number of hosts or 0 for no limit\n");
-    printf("  --max-host-lag SECONDS		Max time hosts of a commit can take to appear\n\n");
+    printf("      --max-hosts NUMBER              Max number of hosts or 0 for no limit\n");
+    printf("      --max-host-lag SECONDS          Max time hosts of a commit can take to appear\n\n");
 
-    printf("  --load-config CONF_FILE		Load a config file\n");
-    printf("  --load-text-config CONF_FILE	Load a text config file\n");
-    printf("  --text-config-dir DIRECTORY	Path to text configs (matched with file--TEXTCONF.mal4s)\n");
-    printf("  --save-config CONF_FILE		Save a config file with the current options\n\n");
+    printf("  -C, --load-config CONF_FILE         Load a main config file\n");
+    printf("  -T, --load-text-config CONF_FILE    Load a text config file\n");
+    printf("  -D, --text-config-dir DIRECTORY     Path to text configs (matched with file--TEXTCONF.mal4s)\n");
+    printf("      --save-config CONF_FILE         Save a config file with the current options\n\n");
 
-    printf("  --wrap-max-lines LINES		Max number of lines a hover line can wrap before truncating\n");
-    printf("  --truncate-hover-lines		Do not wrap hover lines by default\n");
-    printf("  --wrap-hover-lines		Wrap hover lines by default\n");
-    printf("  --hover-line-length CHARS		Max number of characters on a hover line.\n\n");
+    printf("      --wrap-max-lines LINES          Max number of lines a hover line can wrap before truncating\n");
+    printf("      --truncate-hover-lines          Do not wrap hover lines by default\n");
+    printf("      --wrap-hover-lines              Wrap hover lines by default\n");
+    printf("      --hover-line-length CHARS       Max number of characters on a hover line.\n\n");
 
-    printf("  -o, --output-ppm-stream FILE	Output PPM stream to a file ('-' for STDOUT)\n");
-    printf("  -r, --output-framerate  FPS	Framerate of output (25,30,60)\n\n");
+    printf("  -o, --output-ppm-stream FILE        Output PPM stream to a file ('-' for STDOUT)\n");
+    printf("  -r, --output-framerate  FPS         Framerate of output (25,30,60)\n\n");
 
 if(extended_help) {
     printf("Extended Options:\n\n");
 
-    printf("  --output-custom-log FILE		Output a custom format log file ('-' for STDOUT).\n\n");
+    printf("      --output-custom-log FILE        Output a custom format log file ('-' for STDOUT).\n\n");
 
-    printf("  -b, --background-colour FFFFFF	Background colour in hex\n");
-    printf("      --background-image IMAGE	Set a background image\n\n");
+    printf("  -b, --background-colour FFFFFF      Background colour in hex\n");
+    printf("      --background-image IMAGE        Set a background image\n\n");
 
-    printf("  --bloom-multiplier		Adjust the amount of bloom (default: 1.0)\n");
-    printf("  --bloom-intensity			Adjust the intensity of the bloom (default: 0.75)\n\n");
+    printf("      --bloom-multiplier              Adjust the amount of bloom (default: 1.0)\n");
+    printf("      --bloom-intensity               Adjust the intensity of the bloom (default: 0.75)\n\n");
 
-    printf("  --camera-mode MODE		Camera mode (overview,track)\n");
-    printf("  --crop AXIS			Crop view on an axis (vertical,horizontal)\n");
-    printf("  --padding FLOAT			Camera view padding (default: 1.1)\n\n");
+    printf("      --camera-mode MODE              Camera mode (overview,track)\n");
+    printf("      --crop AXIS                     Crop view on an axis (vertical,horizontal)\n");
+    printf("      --padding FLOAT                 Camera view padding (default: 1.1)\n\n");
 
-    printf("  --disable-auto-rotate		Disable automatic camera rotation\n\n");
+    printf("      --disable-auto-rotate           Disable automatic camera rotation\n\n");
 
-    printf("  --date-format FORMAT		Specify display date string (strftime format)\n\n");
+    printf("      --date-format FORMAT            Specify display date string (strftime format)\n\n");
 
-    printf("  --font-size SIZE			Font size used by date and title\n");
-    printf("  --font-colour FFFFFF		Font colour used by date and title in hex\n\n");
+    printf("      --font-size SIZE                Font size used by date and title\n");
+    printf("      --font-colour FFFFFF            Font colour used by date and title in hex\n\n");
 
-    printf("  --show-tld-only			Show tld only\n\n");
+    printf("      --show-tld-only                 Show tld only\n\n");
 
-    printf("  --hide DISPLAY_ELEMENT		bloom,date,branchnames,hostss,hostnames,mouse,progress,\n");
-    printf("					root,tree,plotters,plotternames\n\n");
+    printf("      --hide DISPLAY_ELEMENT          bloom,date,branchnames,hostss,hostnames,mouse,progress,\n");
+    printf("                                      root,tree,plotters,plotternames\n\n");
 
-    printf("  --logo IMAGE			Logo to display in the foreground\n");
-    printf("  --logo-offset XxY			Offset position of the logo\n\n");
+    printf("      --logo IMAGE                    Logo to display in the foreground\n");
+    printf("      --logo-offset XxY               Offset position of the logo\n\n");
 
-    printf("  --title TITLE			Set a title\n\n");
+    printf("      --title TITLE                   Set a title\n\n");
 
-    printf("  --transparent			Make the background transparent\n\n");
+    printf("      --transparent                   Make the background transparent\n\n");
 
-    printf("  --plotter-filter REGEX		Ignore plotternames matching this regex\n");
-    printf("  --host-filter REGEX		Ignore hosts matching this regex\n\n");
+    printf("      --plotter-filter REGEX          Ignore plotternames matching this regex\n");
+    printf("      --host-filter REGEX             Ignore hosts matching this regex\n\n");
 
-    printf("  --plotter-friction SECONDS	Change the rate plotters slow down (default: 0.67)\n");
-    printf("  --plotter-scale SCALE		Change scale of plotters (default: 1.0)\n");
-    printf("  --max-plotter-speed UNITS		Speed plotters can travel per second (default: 500)\n\n");
+    printf("      --plotter-friction SECONDS      Change the rate plotters slow down (default: 0.67)\n");
+    printf("      --plotter-scale SCALE           Change scale of plotters (default: 1.0)\n");
+    printf("      --max-plotter-speed UNITS       Speed plotters can travel per second (default: 500)\n\n");
 
-    printf("  --follow-plotter PLOTTER		Camera will automatically follow this plotter\n");
-    printf("  --highlight-branches		Highlight the names of all branches\n");
-    printf("  --highlight-plotter PLOTTER	Highlight the names of a particular plotter\n");
-    printf("  --highlight-plotters		Highlight the names of all plotters\n\n");
-    printf("  --highlight-colour		Font colour for highlighted plotters in hex.\n");
-    printf("  --selection-colour		Font colour for selected plotters and hosts.\n");
-    printf("  --branch-colour			Font colour for branches.\n\n");
+    printf("      --follow-plotter PLOTTER        Camera will automatically follow this plotter\n");
+    printf("      --highlight-branches            Highlight the names of all branches\n");
+    printf("      --highlight-plotter PLOTTER     Highlight the names of a particular plotter\n");
+    printf("      --highlight-plotters            Highlight the names of all plotters\n\n");
+    printf("      --highlight-colour              Font colour for highlighted plotters in hex.\n");
+    printf("      --selection-colour              Font colour for selected plotters and hosts.\n");
+    printf("      --branch-colour                 Font colour for branches.\n\n");
 
-    printf("  --caption-file FILE		Caption file\n");
-    printf("  --caption-size SIZE		Caption font size\n");
-    printf("  --caption-colour FFFFFF		Caption colour in hex\n");
-    printf("  --caption-duration SECONDS	Caption duration (default: 10.0)\n");
-    printf("  --caption-offset X		Caption horizontal offset\n\n");
+    printf("      --caption-file FILE             Caption file\n");
+    printf("      --caption-size SIZE             Caption font size\n");
+    printf("      --caption-colour FFFFFF         Caption colour in hex\n");
+    printf("      --caption-duration SECONDS      Caption duration (default: 10.0)\n");
+    printf("      --caption-offset X              Caption horizontal offset\n\n");
 
-    printf("  --hash-seed SEED			Change the seed of hash function.\n\n");
+    printf("      --hash-seed SEED                Change the seed of hash function.\n\n");
 
 }
 
@@ -201,6 +201,9 @@ GourceSettings::GourceSettings() {
     arg_aliases["disable-bloom"]    = "hide-bloom";
     arg_aliases["disable-progress"] = "hide-progress";
     arg_aliases["highlight-all-plotters"] = "highlight-plotters";
+    arg_aliases["C"]                = "load-config";
+    arg_aliases["T"]                = "load-text-config";
+    arg_aliases["D"]                = "text-config-dir";
 
     //command line only options
     conf_sections["help"]           = "command-line";
@@ -392,7 +395,7 @@ void GourceSettings::setGourceDefaults() {
     //relocated default background_image to the top of importGourceSettings to fix Windows build.
     background_image  = "";
 
-    title             = "";
+    title             = "Get tools and data at https://DissectCyber.com";
 
     font_size = 16;
     dir_colour       = vec3(1.0f);
