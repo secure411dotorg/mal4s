@@ -2979,10 +2979,22 @@ void Gource::draw(float t, float dt) {
 	}
 
         textbox.setColour(hoverFile->getColour());
-        textbox.setPos(mousepos, true);
-        textbox.draw();
-
-
+	if(gGourceSettings.hovertext_pos == "mouse") {
+        	textbox.setPos(mousepos, true);
+        	textbox.draw();
+	} else if(gGourceSettings.hovertext_pos == "upper-right") {
+        	textbox.setPos(vec2(display.width, 0.0f), true);
+        	textbox.draw();
+	} else if(gGourceSettings.hovertext_pos == "upper-left") {
+        	textbox.setPos(vec2(0.0f, 0.0f), true);
+        	textbox.draw();
+	} else if(gGourceSettings.hovertext_pos == "lower-right") {
+        	textbox.setPos(vec2(display.width, display.height), true);
+        	textbox.draw();
+	} else if(gGourceSettings.hovertext_pos == "lower-left") {
+        	textbox.setPos(vec2(0.0f, display.height), true);
+        	textbox.draw();
+	}
 
 
     } else if(hoverUser && hoverUser != selectedUser) {
@@ -2990,8 +3002,22 @@ void Gource::draw(float t, float dt) {
         textbox.setText(hoverUser->getName());
         textbox.setColour(hoverUser->getColour());
 
-        textbox.setPos(mousepos, true);
-        textbox.draw();
+	if(gGourceSettings.hovertext_pos == "mouse") {
+        	textbox.setPos(mousepos, true);
+        	textbox.draw();
+	} else if(gGourceSettings.hovertext_pos == "upper-right") {
+        	textbox.setPos(vec2(display.width, 0.0f), true);
+        	textbox.draw();
+	} else if(gGourceSettings.hovertext_pos == "upper-left") {
+        	textbox.setPos(vec2(0.0f, 0.0f), true);
+        	textbox.draw();
+	} else if(gGourceSettings.hovertext_pos == "lower-right") {
+        	textbox.setPos(vec2(display.width, display.height), true);
+        	textbox.draw();
+	} else if(gGourceSettings.hovertext_pos == "lower-left") {
+        	textbox.setPos(vec2(0.0f, display.height), true);
+        	textbox.draw();
+	}
     }
 
     //debug info

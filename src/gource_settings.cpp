@@ -97,7 +97,9 @@ void GourceSettings::help(bool extended_help) {
     printf("      --wrap-max-lines LINES          Max number of lines a hover line can wrap before truncating\n");
     printf("      --truncate-hover-lines          Do not wrap hover lines by default\n");
     printf("      --wrap-hover-lines              Wrap hover lines by default\n");
-    printf("      --hover-line-length CHARS       Max number of characters on a hover line.\n\n");
+    printf("      --hover-line-length CHARS       Max number of characters on a hover line.\n");
+    printf("      --hover-position POSITION       Hover text postion (default: mouse). Available options:\n");
+    printf("                                      upper-right, lower-right, upper-left, lower-left, mouse\n\n");
 
     printf("  -o, --output-ppm-stream FILE        Output PPM stream to a file ('-' for STDOUT)\n");
     printf("  -r, --output-framerate  FPS         Framerate of output (25,30,60)\n\n");
@@ -213,6 +215,7 @@ GourceSettings::GourceSettings() {
     conf_sections["save-config"]    = "command-line";
     conf_sections["log-level"]      = "command-line";
     conf_sections["text-config-dir"] = "command-line";
+    conf_sections["hover-position"]  = "text";
 
     //boolean args
     arg_types["enable-exec"]        = "bool";
@@ -246,6 +249,7 @@ GourceSettings::GourceSettings() {
     arg_types["wrap-hover-lines"]   = "bool";
     arg_types["wrap-max-lines"]     = "int";
     arg_types["hover-line-length"]  = "int";
+    arg_types["hover-position"]     = "string";
 
     arg_types["disable-auto-rotate"] = "bool";
     arg_types["disable-auto-skip"]  = "bool";
@@ -324,6 +328,7 @@ void GourceSettings::setTextDefaults() {
     keyWidth        = 90.0f;
     show_key        = true;
     hide_date       = false;
+    hovertext_pos   = "mouse";
 }
 void GourceSettings::setGourceDefaults() {
 
@@ -512,6 +517,19 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
     }
 
     ConfEntry* entry = 0;
+
+   if((entry = text_settings->getEntry("hover-position")) != 0) {
+		hovertext_pos = entry->getString();
+		if( hovertext_pos != "mouse"
+		 && hovertext_pos != "upper-left"
+		 && hovertext_pos != "upper-right"
+		 && hovertext_pos != "lower-left"
+		 && hovertext_pos != "lower-right" ) {
+			std::string unknown_hovertext_pos_option = std::string("unknown hover-position option ") + hovertext_pos;
+			conffile.entryException(entry, unknown_hovertext_pos_option);
+		}
+
+    }
 
    if((entry = text_settings->getEntry("f5-action")) != 0) {
 		f5_action = entry->getString();

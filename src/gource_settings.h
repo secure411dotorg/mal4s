@@ -18,7 +18,7 @@
 #ifndef GOURCE_SETTINGS_H
 #define GOURCE_SETTINGS_H
 
-#define GOURCE_VERSION "1.2.3"
+#define GOURCE_VERSION "1.2.4"
 
 #include "core/texture.h"
 #include "core/settings.h"
@@ -36,6 +36,7 @@ public:
     std::string f7_action;
     std::string f9_action;
     std::string mouseclick_action;
+    std::string hovertext_pos;
     std::string wrap_truncate;
     int wrap_truncate_chars;
     int wrap_max_lines;
