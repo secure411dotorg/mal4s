@@ -25,6 +25,7 @@
 
 #include "core/utf8/utf8.h"
 #include <time.h>
+#include <iostream>
 
 /*
 #include "formats/hg.h"
