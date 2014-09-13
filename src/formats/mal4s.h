@@ -19,6 +19,7 @@
 #define MAL4SLOG_H
 
 #include "commitlog.h"
+#include "../gource_settings.h"
 
 class Mal4sLog : public RCommitLog {
 protected:

@@ -246,6 +246,7 @@ class Gource : public SDLApp {
 
     void updateTime(time_t display_time);
 
+    void drawHoverImage(const std::string& imageName);
     void mousetrace(float dt);
 
     bool canSeek();

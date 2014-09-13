@@ -18,7 +18,7 @@
 #ifndef GOURCE_SETTINGS_H
 #define GOURCE_SETTINGS_H
 
-#define GOURCE_VERSION "1.2.4"
+#define GOURCE_VERSION "1.2.5"
 
 #include "core/texture.h"
 #include "core/settings.h"
@@ -37,9 +37,16 @@ public:
     std::string f9_action;
     std::string mouseclick_action;
     std::string hovertext_pos;
+    std::string hostimage_pos;
+    std::string hostimage_field;
     std::string wrap_truncate;
     int wrap_truncate_chars;
     int wrap_max_lines;
+
+    float hostimage_maxwidth;
+    float hostimage_maxheight;
+    bool hostimage_wIsPercent;
+    bool hostimage_hIsPercent;
 
     std::string textConfDir;
     std::vector<std::string> defaultHoverLines;
@@ -100,7 +107,9 @@ public:
     bool colour_user_images;
     std::string default_user_image;
     std::string user_image_dir;
+    std::string host_image_dir;
     std::map<std::string, std::string> user_image_map;
+    std::map<std::string, std::string> host_image_map;
 
     float camera_zoom_min;
     float camera_zoom_max;

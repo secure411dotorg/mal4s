@@ -37,7 +37,8 @@ public:
     vec3 colour;
     std::vector<std::string> displayData;
     std::string fileUser;
-    RCommitFile(const std::string& filename, const std::string& action, vec3 colour, const std::string& fileUser, const std::vector<std::string>& displayData);
+    std::string imageName;
+    RCommitFile(const std::string& filename, const std::string& action, vec3 colour, const std::string& fileUser, const std::string& imageName, const std::vector<std::string>& displayData);
 };
 
 class RCommit {
@@ -54,9 +55,11 @@ public:
     bool isValid();
 
     void addFile(const std::string& filename, const std::string& action, const std::string& fileUser);
+    void addFile(const std::string& filename, const std::string& action, const std::string& fileUser, const std::string& imageName);
     void addFile(const std::string& filename, const  std::string& action, const vec3& colour, const std::string& fileUser);
-    void addFile(const std::string& filename, const std::string& action, const std::string& fileUser, const std::vector<std::string>& displayData);
-    void addFile(const std::string& filename, const std::string& action, const vec3& colour, const std::string& fileUser, const std::vector<std::string>& displayData);
+    void addFile(const std::string& filename, const  std::string& action, const vec3& colour, const std::string& fileUser, const std::string& imageName);
+    void addFile(const std::string& filename, const std::string& action, const std::string& fileUser, const std::string& imageName, const std::vector<std::string>& displayData);
+    void addFile(const std::string& filename, const std::string& action, const vec3& colour, const std::string& fileUser, const std::string& imageName, const std::vector<std::string>& displayData);
 
     RCommit();
     void debug();

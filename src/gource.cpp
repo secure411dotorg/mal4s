@@ -1196,7 +1196,7 @@ RFile* Gource::addFile(const RCommitFile& cf) {
 
     int tagid = tag_seq++;
 
-    RFile* file = new RFile(cf.filename, cf.colour, vec2(0.0,0.0), tagid, cf.fileUser, cf.displayData);
+    RFile* file = new RFile(cf.filename, cf.colour, vec2(0.0,0.0), tagid, cf.fileUser, cf.imageName, cf.displayData);
 
     files[cf.filename] = file;
     tagfilemap[tagid]  = file;
@@ -2690,6 +2690,129 @@ Branching field = ${bNUM}
 	}
 	return parsedHoverText;
 }
+
+void Gource::drawHoverImage(const std::string& imageName) {
+	TextureResource* hoverImage = 0;
+	//hoverImage = texturemanager.grabFile("/home/ubuntu/logotest.png");
+	if(gGourceSettings.host_image_dir.size() > 0) {
+		std::map<std::string, std::string>::iterator findimage;
+
+		findimage = gGourceSettings.host_image_map.find(imageName);
+
+		//do we have this image
+		if(findimage != gGourceSettings.host_image_map.end()) {
+		    std::string imagefile = findimage->second;
+
+		    hoverImage = texturemanager.grabFile(imagefile, true, GL_CLAMP_TO_EDGE);
+		}
+		if(hoverImage!=0) {
+			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
+			glEnable(GL_TEXTURE_2D);
+
+			glColor4f(1.0, 1.0, 1.0, 1.0);
+
+			glBindTexture(GL_TEXTURE_2D, hoverImage->textureid);
+			float maxwidth = display.width;
+			float maxheight = display.height;
+			if(gGourceSettings.hostimage_wIsPercent) {
+				maxwidth = display.width * gGourceSettings.hostimage_maxwidth;
+			} else if(gGourceSettings.hostimage_maxwidth < display.width) maxwidth = gGourceSettings.hostimage_maxwidth;
+			if(gGourceSettings.hostimage_hIsPercent) {
+				maxheight = display.height * gGourceSettings.hostimage_maxheight;
+			} else if(gGourceSettings.hostimage_maxheight < display.height) maxheight = gGourceSettings.hostimage_maxheight;
+
+			glPushMatrix();
+
+
+			vec2 imagePosition;
+			if(hoverImage->w < maxwidth && hoverImage->h < maxheight) {
+				if(gGourceSettings.hostimage_pos == "upper-right") {
+					imagePosition = vec2(display.width, 0.0) - vec2(hoverImage->w, 0.0);
+				} else if(gGourceSettings.hostimage_pos == "lower-right") {
+					imagePosition = vec2(display.width, display.height) - vec2(hoverImage->w, hoverImage->h);
+				} else if(gGourceSettings.hostimage_pos == "upper-left") {
+					imagePosition = vec2(0.0, 0.0);
+				} else	imagePosition = vec2(0.0, display.height) - vec2(0.0, hoverImage->h);
+
+				glTranslatef(imagePosition.x, imagePosition.y, 0.0);
+
+				glBegin(GL_QUADS);
+					glTexCoord2f(0.0f,0.0f);
+					glVertex2i(0, 0);
+
+					glTexCoord2f(1.0f,0.0f);
+					glVertex2i(hoverImage->w, 0);
+
+					glTexCoord2f(1.0f,1.0f);
+					glVertex2i(hoverImage->w, hoverImage->h);
+
+					glTexCoord2f(0.0f,1.0f);
+					glVertex2i(0, hoverImage->h);
+				glEnd();
+			} else if(maxwidth/hoverImage->w < maxheight/hoverImage->h) {
+				float scaleFactor = maxwidth / hoverImage->w;
+				int scaledWidth = int(hoverImage->w * scaleFactor);
+				int scaledHeight = int(hoverImage->h * scaleFactor);
+
+				if(gGourceSettings.hostimage_pos == "upper-right") {
+					imagePosition = vec2(display.width, 0.0) - vec2(scaledWidth, 0.0);
+				} else if(gGourceSettings.hostimage_pos == "lower-right") {
+					imagePosition = vec2(display.width, display.height) - vec2(scaledWidth, scaledHeight);
+				} else if(gGourceSettings.hostimage_pos == "upper-left") {
+					imagePosition = vec2(0.0, 0.0);
+				} else	imagePosition = vec2(0.0, display.height) - vec2(0.0, scaledHeight);
+
+				glTranslatef(imagePosition.x, imagePosition.y, 0.0);
+
+				glBegin(GL_QUADS);
+					glTexCoord2f(0.0f,0.0f);
+					glVertex2i(0, 0);
+
+					glTexCoord2f(1.0f,0.0f);
+					glVertex2i(scaledWidth, 0);
+
+					glTexCoord2f(1.0f,1.0f);
+					glVertex2i(scaledWidth, scaledHeight);
+
+					glTexCoord2f(0.0f,1.0f);
+					glVertex2i(0, scaledHeight);
+				glEnd();
+			} else {
+				float scaleFactor = maxheight / hoverImage->h;
+				int scaledWidth = int(hoverImage->w * scaleFactor);
+				int scaledHeight = int(hoverImage->h * scaleFactor);
+				
+				if(gGourceSettings.hostimage_pos == "upper-right") {
+					imagePosition = vec2(display.width, 0.0) - vec2(scaledWidth, 0.0);
+				} else if(gGourceSettings.hostimage_pos == "lower-right") {
+					imagePosition = vec2(display.width, display.height) - vec2(scaledWidth, scaledHeight);
+				} else if(gGourceSettings.hostimage_pos == "upper-left") {
+					imagePosition = vec2(0.0, 0.0);
+				} else imagePosition = vec2(0.0, display.height) - vec2(0.0, scaledHeight);
+
+				glTranslatef(imagePosition.x, imagePosition.y, 0.0);
+
+				glBegin(GL_QUADS);
+					glTexCoord2f(0.0f,0.0f);
+					glVertex2i(0, 0);
+
+					glTexCoord2f(1.0f,0.0f);
+					glVertex2i(scaledWidth, 0);
+
+					glTexCoord2f(1.0f,1.0f);
+					glVertex2i(scaledWidth, scaledHeight);
+
+					glTexCoord2f(0.0f,1.0f);
+					glVertex2i(0, scaledHeight);
+				glEnd();
+			}
+
+			glPopMatrix();
+		}
+	}
+}
+
 void Gource::draw(float t, float dt) {
 
     display.mode2D();
@@ -2978,6 +3101,7 @@ void Gource::draw(float t, float dt) {
 		textbox.addLine(parsedHoverText[it]);
 	}
 
+	drawHoverImage(hoverFile->imageName);
         textbox.setColour(hoverFile->getColour());
 	if(gGourceSettings.hovertext_pos == "mouse") {
         	textbox.setPos(mousepos, true);
@@ -2995,8 +3119,6 @@ void Gource::draw(float t, float dt) {
         	textbox.setPos(vec2(0.0f, display.height), true);
         	textbox.draw();
 	}
-
-
     } else if(hoverUser && hoverUser != selectedUser) {
 
         textbox.setText(hoverUser->getName());

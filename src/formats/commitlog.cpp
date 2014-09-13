@@ -274,7 +274,7 @@ void RCommitLog::createTempLog() {
 
 // RCommitFile
 
-RCommitFile::RCommitFile(const std::string& filename, const std::string& action, vec3 colour, const std::string& fileUser, const std::vector<std::string>& displayData) {
+RCommitFile::RCommitFile(const std::string& filename, const std::string& action, vec3 colour, const std::string& fileUser, const std::string& imageName, const std::vector<std::string>& displayData) {
 
     this->filename = RCommitLog::filter_utf8(filename);
 
@@ -287,6 +287,7 @@ RCommitFile::RCommitFile(const std::string& filename, const std::string& action,
     this->colour   = colour;
     this->displayData = displayData;
     this->fileUser = fileUser;
+    this->imageName = imageName;
 }
 
 RCommit::RCommit() {
@@ -309,19 +310,29 @@ vec3 RCommit::fileColour(const std::string& filename) {
 
 void RCommit::addFile(const std::string& filename, const std::string& action, const std::string& fileUser) {
     std::vector<std::string> displayData;
-    addFile(filename, action, fileColour(filename), fileUser, displayData);
+    addFile(filename, action, fileColour(filename), fileUser, fileUser, displayData);
+}
+
+void RCommit::addFile(const std::string& filename, const std::string& action, const std::string& fileUser, const std::string& imageName) {
+    std::vector<std::string> displayData;
+    addFile(filename, action, fileColour(filename), fileUser, imageName, displayData);
 }
 
 void RCommit::addFile(const std::string& filename, const  std::string& action, const vec3& colour, const std::string& fileUser) {
     std::vector<std::string> displayData;
-    addFile(filename, action, colour, fileUser, displayData);
+    addFile(filename, action, colour, fileUser, fileUser, displayData);
 }
 
-void RCommit::addFile(const std::string& filename, const std::string& action, const std::string& fileUser, const std::vector<std::string>& displayData) {
-    addFile(filename, action, fileColour(filename), fileUser, displayData);
+void RCommit::addFile(const std::string& filename, const  std::string& action, const vec3& colour, const std::string& fileUser, const std::string& imageName) {
+    std::vector<std::string> displayData;
+    addFile(filename, action, colour, fileUser, imageName, displayData);
 }
 
-void RCommit::addFile(const std::string& filename, const  std::string& action, const vec3& colour, const std::string& fileUser, const std::vector<std::string>& displayData) {
+void RCommit::addFile(const std::string& filename, const std::string& action, const std::string& fileUser, const std::string& imageName, const std::vector<std::string>& displayData) {
+    addFile(filename, action, fileColour(filename), fileUser, imageName, displayData);
+}
+
+void RCommit::addFile(const std::string& filename, const  std::string& action, const vec3& colour, const std::string& fileUser, const std::string& imageName, const std::vector<std::string>& displayData) {
     //check filename against filters
     if(!gGourceSettings.file_filters.empty()) {
 
@@ -334,7 +345,7 @@ void RCommit::addFile(const std::string& filename, const  std::string& action, c
         }
     }
 
-    files.push_back(RCommitFile(filename, action, colour, fileUser, displayData));
+    files.push_back(RCommitFile(filename, action, colour, fileUser, imageName, displayData));
 }
 
 void RCommit::postprocess() {

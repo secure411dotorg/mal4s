@@ -87,6 +87,9 @@ void GourceSettings::help(bool extended_help) {
 
     printf("  -i, --host-idle-time SECONDS        Time hosts remain idle (default: 0)\n\n");
 
+    printf("      --host-image-dir DIRECTORY      Dir containing images to use when hovering over host\n");
+    printf("      --host-image-position POSITION  Host image position on hover.  Available options:\n");
+    printf("                                      upper-right, lower-right, upper-left, lower-left\n");
     printf("      --max-hosts NUMBER              Max number of hosts or 0 for no limit\n");
     printf("      --max-host-lag SECONDS          Max time hosts of a commit can take to appear\n\n");
 
@@ -129,8 +132,8 @@ if(extended_help) {
 
     printf("      --show-tld-only                 Show tld only\n\n");
 
-    printf("      --hide DISPLAY_ELEMENT          bloom,date,branchnames,hostss,hostnames,mouse,progress,\n");
-    printf("                                      root,tree,plotters,plotternames\n\n");
+    printf("      --hide DISPLAY_ELEMENT          bloom,date,branchnames,hosts,hostnames,mouse,\n");
+    printf("                                      progress,root,tree,plotters,plotternames\n\n");
 
     printf("      --logo IMAGE                    Logo to display in the foreground\n");
     printf("      --logo-offset XxY               Offset position of the logo\n\n");
@@ -159,6 +162,13 @@ if(extended_help) {
     printf("      --caption-colour FFFFFF         Caption colour in hex\n");
     printf("      --caption-duration SECONDS      Caption duration (default: 10.0)\n");
     printf("      --caption-offset X              Caption horizontal offset\n\n");
+
+    printf("      --host-image-max-size SIZE      Max size of image when hovering over a host.\n");
+    printf("                                      A single SIZE value sets width and height the\n");
+    printf("                                      same Specify SIZE as number of pixels or \n");
+    printf("                                      percentage of viewport. Separate width and \n");
+    printf("                                      height values with an x.\n");
+    printf("                                      Examples: 25%%x30%%    25%%    200    150x10%%\n\n");
 
     printf("      --hash-seed SEED                Change the seed of hash function.\n\n");
 
@@ -217,6 +227,8 @@ GourceSettings::GourceSettings() {
     conf_sections["log-level"]      = "command-line";
     conf_sections["text-config-dir"] = "command-line";
     conf_sections["hover-position"]  = "text";
+    conf_sections["host-image-field"] = "text";
+    conf_sections["key-width"]      = "text";
 
     //boolean args
     arg_types["enable-exec"]        = "bool";
@@ -250,6 +262,9 @@ GourceSettings::GourceSettings() {
     arg_types["wrap-hover-lines"]   = "bool";
     arg_types["wrap-max-lines"]     = "int";
     arg_types["hover-line-length"]  = "int";
+    arg_types["host-image-dir"]     = "string";
+    arg_types["host-image-position"] = "string";
+    arg_types["host-image-field"]   = "string";
     arg_types["hover-position"]     = "string";
 
     arg_types["disable-auto-rotate"] = "bool";
@@ -266,6 +281,7 @@ GourceSettings::GourceSettings() {
     arg_types["padding"]            = "float";
     arg_types["time-scale"]         = "float";
 
+    arg_types["host-image-max-size"] = "string";
     arg_types["max-hosts"]          = "int";
     arg_types["font-size"]          = "int";
     arg_types["hash-seed"]          = "int";
@@ -330,6 +346,8 @@ void GourceSettings::setTextDefaults() {
     show_key        = true;
     hide_date       = false;
     hovertext_pos   = "mouse";
+    hostimage_pos  = "upper-right";
+    hostimage_field = "plotter";
 }
 void GourceSettings::setGourceDefaults() {
 
@@ -341,6 +359,11 @@ void GourceSettings::setGourceDefaults() {
     wrap_truncate  = "wrap";
     wrap_max_lines = 3;
     wrap_truncate_chars = 50;
+
+    hostimage_maxwidth = 0.25;
+    hostimage_wIsPercent = true;
+    hostimage_maxheight = 0.25;
+    hostimage_hIsPercent = true;
 
     hide_users     = false;
     hide_tree      = false;
@@ -519,7 +542,12 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
 
     ConfEntry* entry = 0;
 
-   if((entry = text_settings->getEntry("hover-position")) != 0) {
+    if((entry = text_settings->getEntry("host-image-field")) != 0) {
+	hostimage_field = entry->getString();
+	printf("Config host-image-field: %s\n", hostimage_field.c_str());
+    }
+
+    if((entry = text_settings->getEntry("hover-position")) != 0) {
 		hovertext_pos = entry->getString();
 		if( hovertext_pos != "mouse"
 		 && hovertext_pos != "upper-left"
@@ -529,35 +557,53 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
 			std::string unknown_hovertext_pos_option = std::string("unknown hover-position option ") + hovertext_pos;
 			conffile.entryException(entry, unknown_hovertext_pos_option);
 		}
-
+		if(hovertext_pos != "mouse") {
+			if(hovertext_pos == "upper-right") {
+				hostimage_pos = "lower-right";
+			} else if(hovertext_pos == "upper-left") {
+				hostimage_pos = "lower-left";
+			} else if(hovertext_pos == "lower-left") {
+				hostimage_pos = "upper-left";
+			} else  hostimage_pos = "upper-right";
+		}
     }
 
-   if((entry = text_settings->getEntry("f5-action")) != 0) {
+    if((entry = text_settings->getEntry("host-image-position")) != 0) {
+		hovertext_pos = entry->getString();
+		if( hovertext_pos != "upper-left"
+		 && hovertext_pos != "upper-right"
+		 && hovertext_pos != "lower-left"
+		 && hovertext_pos != "lower-right" ) {
+			std::string unknown_hovertext_pos_option = std::string("unknown host-image-position option ") + hovertext_pos;
+			conffile.entryException(entry, unknown_hovertext_pos_option);
+		}
+    }
+    if((entry = text_settings->getEntry("f5-action")) != 0) {
 		f5_action = entry->getString();
     }
 
-   if((entry = text_settings->getEntry("f7-action")) != 0) {
+    if((entry = text_settings->getEntry("f7-action")) != 0) {
 		f7_action = entry->getString();
     }
 
-   if((entry = text_settings->getEntry("f9-action")) != 0) {
+    if((entry = text_settings->getEntry("f9-action")) != 0) {
 		f9_action = entry->getString();
     }
 
-   if((entry = text_settings->getEntry("mouseclick-action")) != 0) {
+    if((entry = text_settings->getEntry("mouseclick-action")) != 0) {
 		mouseclick_action = entry->getString();
     }
 
-   if((entry = text_settings->getEntry("browser-url")) != 0) {
+    if((entry = text_settings->getEntry("browser-url")) != 0) {
 		browser_url = entry->getString();
     }
 
-   if((entry = text_settings->getEntry("key-format")) != 0) {
+    if((entry = text_settings->getEntry("key-format")) != 0) {
 		keyFormat.clear();
 		keyFormat = entry->getString();
     }
 
-    if(text_settings->getBool("key-off")) {
+     if(text_settings->getBool("key-off")) {
         show_key = false;
     }
 
@@ -879,6 +925,64 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
+    if((entry = gource_settings->getEntry("host-image-max-size")) != 0) {
+	std::string parseSize = entry->getString();
+	size_t i = parseSize.find_first_not_of("0123456789%Xx");
+	if(i != std::string::npos) {
+		conffile.entryException(entry, "host-image-max-size contains characters other than 0-9,x,X, and \%. Specify size as NUM[\%]xNUM[\%] or NUM[\%].  Example 30\%x200");
+	}
+	i = parseSize.find_first_of("xX");
+	std::string width;
+	std::string height;
+	if(i == std::string::npos) {
+		width = parseSize;
+		height = parseSize;
+		if(width.empty()) conffile.entryException(entry, "host-image-max-size must contain at least one value. Specify size as NUM[\%]xNUM[\%] or NUM[\%].  Example 30\%x200");
+	} else if(parseSize.find_last_of("xX") != i) {
+		conffile.entryException(entry, "host-image-max-size contains more than 1 x.  Specify size as NUM[\%]xNUM[\%] or NUM[\%].  Example 30\%x200");
+	} else {
+		width = parseSize.substr(0,i);
+		height = parseSize.substr(i+1);
+		if(width.empty() || height.empty()) conffile.entryException(entry, "host-image-max-size must contain a value before and after x. Specify size as NUM[\%]xNUM[\%] or NUM[\%].  Example 30\%x200");
+	}
+	std::string logwidth;
+	std::string logheight;
+	i = width.find_first_of("%");
+	if(i == std::string::npos) {
+		hostimage_wIsPercent = false;
+		hostimage_maxwidth = stof(width);
+		logwidth = width + " pixels";
+	} else if(width.size() == 1 || i != width.size()-1) {
+		conffile.entryException(entry, "host-image-max-size percentage must contain a numeric value followed by a single \%: Example 10%");
+	} else {
+		hostimage_wIsPercent = true;
+		hostimage_maxwidth = stof(width.substr(0,i));
+		logwidth = width.substr(0,i) + " percent of pixels";
+		if(hostimage_maxwidth > 100 || hostimage_maxwidth == 0) {
+			conffile.entryException(entry, "host-image-max-size percentage must be 0-100");
+		}
+		hostimage_maxwidth = hostimage_maxwidth / 100;
+	}
+	i = height.find_first_of("%");
+	if(i == std::string::npos) {
+		hostimage_hIsPercent = false;
+		hostimage_maxheight = stof(height);
+		logheight = height + " pixels";
+	} else if(height.size() == 1 || i != height.size()-1) {
+		conffile.entryException(entry, "host-image-max-size percentage must contain a numeric value followed by a single \%: Example 10\%");
+	} else {
+		hostimage_hIsPercent = true;
+		hostimage_maxheight = stof(height.substr(0,i));
+		logheight = height.substr(0,i) + " percent of pixels";
+		if(hostimage_maxheight > 100 || hostimage_maxheight == 0) {
+			conffile.entryException(entry, "host-image-max-size percentage must be 0-100");
+		}
+		hostimage_maxheight = hostimage_maxheight / 100;
+	}
+	debugLog("host image max width is %s", logwidth.c_str());
+	debugLog("host image max heght is %s", logheight.c_str());
+    }
+
     if((entry = gource_settings->getEntry("browser-command")) != 0) {
 	browser_command = entry->getString();
     }
@@ -1032,22 +1136,61 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
             std::string image_path = gGourceSettings.user_image_dir + dirfile;
             std::string name       = dirfile.substr(0,dirfile.size() - file_ext.size());
-/*
-#ifdef __APPLE__
-                CFMutableStringRef help = CFStringCreateMutable(kCFAllocatorDefault, 0);
-                CFStringAppendCString(help, name.c_str(), kCFStringEncodingUTF8);
-                CFStringNormalize(help, kCFStringNormalizationFormC);
-                char data[4096];
-                CFStringGetCString(help,
-                                   data,
-                                   sizeof(data),
-                                   kCFStringEncodingUTF8);
-                name = data;
-#endif
-*/
+
             debugLog("%s => %s", name.c_str(), image_path.c_str());
 
             user_image_map[name] = image_path;
+        }
+    }
+
+    if((entry = gource_settings->getEntry("host-image-dir")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify host-image-dir (directory)");
+
+        host_image_dir = entry->getString();
+
+        //append slash
+        if(host_image_dir[host_image_dir.size()-1] != '/') {
+            host_image_dir += std::string("/");
+        }
+
+        host_image_map.clear();
+
+        boost::filesystem::path image_dir_path(host_image_dir);
+
+        if(!is_directory(image_dir_path)) {
+             conffile.entryException(entry, "specified host-image-dir is not a directory");
+        }
+
+        std::vector<boost::filesystem::path> image_dir_files;
+
+        try {
+            copy(boost::filesystem::directory_iterator(image_dir_path), boost::filesystem::directory_iterator(), back_inserter(image_dir_files));
+        } catch(const boost::filesystem::filesystem_error& exception) {
+             conffile.entryException(entry, "error reading specified host-image-dir");
+        }
+
+        for(boost::filesystem::path& p : image_dir_files) {
+
+            std::string dirfile;
+
+#ifdef _WIN32
+            std::wstring dirfile_16 = p.filename().wstring();
+            utf8::utf16to8(dirfile_16.begin(), dirfile_16.end(), back_inserter(dirfile));
+#else
+            dirfile = p.filename().string();
+#endif
+            std::string file_ext = extension(p);
+            boost::algorithm::to_lower(file_ext);
+
+            if(file_ext != ".jpg" && file_ext != ".jpeg" && file_ext != ".png") continue;
+
+            std::string image_path = gGourceSettings.host_image_dir + dirfile;
+            std::string name       = dirfile.substr(0,dirfile.size() - file_ext.size());
+
+            debugLog("%s => %s", name.c_str(), image_path.c_str());
+
+            host_image_map[name] = image_path;
         }
     }
 
