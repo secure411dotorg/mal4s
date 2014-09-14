@@ -347,7 +347,7 @@ void GourceSettings::setTextDefaults() {
     hide_date       = false;
     hovertext_pos   = "mouse";
     hostimage_pos  = "upper-right";
-    hostimage_field = "plotter";
+    hostimage_field = "plotter-image";
 }
 void GourceSettings::setGourceDefaults() {
 
