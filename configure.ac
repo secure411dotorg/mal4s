@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.61)
 
-AC_INIT(Mal4s, 1.2.5, [https://github.com/secure411dotorg/mal4s/])
+AC_INIT(Mal4s, 1.2.6, [https://github.com/secure411dotorg/mal4s/])
 AC_CONFIG_SRCDIR([src/main.h])
 
 AM_INIT_AUTOMAKE([dist-bzip2 foreign subdir-objects])

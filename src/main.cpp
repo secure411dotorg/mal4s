@@ -63,23 +63,36 @@ int main(int argc, char *argv[]) {
 		if(conf_marker != std::string::npos) {
 			size_t conf_end_marker = files[0].find_last_of(".");
 			if(conf_end_marker != std::string::npos) {
-				textConfFile = files[0].substr(conf_marker + 1, conf_end_marker - conf_marker - 1) + ".conf";
+				//textConfFile = files[0].substr(conf_marker + 1, conf_end_marker - conf_marker - 1) + ".conf";
+				//Stop reading config name at first ( to allow for browser duplicate file numbering
+				textConfFile = files[0].substr(conf_marker + 1, conf_end_marker - conf_marker - 1);
+				if(textConfFile.find_first_of("(") != std::string::npos) {
+					textConfFile = textConfFile.substr(0,textConfFile.find_first_of("\(")) + ".conf";
+				} else {
+					textConfFile = textConfFile + ".conf";
+				}
+				debugLog("Checking for text config %s in the working directory", textConfFile.c_str());
 				if(!boost::filesystem::exists(textConfFile.c_str())) {
 					if(!gGourceSettings.textConfDir.empty()) {
 						std::string testforconfig = gGourceSettings.textConfDir + textConfFile;
+						debugLog("Checking for text config in %s", testforconfig.c_str());
 						if(boost::filesystem::exists(testforconfig.c_str())) {
 							textConfFile = testforconfig;
 						} else {
 							textConfFile = texturemanager.getDir() + textConfFile;
+							debugLog("Checking for text config in %s", textConfFile.c_str());
 							if(!boost::filesystem::exists(textConfFile.c_str())) {
+								debugLog("Failed to locate a text config file");
 								textConfFile.clear();
 							}
 						}
 					} else {
 						textConfFile = texturemanager.getDir() + textConfFile;
-							if(!boost::filesystem::exists(textConfFile.c_str())) {
-								textConfFile.clear();
-							}
+						debugLog("Checking for text config in %s", textConfFile.c_str());
+						if(!boost::filesystem::exists(textConfFile.c_str())) {
+							debugLog("Failed to locate a text config file");
+							textConfFile.clear();
+						}
 					}
 				}
 			}
@@ -91,9 +104,13 @@ int main(int argc, char *argv[]) {
 		size_t ext_marker = files[0].find_last_of(".");
 		if(ext_marker != std::string::npos) {
 			captionFile = files[0].substr(0, ext_marker + 1) + "captions";
+			debugLog("Checking for caption file %s", captionFile.c_str());
 			if(boost::filesystem::exists(captionFile.c_str())) {
 				replacementArgc += 2;
-			} else captionFile.clear();
+			} else {
+				captionFile.clear();
+				debugLog("No caption file found");
+			}
 		}
 	}
 
@@ -126,8 +143,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	//Test if defaultMainConfig file exists and no other config was specified at the command line
-	if(gGourceSettings.load_config.empty() && boost::filesystem::exists(defaultMainConfig)) {
-		gGourceSettings.load_config = defaultMainConfig;
+	if(gGourceSettings.load_config.empty()) {
+		debugLog("Checking for main config file in %s", defaultMainConfig.c_str());
+		if(boost::filesystem::exists(defaultMainConfig)) { 
+			gGourceSettings.load_config = defaultMainConfig;
+		} else debugLog("No main config file found");
 	}
 	
         //set log level
