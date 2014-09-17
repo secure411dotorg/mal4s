@@ -17,6 +17,35 @@
 
 #include "main.h"
 
+std::string search4TextConfig(std::string confname) {
+	debugLog("Checking for text config %s in the working directory", confname.c_str());
+	if(!boost::filesystem::exists(confname.c_str())) {
+		if(!gGourceSettings.textConfDir.empty()) {
+			std::string testforconfig = gGourceSettings.textConfDir + confname;
+			debugLog("Checking for text config in %s", testforconfig.c_str());
+			if(boost::filesystem::exists(testforconfig.c_str())) {
+				confname = testforconfig;
+			} else {
+				confname = texturemanager.getDir() + confname;
+				debugLog("Checking for text config in %s", confname.c_str());
+				if(!boost::filesystem::exists(confname.c_str())) {
+					debugLog("Failed to locate a text config file");
+					confname.clear();
+				}
+			}
+		} else {
+			confname = texturemanager.getDir() + confname;
+			debugLog("Checking for text config in %s", confname.c_str());
+			if(!boost::filesystem::exists(confname.c_str())) {
+				debugLog("Failed to locate a text config file");
+				confname.clear();
+			}
+		}
+	}
+	return confname;
+}
+	
+
 int main(int argc, char *argv[]) {
 
     SDLAppInit("Mal4s", "mal4s");
@@ -59,42 +88,28 @@ int main(int argc, char *argv[]) {
         Logger::getDefault()->setLevel(gGourceSettings.log_level);
 
 	if(!files.empty() && gGourceSettings.load_text_config.empty()) {
-		size_t conf_marker = files[0].find_last_of("--");
+		size_t conf_marker = files[0].rfind("--");
+		std::string baseconfname;
 		if(conf_marker != std::string::npos) {
+			conf_marker++;
 			size_t conf_end_marker = files[0].find_last_of(".");
 			if(conf_end_marker != std::string::npos) {
-				//textConfFile = files[0].substr(conf_marker + 1, conf_end_marker - conf_marker - 1) + ".conf";
 				//Stop reading config name at first ( to allow for browser duplicate file numbering
 				textConfFile = files[0].substr(conf_marker + 1, conf_end_marker - conf_marker - 1);
+				baseconfname = textConfFile;
 				if(textConfFile.find_first_of("(") != std::string::npos) {
 					textConfFile = textConfFile.substr(0,textConfFile.find_first_of("\(")) + ".conf";
 				} else {
 					textConfFile = textConfFile + ".conf";
 				}
-				debugLog("Checking for text config %s in the working directory", textConfFile.c_str());
-				if(!boost::filesystem::exists(textConfFile.c_str())) {
-					if(!gGourceSettings.textConfDir.empty()) {
-						std::string testforconfig = gGourceSettings.textConfDir + textConfFile;
-						debugLog("Checking for text config in %s", testforconfig.c_str());
-						if(boost::filesystem::exists(testforconfig.c_str())) {
-							textConfFile = testforconfig;
-						} else {
-							textConfFile = texturemanager.getDir() + textConfFile;
-							debugLog("Checking for text config in %s", textConfFile.c_str());
-							if(!boost::filesystem::exists(textConfFile.c_str())) {
-								debugLog("Failed to locate a text config file");
-								textConfFile.clear();
-							}
-						}
-					} else {
-						textConfFile = texturemanager.getDir() + textConfFile;
-						debugLog("Checking for text config in %s", textConfFile.c_str());
-						if(!boost::filesystem::exists(textConfFile.c_str())) {
-							debugLog("Failed to locate a text config file");
-							textConfFile.clear();
-						}
+				textConfFile = search4TextConfig(textConfFile);
+				if(textConfFile.empty()) {
+					conf_end_marker = baseconfname.rfind("-");
+					if(conf_end_marker != std::string::npos && baseconfname.find_first_not_of("0123456789", conf_end_marker+1) == std::string::npos ) {
+						textConfFile = baseconfname.substr(0,conf_end_marker) + ".conf";
+						textConfFile = search4TextConfig(textConfFile);
 					}
-				}
+				}	
 			}
 		}
 	}
