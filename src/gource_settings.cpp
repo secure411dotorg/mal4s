@@ -52,6 +52,8 @@ void GourceSettings::help(bool extended_help) {
     printf("Usage: mal4s [OPTIONS] [LOGFILE]\n");
     printf("\nOptions:\n");
     printf("  -h, --help                          Help\n\n");
+    printf("  -v, --debug, --verbose              Verbose mode.  Causes Mal4s to print debugging\n");
+    printf("                                      messages about its progress.\n");
     printf("  -WIDTHxHEIGHT, --viewport           Set viewport size\n");
     printf("  -f, --fullscreen                    Fullscreen\n");
     printf("      --multi-sampling                Enable multi-sampling\n");
@@ -81,13 +83,14 @@ void GourceSettings::help(bool extended_help) {
 
     printf("      --key-off                       Hide key\n\n");
 
-    printf("      --plotter-image-dir DIRECTORY   Dir containing images to use as avatars\n");
+    printf("      --plotter-image-dir DIRECTORY   Directory containing images to use as avatars\n");
     printf("      --default-plotter-image IMAGE	  Default plotter image file\n");
     printf("      --colour-images                 Colourize plotter images\n\n");
 
     printf("  -i, --host-idle-time SECONDS        Time hosts remain idle (default: 0)\n\n");
 
-    printf("      --host-image-dir DIRECTORY      Dir containing images to use when hovering over host\n");
+    printf("      --host-image-dir DIRECTORY      Directory containing images to use when\n");
+    printf("                                      hovering over host\n");
     printf("      --host-image-position POSITION  Host image position on hover.  Available options:\n");
     printf("                                      upper-right, lower-right, upper-left, lower-left\n");
     printf("      --max-hosts NUMBER              Max number of hosts or 0 for no limit\n");
@@ -95,15 +98,18 @@ void GourceSettings::help(bool extended_help) {
 
     printf("  -C, --load-config CONF_FILE         Load a main config file\n");
     printf("  -T, --load-text-config CONF_FILE    Load a text config file\n");
-    printf("  -D, --text-config-dir DIRECTORY     Path to text configs (matched with file--TEXTCONF.mal4s)\n");
+    printf("  -D, --text-config-dir DIRECTORY     Path to text configs for auto-matching with\n");
+    printf("                                      SOMENAME--TEXTCONF.mal4s\n");
     printf("      --save-config CONF_FILE         Save a config file with the current options\n\n");
 
-    printf("      --wrap-max-lines LINES          Max number of lines a hover line can wrap before truncating\n");
+    printf("      --wrap-max-lines LINES          Max number of lines a hover line can wrap\n");
+    printf("                                      before truncating\n");
     printf("      --truncate-hover-lines          Do not wrap hover lines by default\n");
     printf("      --wrap-hover-lines              Wrap hover lines by default\n");
     printf("      --hover-line-length CHARS       Max number of characters on a hover line.\n");
-    printf("      --hover-position POSITION       Hover text postion (default: mouse). Available options:\n");
-    printf("                                      upper-right, lower-right, upper-left, lower-left, mouse\n\n");
+    printf("      --hover-position POSITION       Hover text postion\n");
+    printf("                                      Available options: mouse (default),\n");
+    printf("                                      upper-right, lower-right, upper-left, lower-left\n\n");
 
     printf("  -o, --output-ppm-stream FILE        Output PPM stream to a file ('-' for STDOUT)\n");
     printf("  -r, --output-framerate  FPS         Framerate of output (25,30,60)\n\n");
@@ -111,7 +117,7 @@ void GourceSettings::help(bool extended_help) {
 if(extended_help) {
     printf("Extended Options:\n\n");
 
-    printf("      --output-custom-log FILE        Output a custom format log file ('-' for STDOUT).\n\n");
+    //printf("      --output-custom-log FILE        Output a custom format log file ('-' for STDOUT).\n\n");
 
     printf("  -b, --background-colour FFFFFF      Background colour in hex\n");
     printf("      --background-image IMAGE        Set a background image\n\n");
@@ -170,6 +176,8 @@ if(extended_help) {
     printf("                                      height values with an x.\n");
     printf("                                      Examples: 25%%x30%%    25%%    200    150x10%%\n\n");
 
+    printf("      --version                       Display version and exit.\n\n");
+
     printf("      --hash-seed SEED                Change the seed of hash function.\n\n");
 
 }
@@ -217,6 +225,8 @@ GourceSettings::GourceSettings() {
     arg_aliases["C"]                = "load-config";
     arg_aliases["T"]                = "load-text-config";
     arg_aliases["D"]                = "text-config-dir";
+    arg_aliases["v"]                = "debug";
+    arg_aliases["verbose"]          = "debug";
 
     //command line only options
     conf_sections["help"]           = "command-line";
@@ -225,12 +235,16 @@ GourceSettings::GourceSettings() {
     conf_sections["load-config"]    = "command-line";
     conf_sections["save-config"]    = "command-line";
     conf_sections["log-level"]      = "command-line";
+    conf_sections["debug"]          = "command-line";
     conf_sections["text-config-dir"] = "command-line";
+    conf_sections["version"]         = "command-line";
     conf_sections["hover-position"]  = "text";
     conf_sections["host-image-field"] = "text";
     conf_sections["key-width"]      = "text";
 
     //boolean args
+    arg_types["version"]            = "bool";
+    arg_types["debug"]              = "bool";
     arg_types["enable-exec"]        = "bool";
     arg_types["enable-browser"]     = "bool";
     arg_types["help"]               = "bool";
@@ -480,7 +494,10 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
     if(name == "help") {
         help();
     }
-
+    if(name == "version") {
+	printf("Mal4s v%s\n", GOURCE_VERSION);
+	exit(0);
+    }
     if(name == "extended-help") {
         help(true);
     }
@@ -525,6 +542,10 @@ void GourceSettings::commandLineOption(const std::string& name, const std::strin
             log_level = LOG_LEVEL_PEDANTIC;
         }
         return;
+    }
+    if(name == "debug") {
+	log_level = LOG_LEVEL_DEBUG;
+	return;
     }
 
     std::string invalid_error = std::string("invalid ") + name + std::string(" value");

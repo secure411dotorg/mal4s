@@ -29,7 +29,6 @@ std::string search4TextConfig(std::string confname) {
 				confname = texturemanager.getDir() + confname;
 				debugLog("Checking for text config in %s", confname.c_str());
 				if(!boost::filesystem::exists(confname.c_str())) {
-					debugLog("Failed to locate a text config file");
 					confname.clear();
 				}
 			}
@@ -37,7 +36,6 @@ std::string search4TextConfig(std::string confname) {
 			confname = texturemanager.getDir() + confname;
 			debugLog("Checking for text config in %s", confname.c_str());
 			if(!boost::filesystem::exists(confname.c_str())) {
-				debugLog("Failed to locate a text config file");
 				confname.clear();
 			}
 		}
@@ -95,26 +93,29 @@ int main(int argc, char *argv[]) {
 			size_t conf_end_marker = files[0].find_last_of(".");
 			if(conf_end_marker != std::string::npos) {
 				//Stop reading config name at first ( to allow for browser duplicate file numbering
-				textConfFile = files[0].substr(conf_marker + 1, conf_end_marker - conf_marker - 1);
-				baseconfname = textConfFile;
-				if(textConfFile.find_first_of("(") != std::string::npos) {
-					textConfFile = textConfFile.substr(0,textConfFile.find_first_of("\(")) + ".conf";
+				baseconfname = files[0].substr(conf_marker + 1, conf_end_marker - conf_marker - 1);
+				if(baseconfname.rfind("(") > 0) {
+					textConfFile = search4TextConfig(baseconfname + ".conf");
+					if(textConfFile.empty()) textConfFile = search4TextConfig(baseconfname.substr(0,baseconfname.rfind("(")) + ".conf");
 				} else {
-					textConfFile = textConfFile + ".conf";
+					textConfFile = search4TextConfig(textConfFile + ".conf");
 				}
-				textConfFile = search4TextConfig(textConfFile);
 				if(textConfFile.empty()) {
 					conf_end_marker = baseconfname.rfind("-");
 					if(conf_end_marker != std::string::npos && baseconfname.find_first_not_of("0123456789", conf_end_marker+1) == std::string::npos ) {
 						textConfFile = baseconfname.substr(0,conf_end_marker) + ".conf";
 						textConfFile = search4TextConfig(textConfFile);
+						if(textConfFile.empty()) debugLog("Failed to locate a text config file");
 					}
 				}	
 			}
-		}
-	}
+		} else debugLog("Mal4s file name is not in SOMENAME--TEXTCONF.mal4s format, unable to automatically match the text config");
+	} else if(files.empty() && gGourceSettings.load_text_config.empty()) debugLog("Reading from STDIN with no text config specified");
 
 	//Automatic captions file selection
+	//Note: Matching could be done here the same way it is done for the text config above.
+	//However, bad matching of mal4s file to captions file is quite possible with different
+        //versions of the mal4s/captions files.
 	if(!files.empty() && gGourceSettings.caption_file.empty()) {
 		size_t ext_marker = files[0].find_last_of(".");
 		if(ext_marker != std::string::npos) {
