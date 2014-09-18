@@ -178,6 +178,10 @@ public:
     void setTextDefaults();
     void setGourceDefaults();
 
+#ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+    float brokenvsprintfstof(const std::string& numstring);
+#endif
+
     void importGourceSettings(ConfFile& conf, ConfSection* gource_settings = 0);
     void importTextSettings(ConfFile& conf, ConfSection* text_settings = 0);
 

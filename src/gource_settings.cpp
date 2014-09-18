@@ -38,6 +38,18 @@
 
 GourceSettings gGourceSettings;
 
+#ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+	float GourceSettings::brokenvsprintfstof(const std::string& numstring) {
+		//The input is really and integer string and will only contain whole numbers
+		//float is required in case the number is a percentage (math performed later)
+		std::stringstream ss(numstring.c_str());
+		float result;
+		ss >> result;
+		return result;
+	}
+#endif
+
+
 //display help message
 void GourceSettings::help(bool extended_help) {
 
@@ -971,13 +983,21 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 	i = width.find_first_of("%");
 	if(i == std::string::npos) {
 		hostimage_wIsPercent = false;
-		hostimage_maxwidth = stof(width);
+#ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+		hostimage_maxwidth = brokenvsprintfstof(width);
+#else
+		hostimage_maxwidth = std::stof(width);
+#endif
 		logwidth = width + " pixels";
 	} else if(width.size() == 1 || i != width.size()-1) {
 		conffile.entryException(entry, "host-image-max-size percentage must contain a numeric value followed by a single \%: Example 10%");
 	} else {
 		hostimage_wIsPercent = true;
-		hostimage_maxwidth = stof(width.substr(0,i));
+#ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+		hostimage_maxwidth = brokenvsprintfstof(width.substr(0,i));
+#else
+		hostimage_maxwidth = std::stof(width.substr(0,i));
+#endif
 		logwidth = width.substr(0,i) + " percent of pixels";
 		if(hostimage_maxwidth > 100 || hostimage_maxwidth == 0) {
 			conffile.entryException(entry, "host-image-max-size percentage must be 0-100");
@@ -987,13 +1007,21 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 	i = height.find_first_of("%");
 	if(i == std::string::npos) {
 		hostimage_hIsPercent = false;
-		hostimage_maxheight = stof(height);
+#ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+		hostimage_maxheight = brokenvsprintfstof(height);
+#else
+		hostimage_maxheight = std::stof(height);
+#endif
 		logheight = height + " pixels";
 	} else if(height.size() == 1 || i != height.size()-1) {
 		conffile.entryException(entry, "host-image-max-size percentage must contain a numeric value followed by a single \%: Example 10\%");
 	} else {
 		hostimage_hIsPercent = true;
-		hostimage_maxheight = stof(height.substr(0,i));
+#ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+		hostimage_maxheight = brokenvsprintfstof(height.substr(0,i));
+#else
+		hostimage_maxheight = std::stof(height.substr(0,i));
+#endif
 		logheight = height.substr(0,i) + " percent of pixels";
 		if(hostimage_maxheight > 100 || hostimage_maxheight == 0) {
 			conffile.entryException(entry, "host-image-max-size percentage must be 0-100");
