@@ -267,12 +267,12 @@ Branching field = ${bNUM}
 		} else if(fieldIdentifier.compare(0,1,"n") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 		   //Convert the string to an unigned int
 #ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
-		   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+		   unsigned long fieldnum = std::stoul(fieldIdentifier.substr(1)) - 1;
 #else
-           unsigned int fieldnum;
-           std::stringstream ss(fieldIdentifier.substr(1).c_str());
-           ss >> fieldnum;
-           fieldnum = fieldnum - 1;
+		   unsigned long fieldnum;
+		   std::stringstream ss(fieldIdentifier.substr(1).c_str());
+		   ss >> fieldnum;
+		   fieldnum = fieldnum - 1;
 #endif
 		   //Test if the field is in range
 		   if(nonBranching.size() > fieldnum) {
@@ -291,12 +291,12 @@ Branching field = ${bNUM}
 		} else if(fieldIdentifier.compare(0,1,"b") == 0 && fieldIdentifier.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 		   //Convert the string to an unigned int
 #ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
-		   unsigned int fieldnum = std::stoi(fieldIdentifier.substr(1)) - 1;
+		   unsigned long fieldnum = std::stoul(fieldIdentifier.substr(1)) - 1;
 #else
-           unsigned int fieldnum;
-           std::stringstream ss(fieldIdentifier.substr(1).c_str());
-           ss >> fieldnum;
-           fieldnum = fieldnum - 1;
+		   unsigned long fieldnum;
+		   std::stringstream ss(fieldIdentifier.substr(1).c_str());
+		   ss >> fieldnum;
+		   fieldnum = fieldnum - 1;
 #endif
 		   //Test if the field is in range
 		   if(branching.size() > fieldnum) {

@@ -128,14 +128,27 @@ bool Mal4sLog::parseCommitEntry(RCommit& commit) {
 	}
     } else if(gGourceSettings.hostimage_field.size() > 1 && gGourceSettings.hostimage_field.compare(0,1,"b") == 0 &&  gGourceSettings.hostimage_field.substr(1).find_first_not_of("0123456789") == std::string::npos) {
 	std::vector<std::string> branches = split(entries[3], '/');
-	unsigned long fnum = stoul(gGourceSettings.hostimage_field.substr(1));
+#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+	unsigned long fnum = std::stoul(gGourceSettings.hostimage_field.substr(1));
+#else
+	unsigned long fnum;
+	std::stringstream ss(gGourceSettings.hostimage_field.substr(1).c_str());
+	ss >> fnum;
+#endif
+
 	if(fnum == 0) {
 		imageName = "";
 	} else if(branches.size() >= 3 && fnum < branches.size() - 3) {
 		imageName = branches[fnum - 1];
 	} else imageName = "";
     } else if(gGourceSettings.hostimage_field.size() > 1 && gGourceSettings.hostimage_field.compare(0,1,"n") == 0 &&  gGourceSettings.hostimage_field.substr(1).find_first_not_of("0123456789") == std::string::npos) {
-	unsigned long fnum = stoul(gGourceSettings.hostimage_field.substr(1));
+#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+	unsigned long fnum = std::stoul(gGourceSettings.hostimage_field.substr(1));
+#else
+	unsigned long fnum;
+	std::stringstream ss(gGourceSettings.hostimage_field.substr(1).c_str());
+	ss >> fnum;
+#endif
 	if(fnum == 0) {
 		imageName = "";
 	} else if(displayData.size() >= 3 && fnum < displayData.size() - 3) {
