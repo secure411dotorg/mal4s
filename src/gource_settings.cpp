@@ -602,13 +602,13 @@ void GourceSettings::importTextSettings(ConfFile& conffile, ConfSection* text_se
     }
 
     if((entry = text_settings->getEntry("host-image-position")) != 0) {
-		hovertext_pos = entry->getString();
-		if( hovertext_pos != "upper-left"
-		 && hovertext_pos != "upper-right"
-		 && hovertext_pos != "lower-left"
-		 && hovertext_pos != "lower-right" ) {
-			std::string unknown_hovertext_pos_option = std::string("unknown host-image-position option ") + hovertext_pos;
-			conffile.entryException(entry, unknown_hovertext_pos_option);
+		hostimage_pos = entry->getString();
+		if( hostimage_pos != "upper-left"
+		 && hostimage_pos != "upper-right"
+		 && hostimage_pos != "lower-left"
+		 && hostimage_pos != "lower-right" ) {
+			std::string unknown_hostimage_pos_option = std::string("unknown host-image-position option ") + hostimage_pos;
+			conffile.entryException(entry, unknown_hostimage_pos_option);
 		}
     }
     if((entry = text_settings->getEntry("f5-action")) != 0) {
