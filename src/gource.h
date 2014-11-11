@@ -264,6 +264,7 @@ class Gource : public SDLApp {
     void updateAndDrawEdges();
 
     std::vector<std::string> parseRFileText(RFile* hovering);
+    std::string getHoverImageName(RFile* hoverFile);
 
     void drawFileShadows(float dt);
     void drawUserShadows(float dt);

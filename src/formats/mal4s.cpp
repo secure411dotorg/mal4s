@@ -108,59 +108,10 @@ bool Mal4sLog::parseCommitEntry(RCommit& commit) {
         colour = parseColour(entries[4]);
     }
 
-    std::string imageName;
-    //Select the image name to display on hover from only one field
-    if(gGourceSettings.host_image_dir.empty()) {
-	imageName = "";
-    } else if(gGourceSettings.hostimage_field == "plotter") {
-	imageName = entries[1];
-    } else if(gGourceSettings.hostimage_field == "plotter-image") {
-	imageName = commit.userimagename;
-    } else if(gGourceSettings.hostimage_field == "host") {
-	size_t hbegin = entries[3].find_last_of("/");
-	if(hbegin != std::string::npos) {
-		imageName = entries[3].substr(hbegin+1);
-	}
-    } else if(gGourceSettings.hostimage_field == "tld") {
-	size_t tbegin = entries[3].find_last_of(".");
-	if(tbegin != std::string::npos  && tbegin+1 < entries[3].size()) {
-		imageName = entries[3].substr(tbegin+1);
-	}
-    } else if(gGourceSettings.hostimage_field.size() > 1 && gGourceSettings.hostimage_field.compare(0,1,"b") == 0 &&  gGourceSettings.hostimage_field.substr(1).find_first_not_of("0123456789") == std::string::npos) {
-	std::vector<std::string> branches = split(entries[3], '/');
-#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
-	unsigned long fnum = std::stoul(gGourceSettings.hostimage_field.substr(1));
-#else
-	unsigned long fnum;
-	std::stringstream ss(gGourceSettings.hostimage_field.substr(1).c_str());
-	ss >> fnum;
-#endif
-
-	if(fnum == 0) {
-		imageName = "";
-	} else if(branches.size() >= 3 && fnum < branches.size() - 3) {
-		imageName = branches[fnum - 1];
-	} else imageName = "";
-    } else if(gGourceSettings.hostimage_field.size() > 1 && gGourceSettings.hostimage_field.compare(0,1,"n") == 0 &&  gGourceSettings.hostimage_field.substr(1).find_first_not_of("0123456789") == std::string::npos) {
-#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
-	unsigned long fnum = std::stoul(gGourceSettings.hostimage_field.substr(1));
-#else
-	unsigned long fnum;
-	std::stringstream ss(gGourceSettings.hostimage_field.substr(1).c_str());
-	ss >> fnum;
-#endif
-	if(fnum == 0) {
-		imageName = "";
-	} else if(displayData.size() >= 3 && fnum < displayData.size() - 3) {
-		imageName = displayData[fnum - 1];
-	} else imageName = "";
-    } else {
-	imageName = "";
-    }
     if(has_colour) {
-        commit.addFile(entries[3], action, colour, commit.username, imageName, displayData);
+        commit.addFile(entries[3], action, colour, commit.username, commit.userimagename, displayData);
     } else {
-        commit.addFile(entries[3], action, commit.username, imageName, displayData);
+        commit.addFile(entries[3], action, commit.username, commit.userimagename, displayData);
     }
 
     return true;

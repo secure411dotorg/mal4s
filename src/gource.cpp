@@ -707,7 +707,10 @@ Branching field = ${bNUM}
 	   //Make sure it is only number enclosed in ${FIELDNUM}
 	   if(close != std::string::npos) {
 		fieldIdentifier = action.substr(open + 2, close - open - 2);
-		if(fieldIdentifier.compare("plotter") == 0) {
+		if(fieldIdentifier.compare("plotter-image") == 0) {
+		   parsedAction += action.substr(last, open - last) + file->imageName;
+		   last = close + 1;
+		} else if(fieldIdentifier.compare("plotter") == 0) {
 		   parsedAction += action.substr(last, open - last) + file->fileUser;
 		   last = close + 1;
 		} else if(fieldIdentifier.compare("host") == 0) {
@@ -2618,6 +2621,9 @@ Branching field = ${bNUM}
 			   wrap_truncate = "wrap";
 			} else if(fieldIdentifier.compare("truncate") == 0) {
 			   wrap_truncate = "truncate";
+			} else if(fieldIdentifier.compare("plotter-image") == 0) {
+			   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last) + hoverFile->imageName;
+			   last = close + 1;
 			} else if(fieldIdentifier.compare("plotter") == 0) {
 			   parsedHoverText[vector_it] += displayFormat[it].substr(last, open - last) + hoverFile->fileUser;
 			   last = close + 1;
@@ -2689,6 +2695,58 @@ Branching field = ${bNUM}
 	   }
 	}
 	return parsedHoverText;
+}
+
+std::string Gource::getHoverImageName(RFile* hoverFile) {
+	//Select the image name to display on hover from only one field
+	if(!gGourceSettings.host_image_dir.empty()) {
+		if(gGourceSettings.hostimage_field == "plotter") {
+			return hoverFile->fileUser;
+		} else if(gGourceSettings.hostimage_field == "plotter-image") {
+			return hoverFile->imageName;
+		} else if(gGourceSettings.hostimage_field == "host") {
+			return hoverFile->getName();
+		} else if(gGourceSettings.hostimage_field == "tld") {
+			return hoverFile->ext;
+		} else if(gGourceSettings.hostimage_field.size() > 1 && gGourceSettings.hostimage_field.compare(0,1,"b") == 0 &&  gGourceSettings.hostimage_field.substr(1).find_first_not_of("0123456789") == std::string::npos) {
+			std::string path = hoverFile->path;
+			// Erase leading slash from the path
+			path.erase(0,1);
+
+			// Convert "path" to separate fields
+			std::vector<std::string> branches = split(path, '/');
+#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+			unsigned long fnum = std::stoul(gGourceSettings.hostimage_field.substr(1));
+#else
+			unsigned long fnum;
+			std::stringstream ss(gGourceSettings.hostimage_field.substr(1).c_str());
+			ss >> fnum;
+#endif
+
+			if(fnum == 0) {
+				return "";
+			} else if(branches.size() >= 3 && fnum < branches.size() - 3) {
+				return branches[fnum - 1];
+			} else return "";
+	    } else if(gGourceSettings.hostimage_field.size() > 1 && gGourceSettings.hostimage_field.compare(0,1,"n") == 0 &&  gGourceSettings.hostimage_field.substr(1).find_first_not_of("0123456789") == std::string::npos) {
+		std::vector<std::string> displayData = hoverFile->displayData;
+#ifndef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
+		unsigned long fnum = std::stoul(gGourceSettings.hostimage_field.substr(1));
+#else
+		unsigned long fnum;
+		std::stringstream ss(gGourceSettings.hostimage_field.substr(1).c_str());
+		ss >> fnum;
+#endif
+		if(fnum == 0) {
+			return "";
+		} else if(displayData.size() >= 3 && fnum < displayData.size() - 3) {
+			return displayData[fnum - 1];
+		} else return "";
+	    } else {
+		return "";
+	    }
+	}
+	return "";
 }
 
 void Gource::drawHoverImage(const std::string& imageName) {
@@ -3101,7 +3159,8 @@ void Gource::draw(float t, float dt) {
 		textbox.addLine(parsedHoverText[it]);
 	}
 
-	drawHoverImage(hoverFile->imageName);
+	drawHoverImage(getHoverImageName(hoverFile));
+
         textbox.setColour(hoverFile->getColour());
 	if(gGourceSettings.hovertext_pos == "mouse") {
         	textbox.setPos(mousepos, true);

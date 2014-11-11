@@ -255,7 +255,10 @@ Branching field = ${bNUM}
 	   //Make sure it is only number enclosed in ${FIELDNUM}
 	   if(close != std::string::npos) {
 		fieldIdentifier = keyFormat.substr(open + 2, close - open - 2);
-		if(fieldIdentifier.compare("plotter") == 0) {
+		if(fieldIdentifier.compare("plotter-image") == 0) {
+		   parsedKeyEntry += keyFormat.substr(last, open - last) + file->imageName;
+		   last = close + 1;
+		} else if(fieldIdentifier.compare("plotter") == 0) {
 		   parsedKeyEntry += keyFormat.substr(last, open - last) + file->fileUser;
 		   last = close + 1;
 		} else if(fieldIdentifier.compare("host") == 0) {
