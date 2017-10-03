@@ -122,7 +122,6 @@ bool RCommitLog::checkFirstChar(int firstChar, std::istream& stream) {
 }
 
 bool RCommitLog::checkFormat() {
-
     if(!success) return false;
 
     //read a commit to see if the log is in the correct format
@@ -221,6 +220,9 @@ bool RCommitLog::nextCommit(RCommit& commit, bool validate) {
         return true;
     }
 
+    // ensure commit is re-initialized
+    commit = RCommit();
+
     bool success = parseCommit(commit);
 
     if(!success) return false;
@@ -236,6 +238,10 @@ bool RCommitLog::isFinished() {
     if(seekable && logf->isFinished()) return true;
 
     return false;
+}
+
+bool RCommitLog::hasBufferedCommit() {
+    return buffered;
 }
 
 //create temp file
@@ -340,6 +346,18 @@ void RCommit::addFile(const std::string& filename, const  std::string& action, c
             Regex* r = *ri;
 
             if(r->match(filename)) {
+                return;
+            }
+        }
+    }
+
+    // Only allow files that have been whitelisted
+    if(!gGourceSettings.file_show_filters.empty()) {
+
+        for(std::vector<Regex*>::iterator ri = gGourceSettings.file_show_filters.begin(); ri != gGourceSettings.file_show_filters.end(); ri++) {
+            Regex* r = *ri;
+
+            if(!r->match(filename)) {
                 return;
             }
         }

@@ -1,8 +1,46 @@
+0.48:
+ * Can now generate logs from git sub module directories.
+
+0.47:
+ * Fixed low mouse movement speed with some mice while repositioning camera.
+
+0.46:
+ * Added --screen option.
+
+0.45:
+ * Added --window-position XxY option.
+ * Added --frameless option.
+ * Added --file-show-filter REGEX option (swoogles).
+ * Added --filename-time and filename-colour options (gh2k).
+ * Improved handling of very low seconds-per-day values (malengrin).
+ * Fixed crash when SVN log lacks author information (obarthel).
+ * Additional git log command validation (cym13).
+ * Allow lower case hex colours in custom logs (HSorensen).
+ * Enabled STDOUT support with --output-stream '-' on Windows (circulosmeos).
+ * Now requires SDL 2 to build (deprecated SDL 1.2 support removed).
+
+0.44:
+ * Fixed crash when taking a screenshot with an odd resolution.
+ * Fixed type deduction compilation error with newer versions of GCC.
+ * Documentation improvements.
+
+0.43:
+ * Updated boost autoconf macros to fix multi-arch detection.
+
+0.42:
+ * Fixed bzr log command when no start date was specified (chrisf).
+ * Fixed hg log commit order when date range specified.
+ * Fixed hg log command line on Windows.
+ * Fixed parser bug in date range filtering code.
+
 0.41:
  * Multi-monitor support using SDL 2.0 when available.
+ * SDL 1.2 support is deprecated.
  * Full screen mode now uses desktop resolution by default.
- * Added --start-date YYYY-MM-DD option.
+ * Added --start-date, --stop-date 'YYYY-MM-DD hh:mm:ss' options.
+ * Added --dir-name-depth option.
  * Changed --file-idle-time default value to 0.
+ * Changed screenshot format to PNG.
 
 0.40:
  * Added caption support.

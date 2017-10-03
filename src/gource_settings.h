@@ -18,7 +18,7 @@
 #ifndef GOURCE_SETTINGS_H
 #define GOURCE_SETTINGS_H
 
-#define GOURCE_VERSION "1.2.9"
+#define GOURCE_VERSION "1.2.10"
 
 #include "core/texture.h"
 #include "core/settings.h"
@@ -85,7 +85,9 @@ public:
     vec2 logo_offset;
 
     std::string start_date;
+    std::string stop_date;
     time_t start_timestamp;
+    time_t stop_timestamp;
 
     float start_position;
     float stop_position;
@@ -155,9 +157,12 @@ public:
     vec3 highlight_colour;
     vec3 selection_colour;
 
+    int dir_name_depth;
+
     std::vector<std::string> highlight_users;
     std::vector<std::string> follow_users;
     std::vector<Regex*> file_filters;
+    std::vector<Regex*> file_show_filters;
     std::vector<Regex*> user_filters;
     bool file_extensions;
 
@@ -167,12 +172,15 @@ public:
     int caption_size;
     int caption_offset;
 
+    vec3 filename_colour;
+    float filename_time;
+
     std::string output_custom_filename;
 
     TextureResource* file_graphic;
 
     int log_level;
-
+    
     GourceSettings();
 
     void setTextDefaults();

@@ -2,6 +2,7 @@
 *.mpg
 *.mkv
 *.mp4
+gource-*.png
 .objs
 /gource
 /gource.exe
@@ -9,6 +10,7 @@
 /mal4s
 gource.win32.depend
 gource.win32.layout
+gource.pro.user
 debug.log
 Makefile
 Makefile.in
@@ -18,13 +20,10 @@ logs/*
 /aclocal.m4
 /autom4te.cache
 /configure
-/config.sub
-/config.guess
 /config.log
 /config.status
-/depcomp
-/install-sh
-/missing
+/dev/win64
+/build-aux
 *.swp
 *.d
 .deps

@@ -16,6 +16,7 @@
 */
 
 #include "gource.h"
+#include "core/png_writer.h"
 
 
 bool  gGourceDrawBackground  = true;
@@ -97,6 +98,8 @@ Gource::Gource(FrameExporter* exporter) {
     mousemoved   = false;
     mousedragged = false;
     mouseclicked = false;
+
+    take_screenshot = false;
 
     if(gGourceSettings.hide_mouse) {
         cursor.showCursor(false);
@@ -317,6 +320,7 @@ void Gource::grabMouse(bool grab_mouse) {
         if(SDL_GetRelativeMouseMode()) {
             SDL_SetWindowGrab(display.sdl_window, SDL_FALSE);
             SDL_SetRelativeMouseMode(SDL_FALSE);
+            SDL_WarpMouseInWindow(display.sdl_window, mousepos.x, mousepos.y);
         }
     }
 #endif
@@ -369,7 +373,7 @@ void Gource::mouseMove(SDL_MouseMotionEvent *e) {
             return;
         }
 
-        cursor_move = mag;
+        cursor_move += mag;
 
         return;
     }
@@ -834,7 +838,7 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
         if(commitlog==0) return;
 
         if(e->keysym.sym == SDLK_F12) {
-            screenshot();
+            take_screenshot = true;
         }
 
 	if(e->keysym.sym == SDLK_o && hoverFile != 0 && !gGourceSettings.browser_url.empty()) {
@@ -914,11 +918,11 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
             idle_time = gGourceSettings.auto_skip_seconds;
         }
 
-        if (e->keysym.sym == SDLK_t) {
+        if (e->keysym.sym == SDLK_y) {
             gGourceQuadTreeDebug = !gGourceQuadTreeDebug;
         }
 
-        if (e->keysym.sym == SDLK_y) {
+        if (e->keysym.sym == SDLK_t) {
             gGourceSettings.hide_tree = !gGourceSettings.hide_tree;
         }
 
@@ -1321,7 +1325,7 @@ void Gource::readLog() {
     //debugLog("readLog()\n");
 
     // read commits until either we are ahead of currtime
-    while(!commitlog->isFinished() && (commitqueue.empty() || (commitqueue.back().timestamp <= currtime && commitqueue.size() < commitqueue_max_size)) ) {
+    while((commitlog->hasBufferedCommit() || !commitlog->isFinished()) && (commitqueue.empty() || (commitqueue.back().timestamp <= currtime && commitqueue.size() < commitqueue_max_size)) ) {
 
         RCommit commit;
 
@@ -1330,6 +1334,11 @@ void Gource::readLog() {
                 break;
             }
             continue;
+        }
+
+        if(gGourceSettings.stop_timestamp != 0 && commit.timestamp > gGourceSettings.stop_timestamp) {
+            stop_position_reached = true;
+            break;
         }
 
         commitqueue.push_back(commit);
@@ -1348,8 +1357,14 @@ void Gource::readLog() {
 
     bool is_finished = commitlog->isFinished();
 
-    if(   (gGourceSettings.stop_at_end && is_finished)
-       || (gGourceSettings.stop_position > 0.0 && commitlog->isSeekable() && (is_finished || last_percent >= gGourceSettings.stop_position)) ) {
+
+    if(
+       // end reached
+       (gGourceSettings.stop_at_end && is_finished)
+
+       // stop position reached
+       || (gGourceSettings.stop_position > 0.0 && commitlog->isSeekable() && (is_finished || last_percent >= gGourceSettings.stop_position))
+    ) {
         stop_position_reached = true;
     }
 
@@ -1659,7 +1674,7 @@ void Gource::updateCamera(float dt) {
 
             vec3 cam_pos = camera.getPos();
 
-            vec2 cursor_delta = cursor_move * cam_rate * 400.0f * dt;
+            vec2 cursor_delta = cursor_move * cam_rate * 10.0f;
 
             cam_pos.x += cursor_delta.x;
             cam_pos.y += cursor_delta.y;
@@ -1918,7 +1933,12 @@ void Gource::logic(float t, float dt) {
 
         processCommit(commit, t);
 
-        currtime = lasttime = commit.timestamp;
+        // allow for non linear time lines
+        if(lasttime > commit.timestamp) {
+            currtime = commit.timestamp;
+        }
+
+        lasttime = commit.timestamp;
         subseconds = 0.0;
 
         commitqueue.pop_front();
@@ -2395,23 +2415,23 @@ void Gource::setMessage(const char* str, ...) {
 void Gource::screenshot() {
 
     //get next free recording name
-    char tganame[256];
+    char pngname[256];
     struct stat finfo;
-    int tgano = 1;
+    int pngno = 1;
 
-    while(tgano < 10000) {
-        snprintf(tganame, 256, "gource-%04d.tga", tgano);
-        if(stat(tganame, &finfo) != 0) break;
-        tgano++;
+    while(pngno < 10000) {
+        snprintf(pngname, 256, "gource-%04d.png", pngno);
+        if(stat(pngname, &finfo) != 0) break;
+        pngno++;
     }
 
-    //write tga
-    std::string filename(tganame);
+    //write png
+    std::string filename(pngname);
 
-    TGAWriter tga(gGourceSettings.transparent ? 4 : 3);
-    tga.screenshot(filename);
+    PNGWriter png(gGourceSettings.transparent ? 4 : 3);
+    png.screenshot(filename);
 
-    setMessage("Wrote screenshot %s", tganame);
+    setMessage("Wrote screenshot %s", pngname);
 }
 
 void Gource::updateVBOs(float dt) {
@@ -3134,10 +3154,6 @@ void Gource::draw(float t, float dt) {
         caption->draw();
     }
 
-    if(message_timer>0.0f) {
-         fontmedium.draw(1, 3, message);
-    }
-
     //file key
     file_key.draw();
     file_key.setShow(gGourceSettings.show_key);
@@ -3268,4 +3284,19 @@ void Gource::draw(float t, float dt) {
 
     mousemoved=false;
     mouseclicked=false;
+
+    if(take_screenshot) {
+        screenshot();
+        take_screenshot = false;
+    }
+
+    if(message_timer > 0.0f) {
+        font.setColour(vec4(1.0f));
+
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+
+        font.draw(1, 3, message);
+    }
 }
