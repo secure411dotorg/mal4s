@@ -24,29 +24,51 @@ Help ('\fB-H\fR' for extended help).
 Set the viewport size. If \-f is also supplied, will attempt to set the video mode to this also. Add ! to make the window non-resizable.
 .TP
 \fB\-f\fR
-Fullscreen
+Fullscreen.
 .TP
-\fB\-w\fR
-Windowed
+\fB\-\-screen SCREEN\fR
+Set the number of the screen to display on.
+.TP
+\fB\-\-window\-position XxY\fR
+Initial window position on your desktop which may be made up of multiple monitors.
+
+This will override the screen setting so don't specify both.
+.TP
+\fB\-\-frameless\fR
+Frameless window.
 .TP
 \fB\-\-transparent\fR
 Make the background transparent. Only really useful for screenshots.
 .TP
-\fB     \-\-start\-date YYYY\-MM\-DD\fR
-Start with first log entry on or after the supplied date.
+\fB\-\-start\-date 'YYYY\-MM\-DD hh:mm:ss +tz'\fR
+Start with the first entry after the supplied date and optional time.
+
+If a time zone offset isn't specified the local time zone is used.
+
+Example accepted formats:
+
+    "2012-06-30"
+    "2012-06-30 12:00"
+    "2012-06-30 12:00:00 +12"
+.TP
+\fB\-\-stop\-date 'YYYY\-MM\-DD hh:mm:ss +tz'\fR
+Stop at the last entry prior to the supplied date and optional time.
+
+Uses the same format as \-\-start\-date.
+.TP
 \fB\-p, \-\-start\-position POSITION\fR
 Begin at some position in the log (between 0.0 and 1.0 or 'random').
 .TP
-\fB    \-\-stop\-position  POSITION\fR
+\fB\-\-stop\-position  POSITION\fR
 Stop (exit) at some position in the log (does not work with STDIN).
 .TP
 \fB\-t, \-\-stop\-at\-time SECONDS\fR
 Stop (exit) after a specified number of seconds.
 .TP
-\fB    \-\-stop\-at\-end\fR
+\fB\-\-stop\-at\-end\fR
 Stop (exit) at the end of the log / stream.
 .TP
-\fB    \-\-loop\fR
+\fB\-\-loop\fR
 Loop back to the start of the log when the end is reached.
 .TP
 \fB\-a, \-\-auto\-skip\-seconds SECONDS\fR
@@ -55,7 +77,7 @@ Automatically skip to next entry if nothing happens for a specified number of se
 \fB\-s, \-\-seconds\-per\-day SECONDS\fR
 Speed of simulation in seconds per day.
 .TP
-\fB\    \-\-realtime\fR
+\fB\-\-realtime\fR
 Realtime playback speed.
 .TP
 \fB\-c, \-\-time\-scale SCALE\fR
@@ -121,14 +143,26 @@ Font colour for highlighted users in hex.
 \fB\-\-selection\-colour FFFFFF\fR
 Font colour for selected users and files.
 .TP
+\fB\-\-filename\-colour FFFFFF\fR
+Font colour for filenames.
+.TP
 \fB\-\-dir\-colour FFFFFF\fR
 Font colour for directories.
+.TP
+\fB\-\-dir\-name\-depth DEPTH\fR
+Draw names of directories down to a specific depth in the tree.
+.TP
+\fB\-\-filename\-time SECONDS\fR
+Duration to keep filenames on screen (>= 2.0).
 .TP
 \fB\-\-file\-extensions\fR
 Show filename extensions only.
 .TP
 \fB\-\-file\-filter REGEX\fR
 Filter out any files matching a specified regular expression.
+.TP
+\fB\-\-file\-show\-filter REGEX\fR
+Show only files matching this regular expression.
 .TP
 \fB\-\-user\-filter REGEX\fR
 Filter out any usernames matching a specified regular expression.
@@ -173,7 +207,7 @@ Max speed users can travel per second.
 Time users take to come to a halt.
 .TP
 \fB\-\-user\-scale SCALE\fR
-Change scale of users.
+Change scale of user avatars.
 .TP
 \fB\-\-camera\-mode MODE\fR
 Camera mode (overview,track).
@@ -286,7 +320,7 @@ mal4s my\-cvs\-project.log
 If you want to use Mal4s with something other than the supported systems, there is a pipe ('|') delimited custom log format:
 
 .ti 10
-timestamp - A unix timestamp of when the update occured.
+timestamp - A unix timestamp of when the update occurred.
 .ti 10
 username  - The name of the user who made the update.
 .ti 10
@@ -347,11 +381,27 @@ Interactive keyboard commands:
 .ti 10
 (S)   Randomize colours
 .ti 10
+(D)   Toggle directory name display mode
+.ti 10
+(F)   Toggle file name display mode
+.ti 10
+(U)   Toggle user name display mode
+.ti 10
+(G)   Toggle display of users
+.ti 10
+(T)   Toggle display of directory tree edges
+.ti 10
+(R)   Toggle display of root directory edges
+.ti 10
 (+-)  Adjust simulation speed
 .ti 10
 (<>)  Adjust time scale
 .ti 10
 (TAB) Cycle through visible users
+.ti 10
+(F12) Screenshot
+.ti 10
+(Alt+Enter) Fullscreen toggle
 .ti 10
 (ESC) Quit
 .SH AUTHOR
