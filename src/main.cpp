@@ -67,8 +67,8 @@ int main(int argc, char *argv[]) {
     std::string defaultMainConfig = texturemanager.getDir() + "mal4s.conf";
 
     std::string demoFile = texturemanager.getDir() + "sample--newns.mal4s";
-    //captionFile will be re-used if a file name is specified at the command prompt
-    std::string captionFile = texturemanager.getDir() + "sample--newns.captions";
+    std::string captionFile;
+    std::string demoCaptionFile = texturemanager.getDir() + "sample--newns.captions";
     std::string captionArg = "--caption-file";
     bool isDemo = false;
     int replacementArgc = argc;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
     char* demo[demoindex];
     demo[0] = argv[0];
     demo[1] = strdup(captionArg.c_str());
-    demo[2] = strdup(captionFile.c_str());
+    demo[2] = strdup(demoCaptionFile.c_str());
     demo[3] = strdup(demoFile.c_str());
 
     //convert args to a conf file
