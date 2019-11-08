@@ -37,22 +37,26 @@ Gource::Gource(FrameExporter* exporter) {
         gGourceSettings.file_graphic = texturemanager.grab("file.png", true, GL_CLAMP_TO_EDGE);
     }
 
-    fontlarge = fontmanager.grab("FreeSans.ttf", 42);
+    fontlarge = fontmanager.grab(gGourceSettings.font_file, 42);
     fontlarge.dropShadow(true);
     fontlarge.roundCoordinates(true);
 
-    fontmedium = fontmanager.grab("FreeSans.ttf", gGourceSettings.font_size);
+    fontmedium = fontmanager.grab(gGourceSettings.font_file, gGourceSettings.font_size);
     fontmedium.dropShadow(true);
     fontmedium.roundCoordinates(false);
 
-    fontcaption = fontmanager.grab("FreeSans.ttf", gGourceSettings.caption_size);
+    fontcaption = fontmanager.grab(gGourceSettings.font_file, gGourceSettings.caption_size);
     fontcaption.dropShadow(true);
     fontcaption.roundCoordinates(false);
     fontcaption.alignTop(false);
 
-    font = fontmanager.grab("FreeSans.ttf", 14);
+    font = fontmanager.grab(gGourceSettings.font_file, 14);
     font.dropShadow(true);
     font.roundCoordinates(true);
+
+    fontdirname = fontmanager.grab(gGourceSettings.font_file, gGourceSettings.dirname_font_size);
+    fontdirname.dropShadow(true);
+    fontdirname.roundCoordinates(true);
 
     //only use bloom with alpha channel if transparent due to artifacts on some video cards
     std::string bloom_tga = gGourceSettings.transparent ? "bloom_alpha.tga" : "bloom.tga";
@@ -122,7 +126,7 @@ Gource::Gource(FrameExporter* exporter) {
 
     date_x_offset = 0;
 
-    textbox = TextBox(fontmanager.grab("FreeSans.ttf", 18));
+    textbox = TextBox(fontmanager.grab(gGourceSettings.font_file, 18));
     textbox.setBrightness(0.5f);
     textbox.show();
 
@@ -337,6 +341,7 @@ void Gource::grabMouse(bool grab_mouse) {
 
 void Gource::mouseMove(SDL_MouseMotionEvent *e) {
     if(commitlog==0) return;
+    if(gGourceSettings.disable_input) return;
     if(gGourceSettings.hide_mouse) return;
 
     if(grab_mouse) {
@@ -417,6 +422,7 @@ void Gource::zoom(bool zoomin) {
 
 #if SDL_VERSION_ATLEAST(2,0,0)
 void Gource::mouseWheel(SDL_MouseWheelEvent *e) {
+    if(gGourceSettings.disable_input) return;
 
     if(e->y > 0) {
         zoom(true);
@@ -431,6 +437,7 @@ void Gource::mouseWheel(SDL_MouseWheelEvent *e) {
 
 void Gource::mouseClick(SDL_MouseButtonEvent *e) {
     if(commitlog==0) return;
+    if(gGourceSettings.disable_input) return;
     if(gGourceSettings.hide_mouse) return;
 
     //mouse click should stop the cursor being idle
@@ -799,6 +806,8 @@ Branching field = ${bNUM}
 }
 
 void Gource::keyPress(SDL_KeyboardEvent *e) {
+    if (gGourceSettings.disable_input) return;
+
     if (e->type == SDL_KEYUP) return;
 
 
@@ -974,8 +983,6 @@ void Gource::keyPress(SDL_KeyboardEvent *e) {
                 gGourceSettings.file_extensions = true;
                 gGourceSettings.hide_filenames  = false;
             }
-
-            update_file_labels = true;
         }
 
         if (e->keysym.sym == SDLK_r) {
@@ -1078,7 +1085,6 @@ void Gource::reset() {
     active_user_bounds.reset();
     dir_bounds.reset();
     commitqueue.clear();
-    tagfilemap.clear();
     tagusermap.clear();
     gGourceRemovedFiles.clear();
 
@@ -1086,7 +1092,6 @@ void Gource::reset() {
     if(dirNodeTree!=0) delete dirNodeTree;
 
     recolour = false;
-    update_file_labels = false;
 
     userTree = 0;
     dirNodeTree = 0;
@@ -1180,7 +1185,6 @@ void Gource::deleteFile(RFile* file) {
     }
 
     files.erase(file->fullpath);
-    tagfilemap.erase(file->getTagID());
     file_key.dec(file);
 
     //debugLog("removed file %s\n", file->fullpath.c_str());
@@ -1206,7 +1210,6 @@ RFile* Gource::addFile(const RCommitFile& cf) {
     RFile* file = new RFile(cf.filename, cf.colour, vec2(0.0,0.0), tagid, cf.fileUser, cf.imageName, cf.displayData);
 
     files[cf.filename] = file;
-    tagfilemap[tagid]  = file;
 
     root->addFile(file);
 
@@ -1372,12 +1375,12 @@ void Gource::readLog() {
     //debugLog("current date: %s\n", displaydate.c_str());
 }
 
-void Gource::processCommit(RCommit& commit, float t) {
+void Gource::processCommit(const RCommit& commit, float t) {
 
     //find files of this commit or create it
-    for(std::list<RCommitFile>::iterator it = commit.files.begin(); it != commit.files.end(); it++) {
+    for(std::list<RCommitFile>::const_iterator it = commit.files.begin(); it != commit.files.end(); it++) {
 
-        RCommitFile& cf = *it;
+        const RCommitFile& cf = *it;
         RFile* file = 0;
 
         //is this a directory (ends in slash)
@@ -1408,7 +1411,7 @@ void Gource::processCommit(RCommit& commit, float t) {
                 for(std::list<RFile*>::iterator it = dir_files.begin(); it != dir_files.end(); it++) {
                     RFile* file = *it;
 
-                    addFileAction(commit.username, cf, file, t, commit.userimagename);
+                    addFileAction(commit, cf, file, t);
                 }
             }
 
@@ -1424,11 +1427,11 @@ void Gource::processCommit(RCommit& commit, float t) {
             if(!file) continue;
         }
 
-        addFileAction(commit.username, cf, file, t, commit.userimagename);
+        addFileAction(commit, cf, file, t);
     }
 }
 
-void Gource::addFileAction(const std::string& username, const RCommitFile& cf, RFile* file, float t, const std::string& imageName) {
+void Gource::addFileAction(const RCommit& commit, const RCommitFile& cf, RFile* file, float t) {
     //create user if havent yet. do it here to ensure at least one of there files
     //was added (incase we hit gGourceSettings.max_files)
 
@@ -1436,11 +1439,11 @@ void Gource::addFileAction(const std::string& username, const RCommitFile& cf, R
     RUser* user = 0;
 
     //see if user already exists
-    std::map<std::string, RUser*>::iterator seen_user = users.find(username);
+    std::map<std::string, RUser*>::iterator seen_user = users.find(commit.username);
     if(seen_user != users.end()) user = seen_user->second;
 
     if(user == 0) {
-        user = addUser(username, imageName);
+        user = addUser(commit.username, commit.userimagename);
 
         if(gGourceSettings.highlight_all_users) user->setHighlighted(true);
         else {
@@ -1464,12 +1467,12 @@ void Gource::addFileAction(const std::string& username, const RCommitFile& cf, R
     commit_seq++;
 
     if(cf.action == "D") {
-        userAction = new RemoveAction(user, file, t);
+        userAction = new RemoveAction(user, file, commit.timestamp, t);
     } else {
         if(cf.action == "A") {
-            userAction = new CreateAction(user, file, t);
+            userAction = new CreateAction(user, file, commit.timestamp, t);
         } else {
-            userAction = new ModifyAction(user, file, t, cf.colour);
+            userAction = new ModifyAction(user, file, commit.timestamp, t, cf.colour);
         }
     }
 
@@ -1844,14 +1847,28 @@ void Gource::logic(float t, float dt) {
         float s = sinf(rotate_angle);
         float c = cosf(rotate_angle);
 
-        root->rotate(s, c);
+        if(manual_rotate) {
+            // rotate around camera position if manual
+            vec2 centre = vec2(camera.getPos());
 
-        for(std::map<std::string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
-            RUser* user = it->second;
+            root->rotate(s, c, centre);
 
-            vec2 userpos = user->getPos();
+            for(std::map<std::string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
+                RUser* user = it->second;
 
-            user->setPos(rotate_vec2(userpos, s, c));
+                vec2 rotated_user_pos = rotate_vec2(user->getPos() - centre, s, c) + centre;
+                user->setPos(rotated_user_pos);
+            }
+        } else {
+            root->rotate(s, c);
+
+            for(std::map<std::string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {
+                RUser* user = it->second;
+
+                vec2 rotated_user_pos = rotate_vec2(user->getPos(), s, c);
+                user->setPos(rotated_user_pos);
+            }
+
         }
 
         rotate_angle = 0.0f;
@@ -1860,13 +1877,6 @@ void Gource::logic(float t, float dt) {
     if(recolour) {
         changeColours();
         recolour = false;
-    }
-
-    if(update_file_labels) {
-        for(std::map<std::string,RFile*>::iterator it = files.begin(); it != files.end(); it++) {
-            it->second->updateLabel();
-        }
-        update_file_labels = false;
     }
 
     //still want to update camera while paused
@@ -1884,10 +1894,12 @@ void Gource::logic(float t, float dt) {
     }
 
     //loop in attempt to find commits
-    if(commitqueue.empty() && commitlog->isSeekable() && gGourceSettings.loop) {
-        first_read=true;
-        seekTo(0.0);
-        readLog();
+    if(gGourceSettings.loop && commitqueue.empty() && commitlog->isSeekable()) {
+        if(idle_time >= gGourceSettings.loop_delay_seconds) {
+            first_read=true;
+            seekTo(0.0);
+            readLog();
+        }
     }
 
     if(currtime==0 && !commitqueue.empty()) {
@@ -1933,12 +1945,19 @@ void Gource::logic(float t, float dt) {
 
         processCommit(commit, t);
 
-        // allow for non linear time lines
-        if(lasttime > commit.timestamp) {
-            currtime = commit.timestamp;
+        if(gGourceSettings.no_time_travel) {
+            if(commit.timestamp > lasttime) {
+                lasttime = commit.timestamp;
+            }
+
+        } else {
+            // allow for non linear time lines
+            if(lasttime > commit.timestamp) {
+                currtime = commit.timestamp;
+            }
+            lasttime = commit.timestamp;
         }
 
-        lasttime = commit.timestamp;
         subseconds = 0.0;
 
         commitqueue.pop_front();
@@ -2984,10 +3003,10 @@ void Gource::draw(float t, float dt) {
         fontmanager.startBuffer();
     }
 
-    font.roundCoordinates(false);
-    font.setColour(vec4(gGourceSettings.dir_colour, 1.0f));
+    fontdirname.roundCoordinates(false);
+    fontdirname.setColour(vec4(gGourceSettings.dir_colour, 1.0f));
 
-    root->drawNames(font);
+    root->drawNames(fontdirname);
 
    if(!(gGourceSettings.hide_usernames || gGourceSettings.hide_users)) {
         for(std::map<std::string,RUser*>::iterator it = users.begin(); it!=users.end(); it++) {

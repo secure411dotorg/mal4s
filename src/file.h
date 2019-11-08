@@ -30,8 +30,10 @@ class RFile : public Pawn {
 
     RDirNode* dir;
 
+    time_t removed_timestamp;
     bool forced_removal;
     bool expired;
+    bool removing;
 
     float fade_start;
     
@@ -70,11 +72,7 @@ public:
 
     float getAlpha() const;
 
-    void touch(const vec3 & colour);
-
-    void setSelected(bool selected);
-
-    void updateLabel();
+    void touch(time_t touch_timestamp, const vec3& colour);
 
     void setHidden(bool hidden);
 
@@ -86,7 +84,8 @@ public:
     void logic(float dt);
     void draw(float dt);
 
-    void remove(bool force=false);
+    void remove(time_t removed_timestamp);
+    void remove();
 
     vec2 getAbsolutePos() const;
 

@@ -114,15 +114,23 @@ void RDirNode::nodeUpdated(bool userInitiated) {
 }
 
 void RDirNode::rotate(float s, float c) {
-
-    if(parent != 0) {
-        pos  = rotate_vec2(pos,  s, c);
-        spos = rotate_vec2(spos, s, c);
-    }
+    pos  = rotate_vec2(pos,  s, c);
+    spos = rotate_vec2(spos, s, c);
 
     for(std::list<RDirNode*>::iterator it = children.begin(); it != children.end(); it++) {
         RDirNode* child = (*it);
         child->rotate(s, c);
+    }
+}
+
+void RDirNode::rotate(float s, float c, const vec2& centre) {
+
+    pos  = rotate_vec2(pos - centre,  s, c) + centre;
+    spos = rotate_vec2(spos - centre, s, c) + centre;
+
+    for(std::list<RDirNode*>::iterator it = children.begin(); it != children.end(); it++) {
+        RDirNode* child = (*it);
+        child->rotate(s, c, centre);
     }
 }
 
@@ -430,7 +438,7 @@ bool RDirNode::addFile(RFile* f) {
 
         if(f->path.find(file->fullpath) == 0) {
             //fprintf(stderr, "removing %s as is actually the directory of %s\n", file->fullpath.c_str(), f->fullpath.c_str());
-            file->remove(true);
+            file->remove();
             break;
         }
     }
@@ -792,7 +800,6 @@ void RDirNode::move(float dt) {
 
     //the root node is the centre of the world
     if(parent == 0) {
-        pos = vec2(0.0f);
         return;
     }
 
@@ -929,10 +936,10 @@ void RDirNode::drawDirName(FXFont& dirfont) const{
 
     float alpha = gGourceSettings.highlight_dirs ? 1.0 : std::max(0.0f, 5.0f - since_last_node_change) / 5.0f;
 
-    vec2 mid = spline.getMidPoint();
+    vec2 label_pos = spline.getLabelPos();
 
     dirfont.setAlpha(alpha);
-    dirfont.draw(mid.x, mid.y, path_token);
+    dirfont.draw(label_pos.x, label_pos.y, path_token);
 }
 
 void RDirNode::calcScreenPos(GLint* viewport, GLdouble* modelview, GLdouble* projection) {

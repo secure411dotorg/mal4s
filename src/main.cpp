@@ -46,7 +46,14 @@ std::string search4TextConfig(std::string confname) {
 
 int main(int argc, char *argv[]) {
 
-    SDLAppInit("Mal4s", "mal4s");
+    std::string exepath;
+#ifndef _WIN32
+    if(argc > 0) {
+        exepath = std::string(argv[0]);
+    }
+#endif
+
+    SDLAppInit("Mal4s", "mal4s", exepath);
 
 #ifdef _WIN32
         SDLApp::initConsole();

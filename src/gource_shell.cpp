@@ -134,6 +134,11 @@ void GourceShell::keyPress(SDL_KeyboardEvent *e) {
             quit();
         }
 
+        if(gGourceSettings.disable_input) {
+            // disable keyboard input other than the escape key
+            return;
+        }
+
         if (e->keysym.sym == SDLK_F11) {
             toggleWindowFrame();
         }
@@ -181,19 +186,14 @@ void GourceShell::quit() {
 
 Gource* GourceShell::getNext() {
 
-    if(gource!=0) {
+    if(gource != 0) {
         transition_interval = 1.0f;
+        delete gource;
+        gource = 0;
     }
 
     if(gGourceSettings.shutdown || gource_settings == conf->getSections("gource")->end()) {
-
-        // if we are done, delete gource and replace it with nothing
-        if(gource != 0) {
-            Gource* gource_tmp = gource;
-                gource = 0;
-            delete gource_tmp;
-        }
-
+        // done
         return 0;
     }
 
@@ -225,10 +225,7 @@ Gource* GourceShell::getNext() {
     }
 
     // replace gource
-
-    Gource* gource_tmp = gource;
-        gource = new Gource(exporter);
-    delete gource_tmp;
+    gource = new Gource(exporter);
 
     next = false;
 

@@ -36,6 +36,10 @@
 #include "formats/svn.h"
 */
 
+#ifndef GOURCE_FONT_FILE
+#define GOURCE_FONT_FILE "FreeSans.ttf"
+#endif
+
 GourceSettings gGourceSettings;
 
 #ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
@@ -55,7 +59,7 @@ void GourceSettings::help(bool extended_help) {
 
 #ifdef _WIN32
     //resize window to fit help message
-    SDLApp::resizeConsole(780);
+    SDLApp::resizeConsole(1000);
     SDLApp::showConsole(true);
 #endif
 
@@ -69,6 +73,7 @@ void GourceSettings::help(bool extended_help) {
     printf("  -WIDTHxHEIGHT, --viewport           Set viewport size\n");
     printf("      --screen SCREEN                 Screen number\n");
     printf("  -f, --fullscreen                    Fullscreen\n");
+    printf("      --screen SCREEN                 Screen number\n");
     printf("      --multi-sampling                Enable multi-sampling\n");
     printf("      --no-vsync                      Disable vsync\n\n");
     printf("      --window-position XxY           Initial window position\n");
@@ -94,6 +99,8 @@ void GourceSettings::help(bool extended_help) {
     printf("      --disable-auto-skip             Disable auto skip\n");
     printf("  -s, --seconds-per-day SECONDS       Speed in seconds per day (default: 10)\n");
     printf("      --realtime                      Realtime playback speed\n");
+    printf("      --no-time-travel                Use the time of the last commit if the\n");
+    printf("                                      time of a commit is in the past\n");
     printf("  -c, --time-scale SCALE              Change simulation time scale (default: 1.0)\n");
     printf("  -e, --elasticity FLOAT              Elasticity of nodes (default: 0.0)\n\n");
 
@@ -134,6 +141,9 @@ void GourceSettings::help(bool extended_help) {
 if(extended_help) {
     printf("Extended Options:\n\n");
 
+    printf("  --window-position XxY    Initial window position\n");
+    printf("  --frameless              Frameless window\n\n");
+
     //printf("      --output-custom-log FILE        Output a custom format log file ('-' for STDOUT).\n\n");
 
     printf("  -b, --background-colour FFFFFF      Background colour in hex\n");
@@ -146,11 +156,17 @@ if(extended_help) {
     printf("      --crop AXIS                     Crop view on an axis (vertical,horizontal)\n");
     printf("      --padding FLOAT                 Camera view padding (default: 1.1)\n\n");
 
+    printf("      --disable-input                 Disable keyboard and mouse input\n\n");
     printf("      --disable-auto-rotate           Disable automatic camera rotation\n\n");
 
     printf("      --date-format FORMAT            Specify display date string (strftime format)\n\n");
 
+    printf("      --font-scale SCALE              Scale the size of all fonts\n");
+    printf("      --font-file FILE                Specify the font\n");
     printf("      --font-size SIZE                Font size used by date and title\n");
+    printf("      --host-font-size SIZE           Font size for hosts\n");
+    printf("      --branch-font-size SIZE            Font size for branch names\n");
+    printf("      --plotter-font-size SIZE           Font size for user names\n");
     printf("      --font-colour FFFFFF            Font colour used by date and title in hex\n\n");
 
     printf("      --show-tld-only                 Show tld only\n\n");
@@ -163,10 +179,14 @@ if(extended_help) {
 
     printf("      --title TITLE                   Set a title\n\n");
 
+    printf("      --loop-delay-seconds            SECONDS Seconds to delay before looping (default: 3)\n\n");
+
     printf("      --transparent                   Make the background transparent\n\n");
 
     printf("      --plotter-filter REGEX          Ignore plotternames matching this regex\n");
+    printf("      --plotter-show-filter REGEX     Show only plotternames matching this regex\n\n");
     printf("      --host-filter REGEX             Ignore hosts matching this regex\n\n");
+    printf("      --host-show-filter REGEX        Show only hosts matching this regex\n\n");
     printf("      --host-show-filter REGEX        Show only hosts matching this regex\n\n");
 
     printf("      --plotter-friction SECONDS      Change the rate plotters slow down (default: 0.67)\n");
@@ -195,6 +215,8 @@ if(extended_help) {
     printf("                                      height values with an x.\n");
     printf("                                      Examples: 25%%x30%%    25%%    200    150x10%%\n\n");
     printf("     --branch-name-depth DEPTH        Draw names of branches down to a specific depth.\n\n");
+    printf("     --branch-name-position           FLOAT Position along edge of the branch name\n");
+    printf("                                      (between 0.0 and 1.0, default is 0.5).\n\n");
 
     printf("     --hostname-time SECONDS          Duration to keep hostnames on screen (default: 4.0)\n\n");
 
@@ -277,6 +299,7 @@ GourceSettings::GourceSettings() {
     arg_types["dont-stop"]          = "bool";
     arg_types["loop"]               = "bool";
     arg_types["realtime"]           = "bool";
+    arg_types["no-time-travel"]     = "bool";
     arg_types["colour-images"]      = "bool";
     arg_types["hide-date"]          = "bool";
     arg_types["hide-hosts"]         = "bool";
@@ -284,6 +307,7 @@ GourceSettings::GourceSettings() {
     arg_types["hide-tree"]          = "bool";
     arg_types["hide-plotter-names"] = "bool";
     arg_types["hide-hostnames"]     = "bool";
+    arg_types["hide-tree"]          = "bool";
     arg_types["hide-branch-names"]  = "bool";
     arg_types["hide-progress"]      = "bool";
     arg_types["hide-bloom"]         = "bool";
@@ -305,6 +329,7 @@ GourceSettings::GourceSettings() {
 
     arg_types["disable-auto-rotate"] = "bool";
     arg_types["disable-auto-skip"]  = "bool";
+    arg_types["disable-input"]      = "bool";
 
     arg_types["bloom-intensity"]    = "float";
     arg_types["bloom-multiplier"]   = "float";
@@ -316,13 +341,20 @@ GourceSettings::GourceSettings() {
     arg_types["plotter-friction"]   = "float";
     arg_types["padding"]            = "float";
     arg_types["time-scale"]         = "float";
+    arg_types["branch-name-position"] = "float";
+    arg_types["loop-delay-seconds"] = "float";
 
     arg_types["host-image-max-size"] = "string";
     arg_types["max-hosts"]          = "int";
     arg_types["font-size"]          = "int";
+    arg_types["host-font-size"]     = "int";
+    arg_types["branch-font-size"]      = "int";
+    arg_types["plotter-font-size"]  = "int";
+    arg_types["font-scale"]         = "float";
     arg_types["hash-seed"]          = "int";
 
     arg_types["plotter-filter"]     = "multi-value";
+    arg_types["plotter-show-filter"] = "multi-value";
     arg_types["host-filter"]        = "multi-value";
     arg_types["host-show-filter"]   = "multi-value";
     arg_types["follow-plotter"]     = "multi-value";
@@ -360,6 +392,7 @@ GourceSettings::GourceSettings() {
     arg_types["plotter-scale"]      = "string";
     arg_types["camera-mode"]        = "string";
     arg_types["title"]              = "string";
+    arg_types["font-file"]          = "string";
     arg_types["font-colour"]        = "string";
     arg_types["highlight-colour"]   = "string";
     arg_types["selection-colour"]   = "string";
@@ -410,7 +443,7 @@ void GourceSettings::setGourceDefaults() {
     hide_tree      = false;
     hide_files     = false;
     hide_usernames = false;
-    hide_filenames = true;
+    hide_hosts = true;
     hide_dirnames  = true;
     hide_progress  = true;
     hide_bloom     = false;
@@ -433,9 +466,12 @@ void GourceSettings::setGourceDefaults() {
     screenshot_at_end = false;
     stop_at_end    = false;
     dont_stop      = false;
+    no_time_travel = false;
 
 
     disable_auto_rotate = false;
+
+    disable_input = false;
 
     auto_skip_seconds = 1.0f;
     days_per_second   = 0.1f; // TODO: check this is right
@@ -443,6 +479,7 @@ void GourceSettings::setGourceDefaults() {
     time_scale        = 1.0f;
 
     loop = false;
+    loop_delay_seconds = 3.0f;
 
     logo        = "";
     logo_offset = vec2(20.0f,20.0f);
@@ -472,13 +509,18 @@ void GourceSettings::setGourceDefaults() {
 
     title             = "Get tools and data at https://DissectCyber.com";
 
+    font_file = GOURCE_FONT_FILE;
     font_size = 16;
+    host_font_size = 14;
+    dirname_font_size = 14;
+    user_font_size = 14;
     dir_colour       = vec3(1.0f);
     font_colour      = vec3(1.0f);
     highlight_colour = vec3(1.0f);
     selection_colour = vec3(1.0, 1.0, 0.3f);
 
     dir_name_depth = 0;
+    dir_name_position = 0.5f;
 
     elasticity = 0.0f;
 
@@ -507,8 +549,8 @@ void GourceSettings::setGourceDefaults() {
     caption_offset   = 0;
     caption_colour   = vec3(1.0f, 1.0f, 1.0f);
 
-    filename_colour  = vec3(1.0f, 1.0f, 1.0f);
-    filename_time = 4.0f;
+    host_colour  = vec3(1.0f, 1.0f, 1.0f);
+    host_time = 4.0f;
 
     gStringHashSeed = 31;
 
@@ -525,12 +567,19 @@ void GourceSettings::setGourceDefaults() {
     file_show_filters.clear();
 
     file_extensions = false;
+    file_extension_fallback = false;
 
     //delete user filters
     for(std::vector<Regex*>::iterator it = user_filters.begin(); it != user_filters.end(); it++) {
         delete (*it);
     }
     user_filters.clear();
+
+    //delete user whitelist
+    for(std::vector<Regex*>::iterator it = user_show_filters.begin(); it != user_show_filters.end(); it++) {
+        delete (*it);
+    }
+    user_show_filters.clear();
 }
 
 void GourceSettings::commandLineOption(const std::string& name, const std::string& value) {
@@ -978,7 +1027,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             else if(hidestr == "tree")      hide_tree      = true;
             else if(hidestr == "hosts")     hide_files     = true;
             else if(hidestr == "plotternames") hide_usernames = true;
-            else if(hidestr == "hostnames") hide_filenames = true;
+            else if(hidestr == "hostnames") hide_hosts = true;
             else if(hidestr == "branchnames")  hide_dirnames  = true;
             else if(hidestr == "bloom")     hide_bloom     = true;
             else if(hidestr == "progress")  hide_progress  = true;
@@ -1124,8 +1173,23 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         auto_skip_seconds = -1.0;
     }
 
+    if(gource_settings->getBool("disable-input")) {
+        disable_input=true;
+    }
+
     if(gource_settings->getBool("loop")) {
         loop = true;
+    }
+
+    if((entry = gource_settings->getEntry("loop-delay-seconds")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify loop-delay-seconds (float)");
+
+        loop_delay_seconds = entry->getFloat();
+
+        if(loop_delay_seconds<=0.0f) {
+            conffile.invalidValueException(entry);
+        }
     }
 
     if((entry = gource_settings->getEntry("git-branch")) != 0) {
@@ -1213,10 +1277,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             std::string dirfile;
 
 #ifdef _WIN32
-            std::wstring dirfile_16 = p.filename().wstring();
+            std::wstring dirfile_16 = p.host().wstring();
             utf8::utf16to8(dirfile_16.begin(), dirfile_16.end(), back_inserter(dirfile));
 #else
-            dirfile = p.filename().string();
+            dirfile = p.host().string();
 #endif
             std::string file_ext = extension(p);
             boost::algorithm::to_lower(file_ext);
@@ -1264,10 +1328,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             std::string dirfile;
 
 #ifdef _WIN32
-            std::wstring dirfile_16 = p.filename().wstring();
+            std::wstring dirfile_16 = p.host().wstring();
             utf8::utf16to8(dirfile_16.begin(), dirfile_16.end(), back_inserter(dirfile));
 #else
-            dirfile = p.filename().string();
+            dirfile = p.host().string();
 #endif
             std::string file_ext = extension(p);
             boost::algorithm::to_lower(file_ext);
@@ -1285,9 +1349,13 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
     if((entry = gource_settings->getEntry("caption-file")) != 0) {
 
-        if(!entry->hasValue()) conffile.entryException(entry, "specify caption file (filename)");
+        if(!entry->hasValue()) conffile.entryException(entry, "specify caption file (host)");
 
         caption_file = entry->getString();
+
+        if(!boost::filesystem::exists(caption_file)) {
+            conffile.entryException(entry, "caption file not found");
+        }
     }
 
     if((entry = gource_settings->getEntry("caption-duration")) != 0) {
@@ -1345,10 +1413,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 	std::string colstring = entry->getString();
 
 	if(entry->isVec3()) {
-	    filename_colour = entry->getVec3();
+	    host_colour = entry->getVec3();
 	} else if(colstring.size()==6 && sscanf(colstring.c_str(), "%02x%02x%02x", &r, &g, &b) == 3) {
-            filename_colour = vec3(r,g,b);
-            filename_colour /= 255.0f;
+            host_colour = vec3(r,g,b);
+            host_colour /= 255.0f;
         } else {
             conffile.invalidValueException(entry);
         }
@@ -1358,9 +1426,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify duration to keep hosts on screen (float)");
 
-        filename_time = entry->getFloat();
+        host_time = entry->getFloat();
 
-        if(filename_time<2.0f) {
+        if(host_time<2.0f) {
             conffile.entryException(entry, "hostname-time must be >= 2.0");
         }
     }
@@ -1398,6 +1466,17 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
+    if((entry = gource_settings->getEntry("font-file")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font file");
+
+        font_file = entry->getString();
+
+        if(font_file.empty()) {
+           conffile.invalidValueException(entry);
+        }
+    }
+
     if((entry = gource_settings->getEntry("font-size")) != 0) {
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
@@ -1408,6 +1487,54 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             conffile.invalidValueException(entry);
         }
     }
+
+    if((entry = gource_settings->getEntry("host-font-size")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
+
+        host_font_size = entry->getInt();
+
+        if(host_font_size<1 || host_font_size>100) {
+            conffile.invalidValueException(entry);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("branch-font-size")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
+
+        dirname_font_size = entry->getInt();
+
+        if(dirname_font_size<1 || dirname_font_size>100) {
+            conffile.invalidValueException(entry);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("plotter-font-size")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
+
+        user_font_size = entry->getInt();
+
+        if(user_font_size<1 || user_font_size>100) {
+            conffile.invalidValueException(entry);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("font-scale")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font scale");
+
+        float font_scale = entry->getFloat();
+
+        if(font_scale<0.0f || font_scale>10.0f) {
+            conffile.invalidValueException(entry);
+        }
+
+        font_size         = glm::clamp((int)(font_size * font_scale), 1, 100);
+        user_font_size    = glm::clamp((int)(user_font_size * font_scale), 1, 100);
+        dirname_font_size = glm::clamp((int)(dirname_font_size * font_scale), 1, 100);
+    }    
 
     if((entry = gource_settings->getEntry("hash-seed")) != 0) {
 
@@ -1694,6 +1821,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         days_per_second = 1.0 / 86400.0;
     }
 
+    if(gource_settings->getBool("no-time-travel")) {
+        no_time_travel = true;
+    }
+
     if(gource_settings->getBool("dont-stop")) {
         dont_stop = true;
     }
@@ -1834,6 +1965,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         file_extensions=true;
     }
 
+    if(gource_settings->getBool("tld-fallback")) {
+        file_extension_fallback=true;
+    }
+
     if((entry = gource_settings->getEntry("host-filter")) != 0) {
 
         ConfEntryList* filters = gource_settings->getEntries("host-filter");
@@ -1903,6 +2038,29 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
+    if((entry = gource_settings->getEntry("plotter-show-filter")) != 0) {
+
+        ConfEntryList* filters = gource_settings->getEntries("plotter-show-filter");
+
+        for(ConfEntryList::iterator it = filters->begin(); it != filters->end(); it++) {
+
+            entry = *it;
+
+            if(!entry->hasValue()) conffile.entryException(entry, "specify plotter-show-filter (regex)");
+
+            std::string filter_string = entry->getString();
+
+            Regex* r = new Regex(filter_string, 1);
+
+            if(!r->isValid()) {
+                delete r;
+                conffile.entryException(entry, "invalid plotter-show-filter regular expression");
+            }
+
+            user_show_filters.push_back(r);
+        }
+    }
+
     if((entry = gource_settings->getEntry("branch-name-depth")) != 0) {
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify branch-name-depth (depth)");
@@ -1911,6 +2069,17 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
         if(dir_name_depth <= 0) {
             conffile.invalidValueException(entry);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("branch-name-position")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify branch-name-position (float)");
+
+        dir_name_position = entry->getFloat();
+
+        if(dir_name_position < 0.1f || dir_name_position > 1.0f) {
+            conffile.entryException(entry, "branch-name-position outside of range 0.1 - 1.0 (inclusive)");
         }
     }
 

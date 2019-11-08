@@ -251,7 +251,7 @@ void RUser::logic(float t, float dt) {
         RAction* action = *it;
 
         //add all files which are too old
-        if(gGourceSettings.max_file_lag>=0.0 && action->addedtime < t - gGourceSettings.max_file_lag) {
+        if(gGourceSettings.max_file_lag>=0.0 && action->t < t - gGourceSettings.max_file_lag) {
             it = actions.erase(it);
             actionCount--;
             action->rate = 2.0;
@@ -310,10 +310,10 @@ void RUser::logic(float t, float dt) {
 
 void RUser::updateFont() {
     if(selected) {
-        font = fontmanager.grab("FreeSans.ttf", 18);
+        font = fontmanager.grab(gGourceSettings.font_file, 18);
         font.dropShadow(true);
     } else {
-        font = fontmanager.grab("FreeSans.ttf", 14);
+        font = fontmanager.grab(gGourceSettings.font_file, gGourceSettings.user_font_size);
         font.dropShadow(true);
     }
 

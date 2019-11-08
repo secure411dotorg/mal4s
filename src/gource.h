@@ -90,8 +90,6 @@ class Gource : public SDLApp {
 
     bool recolour;
 
-    bool update_file_labels;
-
     bool use_selection_bounds;
     Bounds2D selection_bounds;
 
@@ -142,7 +140,7 @@ class Gource : public SDLApp {
 
     TextBox textbox;
 
-    FXFont font, fontlarge, fontmedium, fontcaption;
+    FXFont font, fontlarge, fontmedium, fontcaption, fontdirname;
 
     bool first_read;
     bool paused;
@@ -192,7 +190,6 @@ class Gource : public SDLApp {
     std::deque<RCommit> commitqueue;
     std::map<std::string, RUser*> users;
     std::map<std::string, RFile*> files;
-    std::map<int, RFile*> tagfilemap;
     std::map<int, RUser*> tagusermap;
 
     std::list<RCaption*> captions;
@@ -228,8 +225,8 @@ class Gource : public SDLApp {
 
     void logReadingError(const std::string& error);
 
-    void processCommit(RCommit& commit, float t);
-    void addFileAction(const std::string& username, const RCommitFile& cf, RFile* file, float t, const std::string& imageName);
+    void processCommit(const RCommit& commit, float t);
+    void addFileAction(const RCommit& commit, const RCommitFile& cf, RFile* file, float t);
 
     std::string dateAtPosition(float percent);
 

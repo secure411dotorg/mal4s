@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.61)
 
-AC_INIT(Mal4s, 1.2.10, [https://github.com/secure411dotorg/mal4s/])
+AC_INIT(Mal4s, 1.3.0, [https://github.com/secure411dotorg/mal4s/])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([src/main.h])
 AM_INIT_AUTOMAKE([dist-bzip2 foreign subdir-objects])
@@ -53,14 +53,17 @@ AX_BOOST_FILESYSTEM
 CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
 LIBS="$LIBS $BOOST_SYSTEM_LIB $BOOST_FILESYSTEM_LIB"
 
-#GLM
-AC_CHECK_HEADER([glm/glm.hpp],, AC_MSG_ERROR(GLM headers are required. Please see INSTALL))
+AC_ARG_ENABLE(font-file,[AS_HELP_STRING([--enable-font-file=FILE],[override the default font])],[gourcefontfile="$enableval"],[gourcefontfile=""])
+AM_CONDITIONAL([FONTFILE], [test "x$gourcefontfile" != "x"])
+AC_SUBST(gourcefontfile)
 
 #see if ttf-font-dir option is enabled
 AC_ARG_ENABLE(ttf-font-dir,[AS_HELP_STRING([--enable-ttf-font-dir=DIR],[directory containing GNU FreeFont TTF fonts])],[gourcefontdir="$enableval"],[gourcefontdir=""])
 AM_CONDITIONAL([FONTDIR], [test "x$gourcefontdir" != "x"])
 AC_SUBST(gourcefontdir)
 
+#GLM
+AC_CHECK_HEADER([glm/glm.hpp],, AC_MSG_ERROR(GLM headers are required. Please see INSTALL))
 
 #see if building against system TinyXML library
 use_tinyxml_system_library=no
