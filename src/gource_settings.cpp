@@ -443,7 +443,7 @@ void GourceSettings::setGourceDefaults() {
     hide_tree      = false;
     hide_files     = false;
     hide_usernames = false;
-    hide_hosts = true;
+    hide_filenames = true;
     hide_dirnames  = true;
     hide_progress  = true;
     hide_bloom     = false;
@@ -511,7 +511,7 @@ void GourceSettings::setGourceDefaults() {
 
     font_file = GOURCE_FONT_FILE;
     font_size = 16;
-    host_font_size = 14;
+    filename_font_size = 14;
     dirname_font_size = 14;
     user_font_size = 14;
     dir_colour       = vec3(1.0f);
@@ -549,8 +549,8 @@ void GourceSettings::setGourceDefaults() {
     caption_offset   = 0;
     caption_colour   = vec3(1.0f, 1.0f, 1.0f);
 
-    host_colour  = vec3(1.0f, 1.0f, 1.0f);
-    host_time = 4.0f;
+    filename_colour  = vec3(1.0f, 1.0f, 1.0f);
+    filename_time = 4.0f;
 
     gStringHashSeed = 31;
 
@@ -1027,7 +1027,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             else if(hidestr == "tree")      hide_tree      = true;
             else if(hidestr == "hosts")     hide_files     = true;
             else if(hidestr == "plotternames") hide_usernames = true;
-            else if(hidestr == "hostnames") hide_hosts = true;
+            else if(hidestr == "hostnames") hide_filenames = true;
             else if(hidestr == "branchnames")  hide_dirnames  = true;
             else if(hidestr == "bloom")     hide_bloom     = true;
             else if(hidestr == "progress")  hide_progress  = true;
@@ -1277,10 +1277,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             std::string dirfile;
 
 #ifdef _WIN32
-            std::wstring dirfile_16 = p.host().wstring();
+            std::wstring dirfile_16 = p.filename().wstring();
             utf8::utf16to8(dirfile_16.begin(), dirfile_16.end(), back_inserter(dirfile));
 #else
-            dirfile = p.host().string();
+            dirfile = p.filename().string();
 #endif
             std::string file_ext = extension(p);
             boost::algorithm::to_lower(file_ext);
@@ -1328,10 +1328,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
             std::string dirfile;
 
 #ifdef _WIN32
-            std::wstring dirfile_16 = p.host().wstring();
+            std::wstring dirfile_16 = p.filename().wstring();
             utf8::utf16to8(dirfile_16.begin(), dirfile_16.end(), back_inserter(dirfile));
 #else
-            dirfile = p.host().string();
+            dirfile = p.filename().string();
 #endif
             std::string file_ext = extension(p);
             boost::algorithm::to_lower(file_ext);
@@ -1413,10 +1413,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 	std::string colstring = entry->getString();
 
 	if(entry->isVec3()) {
-	    host_colour = entry->getVec3();
+	    filename_colour = entry->getVec3();
 	} else if(colstring.size()==6 && sscanf(colstring.c_str(), "%02x%02x%02x", &r, &g, &b) == 3) {
-            host_colour = vec3(r,g,b);
-            host_colour /= 255.0f;
+            filename_colour = vec3(r,g,b);
+            filename_colour /= 255.0f;
         } else {
             conffile.invalidValueException(entry);
         }
@@ -1426,9 +1426,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify duration to keep hosts on screen (float)");
 
-        host_time = entry->getFloat();
+        filename_time = entry->getFloat();
 
-        if(host_time<2.0f) {
+        if(filename_time<2.0f) {
             conffile.entryException(entry, "hostname-time must be >= 2.0");
         }
     }
@@ -1492,9 +1492,9 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
 
-        host_font_size = entry->getInt();
+        filename_font_size = entry->getInt();
 
-        if(host_font_size<1 || host_font_size>100) {
+        if(filename_font_size<1 || filename_font_size>100) {
             conffile.invalidValueException(entry);
         }
     }
