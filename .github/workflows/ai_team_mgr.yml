@@ -1,0 +1,60 @@
+name: Get Commits in Last Hour from All Branches
+
+on: push
+    
+jobs:
+  get-commits:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Get commits in the last hour from all branches
+      run: |
+        TOKEN=${{ secrets.GITHUB_TOKEN }}
+        REPO_OWNER=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
+        REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+        
+        # Get current time and time an hour ago in ISO 8601 format
+        CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        ONE_HOUR_AGO=$(date -u -d '-1 hour' +"%Y-%m-%dT%H:%M:%SZ")
+
+        # Fetch all branches
+        BRANCHES=$(curl -s -H "Authorization: token $TOKEN" \
+          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/branches" | jq -r '.[].name')
+
+        # Initialize an empty JSON array
+        ALL_COMMITS="[]"
+
+        # Loop through all branches and aggregate commits
+        for BRANCH in $BRANCHES; do
+          COMMITS=$(curl -s -H "Authorization: token $TOKEN" \
+            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/commits?sha=$BRANCH&since=$ONE_HOUR_AGO&until=$CURRENT_TIME")
+          
+          # Merge the commits from this branch into the aggregated JSON array
+          ALL_COMMITS=$(echo $ALL_COMMITS $COMMITS | jq -s '.[0] + .[1]')
+        done
+
+        echo "Combined commits from all branches:"
+        echo $ALL_COMMITS
+
+        # Save the combined JSON array to a file
+        echo $ALL_COMMITS > ${REPO_NAME}.json
+
+    - name: Clone target repository
+      run: |
+        git clone https://${{ secrets.GH_ACTIONS_TARGET_PAT }}@github.com/secure411dotorg/gh_actions_target.git target-repo
+
+        cd target-repo
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Copy commits file to target repository
+      run: |
+          REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+          cp ${REPO_NAME}.json target-repo/
+          cd target-repo
+          git add ${REPO_NAME}.json
+          git commit -m "Update ${REPO_NAME}.json with latest commits info"
+          git push https://${{ secrets.GH_ACTIONS_TARGET_PAT }}@github.com/secure411dotorg/gh_actions_target.git main
