@@ -1,7 +1,12 @@
 name: Get Commits in Last Hour from All Branches
 
-on: push
-    
+on: 
+  push:
+    branches: "**/**"
+  issues:
+    types: [opened, edited, deleted, transferred, pinned, unpinned, closed, reopened, assigned, unassigned, labeled, unlabeled, locked, unlocked, milestoned, demilestoned]    
+  issue_comment:
+    types: [created, deleted, edited]
 jobs:
   get-commits:
     runs-on: ubuntu-latest
@@ -40,7 +45,21 @@ jobs:
         echo $ALL_COMMITS
 
         # Save the combined JSON array to a file
-        echo $ALL_COMMITS > ${REPO_NAME}.json
+        echo $ALL_COMMITS > commits.json
+    - name: Get Issue Events
+      run: |
+        TOKEN=${{ secrets.GITHUB_TOKEN }}
+        REPO_OWNER=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
+        REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+
+        ONE_HOUR_AGO=$(date -u -d '-1 hour' +"%Y-%m-%dT%H:%M:%SZ")
+        
+        ISSUE_EVENTS=$(curl -s -H "Authorization: token $TOKEN" \
+          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/events")
+        ISSUE_COMMENTS=$(curl -s -H "Authorization: token $TOKEN" \
+          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/comments?per_page=100&since=$ONE_HOUR_AGO")
+        echo $ISSUE_EVENTS > issues.json
+        echo $ISSUE_COMMENTS > comments.json
 
     - name: Clone target repository
       run: |
@@ -53,8 +72,11 @@ jobs:
     - name: Copy commits file to target repository
       run: |
           REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
-          cp ${REPO_NAME}.json target-repo/
+          mkdir -p target-repo/${REPO_NAME}
+          cp commits.json target-repo/${REPO_NAME}/
+          cp issues.json target-repo/${REPO_NAME}/
+          cp comments.json target-repo/${REPO_NAME}/
           cd target-repo
-          git add ${REPO_NAME}.json
-          git commit -m "Update ${REPO_NAME}.json with latest commits info"
+          git add ${REPO_NAME}
+          git commit -m "Update ${REPO_NAME} with latest commits and issues info"
           git push https://${{ secrets.GH_ACTIONS_TARGET_PAT }}@github.com/secure411dotorg/gh_actions_target.git main
