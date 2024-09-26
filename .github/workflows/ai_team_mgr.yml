@@ -83,4 +83,4 @@ jobs:
           cd target-repo
           git add ${REPO_NAME}
           git commit -m "Update ${REPO_NAME} with latest commits and issues info"
-          git push https://${{ secrets.GH_ACTIONS_TARGET_PAT }}@github.com/secure411dotorg/gh_actions_target.git main
+          git pull && git push https://${{ secrets.GH_ACTIONS_TARGET_PAT }}@github.com/secure411dotorg/gh_actions_target.git main
