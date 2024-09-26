@@ -58,8 +58,11 @@ jobs:
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/events")
         ISSUE_COMMENTS=$(curl -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/comments?per_page=100&since=$ONE_HOUR_AGO")
+        ALL_ISSUES=$(curl -s -H "Authorization: token $TOKEN" \
+          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues")
         echo $ISSUE_EVENTS > issues.json
         echo $ISSUE_COMMENTS > comments.json
+        echo $ALL_ISSUES > ishlist.json
 
     - name: Clone target repository
       run: |
@@ -76,6 +79,7 @@ jobs:
           cp commits.json target-repo/${REPO_NAME}/
           cp issues.json target-repo/${REPO_NAME}/
           cp comments.json target-repo/${REPO_NAME}/
+          cp ishlist.json target-repo/${REPO_NAME}/
           cd target-repo
           git add ${REPO_NAME}
           git commit -m "Update ${REPO_NAME} with latest commits and issues info"
