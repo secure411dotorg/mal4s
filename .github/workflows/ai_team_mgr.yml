@@ -46,7 +46,7 @@ jobs:
 
         # Save the combined JSON array to a file
         echo $ALL_COMMITS > commits.json
-    - name: Get Issue Events
+    - name: Get Issue Events, Tags, Contributors
       run: |
         TOKEN=${{ secrets.GITHUB_TOKEN }}
         REPO_OWNER=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
@@ -60,9 +60,16 @@ jobs:
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/comments?per_page=100&since=$ONE_HOUR_AGO")
         ALL_ISSUES=$(curl -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues?state=all")
+        ALL_LABELS=$(curl -s -H "Authorization: token $TOKEN" \
+          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/labels")  
+        ALL_USERS=$(curl -s -H "Authorization: token $TOKEN" \
+          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contributors")  
         echo $ISSUE_EVENTS > issues.json
         echo $ISSUE_COMMENTS > comments.json
         echo $ALL_ISSUES > ishlist.json
+        echo $ALL_LABELS > labels.json
+        echo $ALL_USERS > contributors.json
+
 
     - name: Clone target repository
       run: |
@@ -73,6 +80,7 @@ jobs:
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
     - name: Copy commits file to target repository
+      continue-on-error: true
       run: |
           REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
           mkdir -p target-repo/${REPO_NAME}
@@ -80,6 +88,9 @@ jobs:
           cp issues.json target-repo/${REPO_NAME}/
           cp comments.json target-repo/${REPO_NAME}/
           cp ishlist.json target-repo/${REPO_NAME}/
+          cp labels.json target-repo/${REPO_NAME}/
+          cp contributors.json target-repo/${REPO_NAME}/
+
           cd target-repo
           git add ${REPO_NAME}
           git commit -m "Update ${REPO_NAME} with latest commits and issues info"
