@@ -78,7 +78,7 @@ jobs:
         cd target-repo
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-
+        git config pull.ff only 
     - name: Copy commits file to target repository
       continue-on-error: true
       run: |
