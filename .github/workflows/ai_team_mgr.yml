@@ -63,7 +63,7 @@ jobs:
         ALL_LABELS=$(curl -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/labels")  
         ALL_USERS=$(curl -s -H "Authorization: token $TOKEN" \
-          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contributors")  
+          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/assignees")  
         echo $ISSUE_EVENTS > issues.json
         echo $ISSUE_COMMENTS > comments.json
         echo $ALL_ISSUES > ishlist.json
