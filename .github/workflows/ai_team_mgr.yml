@@ -59,7 +59,7 @@ jobs:
         ISSUE_COMMENTS=$(curl -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/comments?per_page=100&since=$ONE_HOUR_AGO")
         ALL_ISSUES=$(curl -s -H "Authorization: token $TOKEN" \
-          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues?state=all")
+          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues?state=all&per_page=100")
         ALL_LABELS=$(curl -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/labels")  
         ALL_USERS=$(curl -s -H "Authorization: token $TOKEN" \
