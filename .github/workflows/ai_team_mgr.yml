@@ -58,15 +58,26 @@ jobs:
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/events")
         ISSUE_COMMENTS=$(curl -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/comments?per_page=100&since=$ONE_HOUR_AGO")
-        ALL_ISSUES=$(curl -s -H "Authorization: token $TOKEN" \
-          "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues?state=all&per_page=100")
+        # Pagination to get all issues.
+        ALL_ISSUES=()
+        PAGE=1
+        while :; do
+          RESPONSE=$(curl -s -H "Authorization: token $TOKEN" "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues?state=all&per_page=100&page=$PAGE")
+          if [[ $(echo "$RESPONSE" | jq '. | length') -eq 0 ]]; then
+            break
+          fi
+          ALL_ISSUES+=("$RESPONSE")
+
+          ((PAGE++))
+        done
+        ALL_ISSUES_JSON=$(echo "${ALL_ISSUES[@]}" | jq -s 'add')
         ALL_LABELS=$(curl -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/labels")  
         ALL_USERS=$(curl -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/assignees")  
         echo $ISSUE_EVENTS > issues.json
         echo $ISSUE_COMMENTS > comments.json
-        echo $ALL_ISSUES > ishlist.json
+        echo $ALL_ISSUES_JSON > ishlist.json
         echo $ALL_LABELS > labels.json
         echo $ALL_USERS > contributors.json
 
