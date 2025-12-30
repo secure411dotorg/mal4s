@@ -172,6 +172,7 @@ public:
 
     void setPos(const vec2 & pos);
 
+    void rotate(float s, float c);
     void rotate(float s, float c, const vec2& centre);
 
     void setParent(RDirNode* parent);
