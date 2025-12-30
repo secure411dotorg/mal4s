@@ -226,8 +226,8 @@ class Gource : public SDLApp {
 
     void logReadingError(const std::string& error);
 
-    void processCommit(RCommit& commit, float t);
-    void addFileAction(const std::string& username, const RCommitFile& cf, RFile* file, float t, const std::string& imageName);
+    void processCommit(const RCommit& commit, float t);
+    void addFileAction(const RCommit& commit, const RCommitFile& cf, RFile* file, float t, const std::string& imageName);
 
     std::string dateAtPosition(float percent);
 

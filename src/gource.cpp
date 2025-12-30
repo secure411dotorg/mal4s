@@ -1442,7 +1442,7 @@ void Gource::processCommit(const RCommit& commit, float t) {
                 for(std::list<RFile*>::iterator it = dir_files.begin(); it != dir_files.end(); it++) {
                     RFile* file = *it;
 
-                    addFileAction(commit.username, cf, file, t, commit.userimagename);
+                    addFileAction(commit, cf, file, t, commit.userimagename);
                 }
             }
 
@@ -1458,11 +1458,11 @@ void Gource::processCommit(const RCommit& commit, float t) {
             if(!file) continue;
         }
 
-        addFileAction(commit.username, cf, file, t, commit.userimagename);
+        addFileAction(commit, cf, file, t, commit.userimagename);
     }
 }
 
-void Gource::addFileAction(const std::string& username, const RCommitFile& cf, RFile* file, float t, const std::string& imageName) {
+void Gource::addFileAction(const RCommit& commit, const RCommitFile& cf, RFile* file, float t, const std::string& imageName) {
     //create user if havent yet. do it here to ensure at least one of there files
     //was added (incase we hit gGourceSettings.max_files)
 
@@ -1474,7 +1474,7 @@ void Gource::addFileAction(const std::string& username, const RCommitFile& cf, R
     if(seen_user != users.end()) user = seen_user->second;
 
     if(user == 0) {
-        user = addUser(username, imageName);
+        user = addUser(commit.username, imageName);
 
         if(gGourceSettings.highlight_all_users) user->setHighlighted(true);
         else {
@@ -2501,7 +2501,7 @@ void Gource::updateVBOs(float dt) {
 
             vec2 scaled_dims = user->dims;
 
-            if(gGourceSettings.fixed_user_size) scaled_dims *= (-camera.getPos().z / -starting_z);
+            if(gGourceSettings.fixed_plotter_size) scaled_dims *= (-camera.getPos().z / -starting_z);
 
             user_vbo.add(user->graphic->textureid, user->getPos() - scaled_dims*0.5f, scaled_dims, vec4(col.x, col.y, col.z, alpha));
 

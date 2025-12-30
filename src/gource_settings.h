@@ -100,7 +100,7 @@ public:
     bool stop_at_end;
     bool dont_stop;
     bool no_time_travel;
-    bool fixed_user_size;
+    bool fixed_plotter_size;
     bool author_time;
 
     float auto_skip_seconds;

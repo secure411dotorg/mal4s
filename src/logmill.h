@@ -50,6 +50,7 @@ class RLogMill {
 
     std::string error;
 
+    bool findRepository(boost::filesystem::path& dir, std::string& log_format);
     RCommitLog* fetchLog(std::string& log_format);
 public:
     RLogMill(const std::string& logfile);
