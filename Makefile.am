@@ -4,7 +4,7 @@ bin_PROGRAMS = mal4s
 
 mal4s_CXXFLAGS = -std=gnu++0x -Wall -Wno-sign-compare -Wno-reorder -Wno-unused-but-set-variable -Wno-unused-variable
 
-mal4s_SOURCES = \
+sources = \
 	src/action.cpp \
 	src/bloom.cpp \
 	src/caption.cpp \
@@ -70,14 +70,6 @@ dist_shaders_DATA = data/shaders/shadow.vert data/shaders/shadow.frag data/shade
 
 #uninstall-hook:
 #	rm -f $(DESTDIR)$(mandir)/man1/gource.1.gz
-
-if USE_BUNDLED_TINYXML
-mal4s_SOURCES += \
-	src/tinyxml/tinyxmlerror.cpp \
-	src/tinyxml/tinystr.cpp \
-	src/tinyxml/tinyxml.cpp \
-	src/tinyxml/tinyxmlparser.cpp
-endif
 
 if FONTFILE
 AM_CPPFLAGS += -DGOURCE_FONT_FILE=\"$(gourcefontfile)\"
