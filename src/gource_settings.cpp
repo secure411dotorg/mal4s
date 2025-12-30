@@ -166,7 +166,7 @@ if(extended_help) {
     printf("      --show-tld-only                 Show tld only\n\n");
     printf("  --font-size SIZE         Font size used by date and title\n");
     printf("  --file-font-size SIZE    Font size for filenames\n");
-    printf("  --dir-font-size SIZE     Font size for directory names\n");
+    printf("  --branch-font-size SIZE     Font size for directory names\n");
     printf("  --plotter-font-size SIZE    Font size for user names\n");
     printf("  --font-colour FFFFFF     Font colour used by date and title in hex\n\n");
 
@@ -1507,7 +1507,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
-    if((entry = gource_settings->getEntry("dir-font-size")) != 0) {
+    if((entry = gource_settings->getEntry("branch-font-size")) != 0) {
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
 
