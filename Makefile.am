@@ -55,7 +55,7 @@ sources += \
 	src/tinyxml/tinyxmlparser.cpp
 endif
 
-gource_SOURCES = src/main.cpp ${sources}
+mal4s_SOURCES = src/main.cpp ${sources}
 
 AM_CPPFLAGS = -DSDLAPP_RESOURCE_DIR=\"$(pkgdatadir)\"
 
