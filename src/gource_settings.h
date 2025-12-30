@@ -18,7 +18,7 @@
 #ifndef GOURCE_SETTINGS_H
 #define GOURCE_SETTINGS_H
 
-#define GOURCE_VERSION "1.2.10"
+#define GOURCE_VERSION "1.2.11"
 
 #include "core/texture.h"
 #include "core/settings.h"
@@ -73,6 +73,8 @@ public:
 
     bool disable_auto_rotate;
 
+    bool disable_input;
+
     bool show_key;
 
     std::string load_text_config;
@@ -97,10 +99,15 @@ public:
     bool stop_on_idle;
     bool stop_at_end;
     bool dont_stop;
+    bool no_time_travel;
+    bool fixed_user_size;
+    bool author_time;
 
     float auto_skip_seconds;
     float days_per_second;
     float file_idle_time;
+    float file_idle_time_at_end;
+    float loop_delay_seconds;
 
     bool loop;
 
@@ -131,8 +138,19 @@ public:
 
     std::string title;
 
+    std::string font_file;
     int font_size;
+    int filename_font_size;
+    int dirname_font_size;
+    int user_font_size;
     vec3 font_colour;
+    float font_scale;
+    bool default_font_scale;
+
+    int scaled_font_size;
+    int scaled_filename_font_size;
+    int scaled_dirname_font_size;
+    int scaled_user_font_size;
 
     float elasticity;
 
@@ -158,13 +176,16 @@ public:
     vec3 selection_colour;
 
     int dir_name_depth;
+    float dir_name_position;
 
     std::vector<std::string> highlight_users;
     std::vector<std::string> follow_users;
     std::vector<Regex*> file_filters;
     std::vector<Regex*> file_show_filters;
     std::vector<Regex*> user_filters;
+    std::vector<Regex*> user_show_filters;
     bool file_extensions;
+    bool file_extension_fallback;
 
     std::string caption_file;
     vec3 caption_colour;
@@ -186,9 +207,7 @@ public:
     void setTextDefaults();
     void setGourceDefaults();
 
-#ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
-    float brokenvsprintfstof(const std::string& numstring);
-#endif
+    void setScaledFontSizes();
 
     void importGourceSettings(ConfFile& conf, ConfSection* gource_settings = 0);
     void importTextSettings(ConfFile& conf, ConfSection* text_settings = 0);

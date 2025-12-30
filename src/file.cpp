@@ -43,8 +43,10 @@ RFile::RFile(const std::string & name, const vec3 & colour, const vec2 & pos, in
 
     last_action    = 0.0f;
     fade_start     = -1.0f;
+    removed_timestamp = 0;
     expired        = false;
     forced_removal = false;
+    removing       = false;
 
     shadow = true;
 
@@ -53,34 +55,37 @@ RFile::RFile(const std::string & name, const vec3 & colour, const vec2 & pos, in
     setFilename(name);
 
     if(!file_selected_font.initialized()) {
-        file_selected_font = fontmanager.grab("FreeSans.ttf", 18);
+        file_selected_font = fontmanager.grab(gGourceSettings.font_file, 18);
         file_selected_font.dropShadow(true);
         file_selected_font.roundCoordinates(false);
         file_selected_font.setColour(vec4(gGourceSettings.selection_colour, 1.0f));
     }
 
     if(!file_font.initialized()) {
-        file_font = fontmanager.grab("FreeSans.ttf", 14);
+        file_font = fontmanager.grab(gGourceSettings.font_file, gGourceSettings.scaled_filename_font_size);
         file_font.dropShadow(true);
         file_font.roundCoordinates(false);
         file_font.setColour(vec4(gGourceSettings.filename_colour, 1.0f));
     }
 
-    //namelist = glGenLists(1);
-    //label = 0;
     setSelected(false);
 
     dir = 0;
 }
 
 RFile::~RFile() {
-    //glDeleteLists(namelist, 1);
 }
 
-void RFile::remove(bool force) {
+void RFile::remove(time_t removed_timestamp) {
     last_action = elapsed;
     fade_start  = elapsed;
-    if(force) forced_removal = true;
+    removing = true;
+    this->removed_timestamp = removed_timestamp;
+}
+
+void RFile::remove() {
+    forced_removal = true;
+    remove(0);
 }
 
 void RFile::setDir(RDirNode* dir) {
@@ -122,40 +127,13 @@ void RFile::setFilename(const std::string& abs_file_path) {
     }
 
     //trim name to just extension
-    int dotsep=0;
+    size_t dotsep = name.rfind(".");
 
-    if((dotsep=name.rfind(".")) != std::string::npos && dotsep != name.size()-1) {
+    if(dotsep != std::string::npos && dotsep != name.size()-1) {
         ext = name.substr(dotsep+1);
+    } else if(gGourceSettings.file_extension_fallback) {
+        ext = name;
     }
-}
-
-int call_count = 0;
-
-
-void RFile::setSelected(bool selected) {
-//    if(font.getFTFont()!=0 && this->selected==selected) return;
-    //if(label && this->selected==selected) return;
-
-//    if(!label) label = new FXLabel();
-
-    Pawn::setSelected(selected);
-
-//    updateLabel();
-
-    //pre-compile name display list
-    //glNewList(namelist, GL_COMPILE);
-    //   font.draw(0.0f, 0.0f, (selected || shortname.size()==0) ? name : shortname);
-    //glEndList();
-}
-
-void RFile::updateLabel() {
-/*    bool show_file_ext = gGourceSettings.file_extensions;
-
-    if(selected) {
-        label->setText(file_selected_font, (selected || !show_file_ext) ? name : ext);
-    } else {
-        label->setText(file_font,          (selected || !show_file_ext) ? name : ext);
-    }*/
 }
 
 void RFile::colourize() {
@@ -249,17 +227,18 @@ void RFile::logic(float dt) {
     if(isHidden() && !forced_removal) elapsed = 0.0;
 }
 
-void RFile::touch(const vec3 & colour) {
-    if(forced_removal) return;
+void RFile::touch(time_t touched_timestamp, const vec3 & colour) {
+    if(forced_removal || (removing && touched_timestamp < removed_timestamp)) return;
 
-    fade_start = -1.0f;
-    
     //fprintf(stderr, "touch %s\n", fullpath.c_str());
 
+    fade_start = -1.0f;
+    removing = false;
+    removed_timestamp = 0;
     last_action = elapsed;
     touch_colour = colour;
 
-    //un expire file
+    //un expire file if touched after being removed
     if(expired) {
         for(std::vector<RFile*>::iterator it = gGourceRemovedFiles.begin(); it != gGourceRemovedFiles.end(); it++) {
             if((*it) == this) {

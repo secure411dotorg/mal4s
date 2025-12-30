@@ -153,6 +153,32 @@ RCommitLog* RLogMill::getLog() {
     return clog;
 }
 
+bool RLogMill::findRepository(boost::filesystem::path& dir, std::string& log_format) {
+
+    dir = canonical(dir);
+
+    //fprintf(stderr, "find repository from initial path: %s\n", dir.string().c_str());
+
+    while(is_directory(dir)) {
+
+             if(is_directory(dir / ".git") || is_regular_file(dir / ".git")) log_format = "git";
+        else if(is_directory(dir / ".hg"))  log_format = "hg";
+        else if(is_directory(dir / ".bzr")) log_format = "bzr";
+        else if(is_directory(dir / ".svn")) log_format = "svn";
+
+        if(!log_format.empty()) {
+            //fprintf(stderr, "found '%s' repository at: %s\n", log_format.c_str(), dir.string().c_str());
+            return true;
+        }
+
+        if(!dir.has_parent_path()) return false;
+
+        dir = dir.parent_path();
+    }
+
+    return false;
+}
+
 RCommitLog* RLogMill::fetchLog(std::string& log_format) {
 
     RCommitLog* clog = 0;

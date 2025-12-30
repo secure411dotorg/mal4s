@@ -16,13 +16,16 @@
 */
 
 #include "slider.h"
+#include "gource_settings.h"
 
 // PositionSlider
 
 PositionSlider::PositionSlider(float percent) {
     this->percent = percent;
+}
 
-    font = fontmanager.grab("FreeSans.ttf", 16);
+void PositionSlider::init() {
+    font = fontmanager.grab(gGourceSettings.font_file, 16 * gGourceSettings.font_scale);
     font.dropShadow(true);
 
     slidercol = vec3(1.0, 1.0, 1.0);
@@ -32,6 +35,8 @@ PositionSlider::PositionSlider(float percent) {
     mouseover_elapsed = 1.0;
     fade_time = 1.0;
     alpha = 0.0;
+
+    capwidth = 0.0f;
 
     resize();
 }
@@ -152,7 +157,8 @@ void PositionSlider::draw(float dt) {
     glColor4f(1.0, 1.0, 1.0, 1.0);
 
     if(caption.size() && mouseover >= 0.0) {
-        font.draw(std::min((double)display.width - capwidth - 1.0, std::max(1.0, mouseover - (capwidth/2.0))), bounds.min.y - 25.0, caption);
+        int height_offset = 25 * gGourceSettings.font_scale;
+        font.draw(std::min((double)display.width - capwidth - 1.0, std::max(1.0, mouseover - (capwidth/2.0))), bounds.min.y - height_offset, caption);
     }
 
 }

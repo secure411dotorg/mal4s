@@ -3,7 +3,7 @@
 Mal4s - Forked from Gource: a software version control visualization
 .SH SYNOPSIS
 \fImal4s\fR
-<options> <path>
+[options] [path]
 .SH DESCRIPTION
 \fImal4s\fR is an OpenGL-based 3D visualisation tool adapted from Gource.
 
@@ -29,6 +29,15 @@ Fullscreen.
 \fB\-\-screen SCREEN\fR
 Set the number of the screen to display on.
 .TP
+\fB\-\-high\-dpi\fR
+Request a high DPI display when creating the window.
+
+On some platforms such as MacOS, the window resolution is specified in points instead of pixels.
+The \-\-high-dpi flag may be required to access some higher resolutions.
+
+E.g. requesting a high DPI 800x600 window may produce a window that is 1600x1200 pixels.
+
+.TP
 \fB\-\-window\-position XxY\fR
 Initial window position on your desktop which may be made up of multiple monitors.
 
@@ -40,7 +49,7 @@ Frameless window.
 \fB\-\-transparent\fR
 Make the background transparent. Only really useful for screenshots.
 .TP
-\fB\-\-start\-date 'YYYY\-MM\-DD hh:mm:ss +tz'\fR
+\fB\-\-start\-date "YYYY\-MM\-DD hh:mm:ss +tz"\fR
 Start with the first entry after the supplied date and optional time.
 
 If a time zone offset isn't specified the local time zone is used.
@@ -51,7 +60,7 @@ Example accepted formats:
     "2012-06-30 12:00"
     "2012-06-30 12:00:00 +12"
 .TP
-\fB\-\-stop\-date 'YYYY\-MM\-DD hh:mm:ss +tz'\fR
+\fB\-\-stop\-date "YYYY\-MM\-DD hh:mm:ss +tz"\fR
 Stop at the last entry prior to the supplied date and optional time.
 
 Uses the same format as \-\-start\-date.
@@ -71,6 +80,9 @@ Stop (exit) at the end of the log / stream.
 \fB\-\-loop\fR
 Loop back to the start of the log when the end is reached.
 .TP
+\fB\-\-loop\-delay\-seconds SECONDS\fR
+Seconds to delay before looping.
+.TP
 \fB\-a, \-\-auto\-skip\-seconds SECONDS\fR
 Automatically skip to next entry if nothing happens for a specified number of seconds.
 .TP
@@ -80,11 +92,22 @@ Speed of simulation in seconds per day.
 \fB\-\-realtime\fR
 Realtime playback speed.
 .TP
+\fB\-\-no\-time\-travel\fR
+Use the time of the last commit if the time of a commit is in the past.
+.TP
+\fB\-\-author\-time\fR
+Use the timestamp of the author instead of the timestamp of the committer.
+.TP
 \fB\-c, \-\-time\-scale SCALE\fR
-Change simulation time scale.
+Change simulation time scale. This affects the movement speed of user avatars.
+
+E.g. 0.5 for half speed, 2 for double speed.
 .TP
 \fB\-i, \-\-file\-idle\-time SECONDS\fR
 Time in seconds files remain idle before they are removed or 0 for no limit.
+.TP
+\fB\-\-file\-idle\-time\-at\-end SECONDS\fR
+Time in seconds files remain idle at the end before they are removed.
 .TP
 \fB\-e, \-\-elasticity FLOAT\fR
 Elasticity of nodes.
@@ -98,8 +121,23 @@ Set a background image.
 \fB\-\-title TITLE\fR
 Set a title
 .TP
+\fB\-\-font\-file FILE\fR
+Specify the font. Should work with most font file formats supported by FreeType, such as TTF and OTF, among others.
+.TP
+\fB\-\-font\-scale SCALE\fR
+Scale the size of all fonts.
+.TP
 \fB\-\-font\-size SIZE\fR
 Font size used by the date and title.
+.TP
+\fB\-\-file\-font\-size SIZE\fR
+Font size of filenames.
+.TP
+\fB\-\-dir\-font\-size SIZE\fR
+Font size of directory names.
+.TP
+\fB\-\-user\-font\-size SIZE\fR
+Font size of user names.
 .TP
 \fB\-\-font\-colour FFFFFF\fR
 Font colour used by the date and title in hex.
@@ -152,26 +190,38 @@ Font colour for directories.
 \fB\-\-dir\-name\-depth DEPTH\fR
 Draw names of directories down to a specific depth in the tree.
 .TP
+\fB\-\-dir\-name\-position FLOAT
+Position along edge of the directory name (between 0.1 and 1.0, default is 0.5).
+.TP
 \fB\-\-filename\-time SECONDS\fR
 Duration to keep filenames on screen (>= 2.0).
 .TP
 \fB\-\-file\-extensions\fR
 Show filename extensions only.
 .TP
+\fB\-\-file\-extension\-fallback\fR
+Use filename as extension if the extension is missing or empty.
+.TP
 \fB\-\-file\-filter REGEX\fR
-Filter out any files matching a specified regular expression.
+Filter out file paths matching the specified regular expression.
 .TP
 \fB\-\-file\-show\-filter REGEX\fR
-Show only files matching this regular expression.
+Show only file paths matching the specified regular expression.
 .TP
 \fB\-\-user\-filter REGEX\fR
-Filter out any usernames matching a specified regular expression.
+Filter usernames matching the specified regular expression.
+.TP
+\fB\-\-user\-show\-filter REGEX\fR
+Show only usernames matching the specified regular expression.
 .TP
 \fB\-\-user\-image\-dir DIRECTORY\fR
-Directory containing .jpg or .png images of users (eg 'Full Name.png') to use as avatars.
+Directory containing .jpg or .png images of users (eg "Full Name.png") to use as avatars.
 .TP
 \fB\-\-default\-user\-image IMAGE\fR
 Path of .jpg to use as the default user image.
+.TP
+\fB\-\-fixed\-user\-size\fR
+Forces the size of the user image to remain fixed throughout.
 .TP
 \fB\-\-colour\-images\fR
 Colourize user images.
@@ -215,6 +265,9 @@ Camera mode (overview,track).
 \fB\-\-disable\-auto\-rotate\fR
 Disable automatic camera rotation.
 .TP
+\fB\-\-disable\-input\fR
+Disable keyboard and mouse input.
+.TP
 \fB\-\-hide DISPLAY_ELEMENT\fR
 Hide one or more display elements from the list below:
 
@@ -230,7 +283,7 @@ Hide one or more display elements from the list below:
     users     \- user avatars
     usernames \- names of users
 
-Separate multiple elements with commas (eg 'mouse,progress')
+Separate multiple elements with commas (eg "mouse,progress")
 
 .TP
 \fB\-\-hash\-seed SEED\fR
@@ -320,7 +373,7 @@ mal4s my\-cvs\-project.log
 If you want to use Mal4s with something other than the supported systems, there is a pipe ('|') delimited custom log format:
 
 .ti 10
-timestamp - A unix timestamp of when the update occurred.
+timestamp - An ISO 8601 or unix timestamp of when the update occurred.
 .ti 10
 username  - The name of the user who made the update.
 .ti 10
@@ -335,7 +388,7 @@ colour    - A colour for the file in hex (FFFFFF) format. Optional.
 Mal4s can display captions along the timeline by specifying a caption file (using \-\-caption\-file) in the pipe ('|') delimited format below:
 
 .ti 10
-timestamp - A unix timestamp of when to display the caption.
+timestamp - An ISO 8601 or unix timestamp of when to display the caption.
 .ti 10
 caption   - The caption
 
@@ -393,9 +446,11 @@ Interactive keyboard commands:
 .ti 10
 (R)   Toggle display of root directory edges
 .ti 10
+(<>)  Adjust time scale / user avatar movement speed
+.ti 10
 (+-)  Adjust simulation speed
 .ti 10
-(<>)  Adjust time scale
+(Keypad +-) Adjust camera zoom
 .ti 10
 (TAB) Cycle through visible users
 .ti 10

@@ -40,13 +40,22 @@ mal4s_SOURCES = \
 	src/gource_settings.cpp \
 	src/key.cpp \
 	src/logmill.cpp \
-	src/main.cpp \
 	src/pawn.cpp \
 	src/slider.cpp \
 	src/spline.cpp \
 	src/textbox.cpp \
 	src/user.cpp \
 	src/zoomcamera.cpp
+
+if USE_BUNDLED_TINYXML
+sources += \
+	src/tinyxml/tinyxmlerror.cpp \
+	src/tinyxml/tinystr.cpp \
+	src/tinyxml/tinyxml.cpp \
+	src/tinyxml/tinyxmlparser.cpp
+endif
+
+gource_SOURCES = src/main.cpp ${sources}
 
 AM_CPPFLAGS = -DSDLAPP_RESOURCE_DIR=\"$(pkgdatadir)\"
 
@@ -62,7 +71,6 @@ dist_shaders_DATA = data/shaders/shadow.vert data/shaders/shadow.frag data/shade
 #uninstall-hook:
 #	rm -f $(DESTDIR)$(mandir)/man1/gource.1.gz
 
-
 if USE_BUNDLED_TINYXML
 mal4s_SOURCES += \
 	src/tinyxml/tinyxmlerror.cpp \
@@ -71,10 +79,26 @@ mal4s_SOURCES += \
 	src/tinyxml/tinyxmlparser.cpp
 endif
 
+if FONTFILE
+AM_CPPFLAGS += -DGOURCE_FONT_FILE=\"$(gourcefontfile)\"
+else
 if FONTDIR
 AM_CPPFLAGS += -DSDLAPP_FONT_DIR=\"$(gourcefontdir)\"
 else
 fontsdir = $(pkgdatadir)/fonts
 dist_fonts_DATA = data/fonts/README data/fonts/FreeSans.ttf
 endif
+endif
 
+check_PROGRAMS = gource_tests
+gource_tests_CPPFLAGS = -I src/test/ ${BOOST_CPPFLAGS}
+gource_tests_LDFLAGS = ${BOOST_LDFLAGS}
+gource_tests_LDADD = ${BOOST_UNIT_TEST_FRAMEWORK_LIB}
+
+gource_tests_SOURCES = \
+	src/test/main.cpp \
+	src/test/datetime_tests.cpp \
+	src/test/regex_tests.cpp \
+	${sources}
+
+TESTS = gource_tests

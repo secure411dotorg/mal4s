@@ -16,6 +16,7 @@
 */
 
 #include "custom.h"
+#include "../gource_settings.h"
 
 Regex custom_regex("^(?:\\xEF\\xBB\\xBF)?(-?[0-9]+)\\|([^|]*)\\|([ADM]?)\\|([^|]+)(?:\\|#?([A-Fa-f0-9]{6}))?");
 
@@ -54,7 +55,17 @@ bool CustomLog::parseCommitEntry(RCommit& commit) {
     //custom line
     if(!custom_regex.match(line, &entries)) return false;
 
-    long timestamp       = atol(entries[0].c_str());
+    time_t timestamp;
+
+    // Allow timestamp to be a string
+    if(entries[0].size() > 1 && entries[0].find("-", 1) != std::string::npos) {
+        if(!SDLAppSettings::parseDateTime(entries[0], timestamp))
+            return false;
+    } else {
+        timestamp = (time_t) atoll(entries[0].c_str());
+        if(!timestamp && entries[0] != "0")
+            return false;
+    }
 
     std::string username = (entries[1].size()>0) ? entries[1] : "Unknown";
     std::string action   = (entries[2].size()>0) ? entries[2] : "A";

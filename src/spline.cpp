@@ -59,12 +59,17 @@ void SplineEdge::update(const vec2& pos1, const vec4& col1, const vec2& pos2, co
         spline_point.push_back(pt);
         spline_colour.push_back(coln);
     }
-    
-    midpoint = pos1 * 0.25f + pos2 * 0.25f + spos * 0.5f;
+
+    const float pos = gGourceSettings.dir_name_position;
+
+    const float s_quota = 0.5f - glm::abs(pos - 0.5f);
+    const float p_quota = 1.0f - s_quota;
+
+    label_pos = pos1 * (p_quota * (1.0f - pos)) + pos2 * (p_quota * pos) + spos * s_quota;
 }
 
-const vec2& SplineEdge::getMidPoint() const {
-    return midpoint;
+const vec2& SplineEdge::getLabelPos() const {
+    return label_pos;
 }
 
 void SplineEdge::drawToVBO(quadbuf& buffer) const {

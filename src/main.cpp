@@ -46,7 +46,14 @@ std::string search4TextConfig(std::string confname) {
 
 int main(int argc, char *argv[]) {
 
-    SDLAppInit("Mal4s", "mal4s");
+    std::string exepath;
+#ifndef _WIN32
+    if(argc > 0) {
+        exepath = std::string(argv[0]);
+    }
+#endif
+
+    SDLAppInit("Mal4s", "mal4s", execpath);
 
 #ifdef _WIN32
         SDLApp::initConsole();
@@ -257,6 +264,20 @@ int main(int argc, char *argv[]) {
     if(gGourceSettings.resizable && gGourceSettings.output_ppm_filename.empty()) {
         display.enableResize(true);
     }
+
+    // Change OS High DPI display behaviour
+    // On Windows this behaves differently, it seems safe to always enable it
+    bool high_dpi = true;
+#ifndef _WIN32
+    // Requesting High DPI on MacOS may cause the pixel resolution to be doubled.
+    // If a resolution has been specified this may not be appropriate
+    // E.g. if you are recording a video at a specific resolution
+    // Can override by supplying --high-dpi option.
+    if(gGourceSettings.viewport_specified && !gGourceSettings.high_dpi) {
+        high_dpi = false;
+    }
+#endif
+    display.enableHighDPIAwareness(high_dpi);
 
     try {
 

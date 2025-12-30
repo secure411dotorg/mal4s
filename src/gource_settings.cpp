@@ -36,6 +36,10 @@
 #include "formats/svn.h"
 */
 
+#ifndef GOURCE_FONT_FILE
+#define GOURCE_FONT_FILE "FreeSans.ttf"
+#endif
+
 GourceSettings gGourceSettings;
 
 #ifdef _GLIBCXX_HAVE_BROKEN_VSWPRINTF
@@ -55,12 +59,13 @@ void GourceSettings::help(bool extended_help) {
 
 #ifdef _WIN32
     //resize window to fit help message
-    SDLApp::resizeConsole(780);
+    SDLApp::resizeConsole(1040);
     SDLApp::showConsole(true);
 #endif
 
     printf("Mal4s v%s\n", GOURCE_VERSION);
 
+<<<<<<< HEAD
     printf("Usage: mal4s [OPTIONS] [LOGFILE]\n");
     printf("\nOptions:\n");
     printf("  -h, --help                          Help\n\n");
@@ -73,12 +78,39 @@ void GourceSettings::help(bool extended_help) {
     printf("      --no-vsync                      Disable vsync\n\n");
     printf("      --window-position XxY           Initial window position\n");
     printf("      --frameless                     Frameless window\n\n");
+=======
+    printf("Usage: gource [options] [path]\n");
+    printf("\nOptions:\n");
+    printf("  -h, --help                       Help\n\n");
+    printf("  -WIDTHxHEIGHT, --viewport        Set viewport size\n");
+    printf("  -f, --fullscreen                 Fullscreen\n");
+    printf("      --screen SCREEN              Screen number\n");
+    printf("      --multi-sampling             Enable multi-sampling\n");
+#ifndef _WIN32
+    printf("      --high-dpi                   Request a high DPI display\n");
+#endif
+    printf("      --no-vsync                   Disable vsync\n\n");
+>>>>>>> upstream/master
 
     printf("      --enable-exec                   Enable command execution (includes browser)\n");
     printf("      --enable-browser                Enable browser command only.\n\n");
 
+<<<<<<< HEAD
     printf("      --disable-exec                  Disable command execution (excludes browser).\n");
     printf("      --disable-browser               Disable browser and URL opening.\n\n");
+=======
+    printf("  -a, --auto-skip-seconds SECONDS  Auto skip to next entry if nothing happens\n");
+    printf("                                   for a number of seconds (default: 3)\n");
+    printf("      --disable-auto-skip          Disable auto skip\n");
+    printf("  -s, --seconds-per-day SECONDS    Speed in seconds per day (default: 10)\n");
+    printf("      --realtime                   Realtime playback speed\n");
+    printf("      --no-time-travel             Use the time of the last commit if the\n");
+    printf("                                   time of a commit is in the past\n");
+    printf("      --author-time                Use the timestamp of the author instead of\n");
+    printf("                                   the timestamp of the committer\n");
+    printf("  -c, --time-scale SCALE           Change simulation time scale (default: 1.0)\n");
+    printf("  -e, --elasticity FLOAT           Elasticity of nodes (default: 0.0)\n\n");
+>>>>>>> upstream/master
 
     printf("      --start-date 'YYYY-MM-DD hh:mm:ss +tz'  Start at a date and optional time\n");
     printf("      --stop-date  'YYYY-MM-DD hh:mm:ss +tz'  Stop at a date and optional time\n\n");
@@ -89,6 +121,7 @@ void GourceSettings::help(bool extended_help) {
     printf("      --dont-stop                     Keep running after the end of the log\n");
     printf("      --loop                          Loop at the end of the log\n\n");
 
+<<<<<<< HEAD
     printf("  -a, --auto-skip-seconds SECONDS     Auto skip to next entry if nothing happens\n");
     printf("                                      for a number of seconds (default: 3)\n");
     printf("      --disable-auto-skip             Disable auto skip\n");
@@ -98,6 +131,15 @@ void GourceSettings::help(bool extended_help) {
     printf("  -e, --elasticity FLOAT              Elasticity of nodes (default: 0.0)\n\n");
 
     printf("      --key-off                       Hide key\n\n");
+=======
+    printf("  --user-image-dir DIRECTORY       Dir containing images to use as avatars\n");
+    printf("  --default-user-image IMAGE       Default user image file\n");
+    printf("  --fixed-user-size                Use a fixed size throughout\n");
+    printf("  --colour-images                  Colourize user images\n\n");
+
+    printf("  -i, --file-idle-time SECONDS     Time files remain idle (default: 0)\n");
+    printf("  --file-idle-time-at-end SECONDS  Time files remain idle at end (default: 0)\n\n");
+>>>>>>> upstream/master
 
     printf("      --plotter-image-dir DIRECTORY   Directory containing images to use as avatars\n");
     printf("      --default-plotter-image IMAGE	  Default plotter image file\n");
@@ -134,7 +176,14 @@ void GourceSettings::help(bool extended_help) {
 if(extended_help) {
     printf("Extended Options:\n\n");
 
+<<<<<<< HEAD
     //printf("      --output-custom-log FILE        Output a custom format log file ('-' for STDOUT).\n\n");
+=======
+    printf("  --window-position XxY    Initial window position\n");
+    printf("  --frameless              Frameless window\n\n");
+
+    printf("  --output-custom-log FILE  Output a custom format log file ('-' for STDOUT).\n\n");
+>>>>>>> upstream/master
 
     printf("  -b, --background-colour FFFFFF      Background colour in hex\n");
     printf("      --background-image IMAGE        Set a background image\n\n");
@@ -148,12 +197,30 @@ if(extended_help) {
 
     printf("      --disable-auto-rotate           Disable automatic camera rotation\n\n");
 
+<<<<<<< HEAD
     printf("      --date-format FORMAT            Specify display date string (strftime format)\n\n");
 
     printf("      --font-size SIZE                Font size used by date and title\n");
     printf("      --font-colour FFFFFF            Font colour used by date and title in hex\n\n");
 
     printf("      --show-tld-only                 Show tld only\n\n");
+=======
+    printf("  --disable-input          Disable keyboard and mouse input\n\n");
+
+    printf("  --date-format FORMAT     Specify display date string (strftime format)\n\n");
+
+    printf("  --font-file FILE         Specify the font\n");
+    printf("  --font-scale SCALE       Scale the size of all fonts\n");
+    printf("  --font-size SIZE         Font size used by date and title\n");
+    printf("  --file-font-size SIZE    Font size for filenames\n");
+    printf("  --dir-font-size SIZE     Font size for directory names\n");
+    printf("  --user-font-size SIZE    Font size for user names\n");
+    printf("  --font-colour FFFFFF     Font colour used by date and title in hex\n\n");
+
+    printf("  --file-extensions          Show filename extensions only\n");
+    printf("  --file-extension-fallback  Use filename as extension if the extension\n");
+    printf("                             is missing or empty\n\n");
+>>>>>>> upstream/master
 
     printf("      --hide DISPLAY_ELEMENT          bloom,date,branchnames,hosts,hostnames,mouse,\n");
     printf("                                      progress,root,tree,plotters,plotternames\n\n");
@@ -163,15 +230,28 @@ if(extended_help) {
 
     printf("      --title TITLE                   Set a title\n\n");
 
+<<<<<<< HEAD
     printf("      --transparent                   Make the background transparent\n\n");
+=======
+    printf("  --loop-delay-seconds SECONDS Seconds to delay before looping (default: 3)\n\n");
+
+    printf("  --title TITLE            Set a title\n\n");
+>>>>>>> upstream/master
 
     printf("      --plotter-filter REGEX          Ignore plotternames matching this regex\n");
     printf("      --host-filter REGEX             Ignore hosts matching this regex\n\n");
     printf("      --host-show-filter REGEX        Show only hosts matching this regex\n\n");
 
+<<<<<<< HEAD
     printf("      --plotter-friction SECONDS      Change the rate plotters slow down (default: 0.67)\n");
     printf("      --plotter-scale SCALE           Change scale of plotters (default: 1.0)\n");
     printf("      --max-plotter-speed UNITS       Speed plotters can travel per second (default: 500)\n\n");
+=======
+    printf("  --user-filter REGEX      Ignore usernames matching this regex\n");
+    printf("  --user-show-filter REGEX Show only usernames matching this regex\n\n");
+    printf("  --file-filter REGEX      Ignore file paths matching this regex\n");
+    printf("  --file-show-filter REGEX Show only file paths matching this regex\n\n");
+>>>>>>> upstream/master
 
     printf("      --follow-plotter PLOTTER        Camera will automatically follow this plotter\n");
     printf("      --highlight-branches            Highlight the names of all branches\n");
@@ -196,7 +276,13 @@ if(extended_help) {
     printf("                                      Examples: 25%%x30%%    25%%    200    150x10%%\n\n");
     printf("     --branch-name-depth DEPTH        Draw names of branches down to a specific depth.\n\n");
 
+<<<<<<< HEAD
     printf("     --hostname-time SECONDS          Duration to keep hostnames on screen (default: 4.0)\n\n");
+=======
+    printf("  --dir-name-depth DEPTH    Draw names of directories down to a specific depth.\n");
+    printf("  --dir-name-position FLOAT Position along edge of the directory name\n");
+    printf("                            (between 0.0 and 1.0, default is 0.5).\n\n");
+>>>>>>> upstream/master
 
     printf("      --version                       Display version and exit.\n\n");
 
@@ -265,6 +351,7 @@ GourceSettings::GourceSettings() {
     conf_sections["key-width"]      = "text";
 
     //boolean args
+<<<<<<< HEAD
     arg_types["version"]            = "bool";
     arg_types["debug"]              = "bool";
     arg_types["enable-exec"]        = "bool";
@@ -305,6 +392,40 @@ GourceSettings::GourceSettings() {
 
     arg_types["disable-auto-rotate"] = "bool";
     arg_types["disable-auto-skip"]  = "bool";
+=======
+    arg_types["help"]                    = "bool";
+    arg_types["extended-help"]           = "bool";
+    arg_types["stop-on-idle"]            = "bool";
+    arg_types["stop-at-end"]             = "bool";
+    arg_types["dont-stop"]               = "bool";
+    arg_types["loop"]                    = "bool";
+    arg_types["realtime"]                = "bool";
+    arg_types["no-time-travel"]          = "bool";
+    arg_types["colour-images"]           = "bool";
+    arg_types["hide-date"]               = "bool";
+    arg_types["hide-files"]              = "bool";
+    arg_types["hide-users"]              = "bool";
+    arg_types["hide-tree"]               = "bool";
+    arg_types["hide-usernames"]          = "bool";
+    arg_types["hide-filenames"]          = "bool";
+    arg_types["hide-dirnames"]           = "bool";
+    arg_types["hide-progress"]           = "bool";
+    arg_types["hide-bloom"]              = "bool";
+    arg_types["hide-mouse"]              = "bool";
+    arg_types["hide-root"]               = "bool";
+    arg_types["highlight-users"]         = "bool";
+    arg_types["highlight-dirs"]          = "bool";
+    arg_types["file-extensions"]         = "bool";
+    arg_types["file-extension-fallback"] = "bool";
+    arg_types["fixed-user-size"]         = "bool";
+    arg_types["author-time"]             = "bool";
+    arg_types["key"]                     = "bool";
+    arg_types["ffp"]                     = "bool";
+
+    arg_types["disable-auto-rotate"] = "bool";
+    arg_types["disable-auto-skip"]   = "bool";
+    arg_types["disable-input"]       = "bool";
+>>>>>>> upstream/master
 
     arg_types["bloom-intensity"]    = "float";
     arg_types["bloom-multiplier"]   = "float";
@@ -317,6 +438,7 @@ GourceSettings::GourceSettings() {
     arg_types["padding"]            = "float";
     arg_types["time-scale"]         = "float";
 
+<<<<<<< HEAD
     arg_types["host-image-max-size"] = "string";
     arg_types["max-hosts"]          = "int";
     arg_types["font-size"]          = "int";
@@ -327,6 +449,35 @@ GourceSettings::GourceSettings() {
     arg_types["host-show-filter"]   = "multi-value";
     arg_types["follow-plotter"]     = "multi-value";
     arg_types["highlight-plotter"]  = "multi-value";
+=======
+    arg_types["bloom-intensity"]   = "float";
+    arg_types["bloom-multiplier"]  = "float";
+    arg_types["elasticity"]        = "float";
+    arg_types["seconds-per-day"]   = "float";
+    arg_types["auto-skip-seconds"] = "float";
+    arg_types["stop-at-time"]      = "float";
+    arg_types["max-user-speed"]    = "float";
+    arg_types["user-friction"]     = "float";
+    arg_types["padding"]           = "float";
+    arg_types["time-scale"]        = "float";
+    arg_types["dir-name-position"] = "float";
+    arg_types["loop-delay-seconds"] = "float";
+
+    arg_types["max-files"] = "int";
+    arg_types["font-size"] = "int";
+    arg_types["font-scale"] = "float";
+    arg_types["file-font-size"] = "int";
+    arg_types["dir-font-size"] = "int";
+    arg_types["user-font-size"] = "int";
+    arg_types["hash-seed"] = "int";
+
+    arg_types["user-filter"]      = "multi-value";
+    arg_types["user-show-filter"] = "multi-value";
+    arg_types["file-filter"]      = "multi-value";
+    arg_types["file-show-filter"] = "multi-value";
+    arg_types["follow-user"]      = "multi-value";
+    arg_types["highlight-user"]   = "multi-value";
+>>>>>>> upstream/master
 
     arg_types["log-level"]          = "string";
     arg_types["background-image"]   = "string";
@@ -341,9 +492,16 @@ GourceSettings::GourceSettings() {
     arg_types["path"]               = "string";
     arg_types["log-command"]        = "string";
     arg_types["background-colour"]  = "string";
+<<<<<<< HEAD
     arg_types["host-idle-time"]     = "string";
     arg_types["plotter-image-dir"]  = "string";
     arg_types["default-plotter-image"] = "string";
+=======
+    arg_types["file-idle-time"]     = "string";
+    arg_types["file-idle-time-at-end"] = "string";
+    arg_types["user-image-dir"]     = "string";
+    arg_types["default-user-image"] = "string";
+>>>>>>> upstream/master
     arg_types["date-format"]        = "string";
     arg_types["log-format"]         = "string";
 
@@ -360,6 +518,7 @@ GourceSettings::GourceSettings() {
     arg_types["plotter-scale"]      = "string";
     arg_types["camera-mode"]        = "string";
     arg_types["title"]              = "string";
+    arg_types["font-file"]          = "string";
     arg_types["font-colour"]        = "string";
     arg_types["highlight-colour"]   = "string";
     arg_types["selection-colour"]   = "string";
@@ -426,6 +585,7 @@ void GourceSettings::setGourceDefaults() {
     stop_timestamp = 0;
     stop_date = "";
 
+<<<<<<< HEAD
     start_position = 0.0f;
     stop_position  = 0.0f;
     stop_at_time   = -1.0f;
@@ -433,16 +593,38 @@ void GourceSettings::setGourceDefaults() {
     screenshot_at_end = false;
     stop_at_end    = false;
     dont_stop      = false;
+=======
+    start_position  = 0.0f;
+    stop_position   = 0.0f;
+    stop_at_time    = -1.0f;
+    stop_on_idle    = false;
+    stop_at_end     = false;
+    dont_stop       = false;
+    no_time_travel  = false;
+    fixed_user_size = false;
+    author_time     = false;
+>>>>>>> upstream/master
 
 
     disable_auto_rotate = false;
 
+<<<<<<< HEAD
     auto_skip_seconds = 1.0f;
     days_per_second   = 0.1f; // TODO: check this is right
     file_idle_time    = 0.0f;
     time_scale        = 1.0f;
+=======
+    disable_input = false;
+
+    auto_skip_seconds     = 3.0f;
+    days_per_second       = 0.1f; // TODO: check this is right
+    file_idle_time        = 0.0f;
+    file_idle_time_at_end = 0.0f;
+    time_scale            = 1.0f;
+>>>>>>> upstream/master
 
     loop = false;
+    loop_delay_seconds = 3.0f;
 
     logo        = "";
     logo_offset = vec2(20.0f,20.0f);
@@ -472,13 +654,21 @@ void GourceSettings::setGourceDefaults() {
 
     title             = "Get tools and data at https://DissectCyber.com";
 
+    font_scale = 1.0f;
+    default_font_scale = true;
+    font_file = GOURCE_FONT_FILE;
     font_size = 16;
+    filename_font_size = 14;
+    dirname_font_size = 14;
+    user_font_size = 14;
+
     dir_colour       = vec3(1.0f);
     font_colour      = vec3(1.0f);
     highlight_colour = vec3(1.0f);
     selection_colour = vec3(1.0, 1.0, 0.3f);
 
     dir_name_depth = 0;
+    dir_name_position = 0.5f;
 
     elasticity = 0.0f;
 
@@ -525,12 +715,29 @@ void GourceSettings::setGourceDefaults() {
     file_show_filters.clear();
 
     file_extensions = false;
+    file_extension_fallback = false;
 
     //delete user filters
     for(std::vector<Regex*>::iterator it = user_filters.begin(); it != user_filters.end(); it++) {
         delete (*it);
     }
     user_filters.clear();
+
+    //delete user whitelist
+    for(std::vector<Regex*>::iterator it = user_show_filters.begin(); it != user_show_filters.end(); it++) {
+        delete (*it);
+    }
+    user_show_filters.clear();
+
+
+    setScaledFontSizes();
+}
+
+void GourceSettings::setScaledFontSizes() {
+    scaled_font_size           = glm::clamp((int)(font_size * font_scale), 1, 100);
+    scaled_user_font_size      = glm::clamp((int)(user_font_size * font_scale), 1, 100);
+    scaled_dirname_font_size   = glm::clamp((int)(dirname_font_size * font_scale), 1, 100);
+    scaled_filename_font_size  = glm::clamp((int)(filename_font_size * font_scale), 1, 100);
 }
 
 void GourceSettings::commandLineOption(const std::string& name, const std::string& value) {
@@ -1124,8 +1331,23 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         auto_skip_seconds = -1.0;
     }
 
+    if(gource_settings->getBool("disable-input")) {
+        disable_input=true;
+    }
+
     if(gource_settings->getBool("loop")) {
         loop = true;
+    }
+
+    if((entry = gource_settings->getEntry("loop-delay-seconds")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify loop-delay-seconds (float)");
+
+        loop_delay_seconds = entry->getFloat();
+
+        if(loop_delay_seconds<=0.0f) {
+            conffile.invalidValueException(entry);
+        }
     }
 
     if((entry = gource_settings->getEntry("git-branch")) != 0) {
@@ -1218,7 +1440,7 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 #else
             dirfile = p.filename().string();
 #endif
-            std::string file_ext = extension(p);
+            std::string file_ext = p.extension().string();
             boost::algorithm::to_lower(file_ext);
 
             if(file_ext != ".jpg" && file_ext != ".jpeg" && file_ext != ".png") continue;
@@ -1288,6 +1510,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         if(!entry->hasValue()) conffile.entryException(entry, "specify caption file (filename)");
 
         caption_file = entry->getString();
+
+        if(!boost::filesystem::exists(caption_file)) {
+            conffile.entryException(entry, "caption file not found");
+        }
     }
 
     if((entry = gource_settings->getEntry("caption-duration")) != 0) {
@@ -1398,6 +1624,25 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
+    if((entry = gource_settings->getEntry("font-file")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font file");
+
+        font_file = entry->getString();
+
+        boost::filesystem::path font_file_path(font_file);
+
+        if(!boost::filesystem::exists(font_file_path)) {
+            conffile.invalidValueException(entry);
+        }
+
+        font_file = boost::filesystem::canonical(font_file_path).string();
+
+        if(font_file.empty()) {
+           conffile.invalidValueException(entry);
+        }
+    }
+
     if((entry = gource_settings->getEntry("font-size")) != 0) {
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
@@ -1407,6 +1652,53 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         if(font_size<1 || font_size>100) {
             conffile.invalidValueException(entry);
         }
+    }
+
+    if((entry = gource_settings->getEntry("file-font-size")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
+
+        filename_font_size = entry->getInt();
+
+        if(filename_font_size<1 || filename_font_size>100) {
+            conffile.invalidValueException(entry);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("dir-font-size")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
+
+        dirname_font_size = entry->getInt();
+
+        if(dirname_font_size<1 || dirname_font_size>100) {
+            conffile.invalidValueException(entry);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("user-font-size")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font size");
+
+        user_font_size = entry->getInt();
+
+        if(user_font_size<1 || user_font_size>100) {
+            conffile.invalidValueException(entry);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("font-scale")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify font scale");
+
+        font_scale = entry->getFloat();
+        default_font_scale = false;
+
+        if(font_scale<0.0f || font_scale>10.0f) {
+            conffile.invalidValueException(entry);
+        }
+
+        setScaledFontSizes();
     }
 
     if((entry = gource_settings->getEntry("hash-seed")) != 0) {
@@ -1582,7 +1874,24 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
+<<<<<<< HEAD
     if((entry = gource_settings->getEntry("plotter-idle-time")) != 0) {
+=======
+    if((entry = gource_settings->getEntry("file-idle-time-at-end")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify file-idle-time-at-end (seconds)");
+
+        std::string file_idle_at_end_str = entry->getString();
+
+        file_idle_time_at_end = (float) atoi(file_idle_at_end_str.c_str());
+
+        if(file_idle_time_at_end<0.0f || (file_idle_time_at_end == 0.0f && file_idle_at_end_str[0] != '0') ) {
+            conffile.invalidValueException(entry);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("user-idle-time")) != 0) {
+>>>>>>> upstream/master
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify plotter-idle-time (seconds)");
 
@@ -1694,6 +2003,10 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         days_per_second = 1.0 / 86400.0;
     }
 
+    if(gource_settings->getBool("no-time-travel")) {
+        no_time_travel = true;
+    }
+
     if(gource_settings->getBool("dont-stop")) {
         dont_stop = true;
     }
@@ -1712,7 +2025,19 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         stop_on_idle = true;
     }
 
+<<<<<<< HEAD
     if((entry = gource_settings->getEntry("max-hosts")) != 0) {
+=======
+    if(gource_settings->getBool("fixed-user-size")) {
+        fixed_user_size = true;
+    }
+
+    if(gource_settings->getBool("author-time")) {
+        author_time = true;
+    }
+
+    if((entry = gource_settings->getEntry("max-files")) != 0) {
+>>>>>>> upstream/master
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify max-hosts (number)");
 
@@ -1834,7 +2159,15 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         file_extensions=true;
     }
 
+<<<<<<< HEAD
     if((entry = gource_settings->getEntry("host-filter")) != 0) {
+=======
+    if(gource_settings->getBool("file-extension-fallback")) {
+        file_extension_fallback=true;
+    }
+
+    if((entry = gource_settings->getEntry("file-filter")) != 0) {
+>>>>>>> upstream/master
 
         ConfEntryList* filters = gource_settings->getEntries("host-filter");
 
@@ -1903,7 +2236,34 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
         }
     }
 
+<<<<<<< HEAD
     if((entry = gource_settings->getEntry("branch-name-depth")) != 0) {
+=======
+    if((entry = gource_settings->getEntry("user-show-filter")) != 0) {
+
+        ConfEntryList* filters = gource_settings->getEntries("user-show-filter");
+
+        for(ConfEntryList::iterator it = filters->begin(); it != filters->end(); it++) {
+
+            entry = *it;
+
+            if(!entry->hasValue()) conffile.entryException(entry, "specify user-show-filter (regex)");
+
+            std::string filter_string = entry->getString();
+
+            Regex* r = new Regex(filter_string, 1);
+
+            if(!r->isValid()) {
+                delete r;
+                conffile.entryException(entry, "invalid user-show-filter regular expression");
+            }
+
+            user_show_filters.push_back(r);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("dir-name-depth")) != 0) {
+>>>>>>> upstream/master
 
         if(!entry->hasValue()) conffile.entryException(entry, "specify branch-name-depth (depth)");
 
@@ -1911,6 +2271,17 @@ void GourceSettings::importGourceSettings(ConfFile& conffile, ConfSection* gourc
 
         if(dir_name_depth <= 0) {
             conffile.invalidValueException(entry);
+        }
+    }
+
+    if((entry = gource_settings->getEntry("dir-name-position")) != 0) {
+
+        if(!entry->hasValue()) conffile.entryException(entry, "specify dir-name-position (float)");
+
+        dir_name_position = entry->getFloat();
+
+        if(dir_name_position < 0.1f || dir_name_position > 1.0f) {
+            conffile.entryException(entry, "dir-name-position outside of range 0.1 - 1.0 (inclusive)");
         }
     }
 

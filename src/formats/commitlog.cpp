@@ -130,6 +130,7 @@ bool RCommitLog::checkFormat() {
         if(seekable) {
             //if the log is seekable, go back to the start
             ((SeekLog*)logf)->seekTo(0.0);
+            lastline.clear();
         } else {
             //otherwise set the buffered flag as we have bufferd one commit
             buffered = true;
@@ -171,7 +172,7 @@ bool RCommitLog::getCommitAt(float percent, RCommit& commit) {
 bool RCommitLog::getNextLine(std::string& line) {
     if(!lastline.empty()) {
         line = lastline;
-        lastline = std::string("");
+        lastline.clear();
         return true;
     }
 
@@ -182,7 +183,7 @@ bool RCommitLog::getNextLine(std::string& line) {
 void RCommitLog::seekTo(float percent) {
     if(!seekable) return;
 
-    lastline = "";
+    lastline.clear();
 
     ((SeekLog*)logf)->seekTo(percent);
 }
@@ -245,20 +246,24 @@ bool RCommitLog::hasBufferedCommit() {
 }
 
 //create temp file
-void RCommitLog::createTempLog() {
+bool RCommitLog::createTempLog() {
+    return createTempFile(temp_file);
+}
+
+bool RCommitLog::createTempFile(std::string& temp_file) {
 
     std::string tempdir;
 
 #ifdef _WIN32
     DWORD tmplen = GetTempPath(0, 0);
 
-    if(tmplen == 0) return;
+    if(tmplen == 0) return false;
 
     std::vector<TCHAR> temp(tmplen+1);
 
     tmplen = GetTempPath(static_cast<DWORD>(temp.size()), &temp[0]);
 
-    if(tmplen == 0 || tmplen >= temp.size()) return;
+    if(tmplen == 0 || tmplen >= temp.size()) return false;
 
     tempdir = std::string(temp.begin(), temp.begin() + static_cast<std::size_t>(tmplen));
     tempdir += "\\";
@@ -270,12 +275,14 @@ void RCommitLog::createTempLog() {
     snprintf(tmplate, 1024, "%sgource-XXXXXX", tempdir.c_str());
 
 #ifdef _WIN32
-    if(mktemp(tmplate) < 0) return;
+    if(mktemp(tmplate) == NULL) return false;
 #else
-    if(mkstemp(tmplate) < 0) return;
+    if(mkstemp(tmplate) < 0) return false;
 #endif
 
     temp_file = std::string(tmplate);
+
+    return true;
 }
 
 // RCommitFile
@@ -382,6 +389,19 @@ bool RCommit::isValid() {
             }
         }
     }
+
+    // Only allow users that have been whitelisted
+    if(!gGourceSettings.user_show_filters.empty()) {
+
+        for(std::vector<Regex*>::iterator ri = gGourceSettings.user_show_filters.begin(); ri != gGourceSettings.user_show_filters.end(); ri++) {
+            Regex* r = *ri;
+
+            if(!r->match(username)) {
+                return false;
+            }
+        }
+    }
+
 
     return !files.empty();
 }

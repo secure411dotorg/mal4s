@@ -7,10 +7,12 @@ use FindBin;
 use File::Copy;
 
 my $base_dir     = "$FindBin::Bin/../..";
-my $build_dir    = "$base_dir/../build-gource-Desktop_Qt_MinGW_64bit-Release/release";
+my $build_dir    = "$base_dir/../build-gource-Msys2_64_bit-Release/release";
 my $binaries_dir = "$base_dir/dev/win64";
 
 my $builds_output_dir = "$base_dir/dev/builds";
+
+my $makensis = "'C:\\Program Files (x86)\\NSIS\\makensis.exe'";
 
 sub gource_version {
     my $version = `cat $base_dir/src/gource_settings.h | grep GOURCE_VERSION`;
@@ -38,6 +40,8 @@ sub dosify {
     close OUTPUT;
 }
 
+my @dll_files;
+
 sub update_binaries {
     copy("$build_dir/gource.exe", "$binaries_dir/gource.exe") or die("failed to copy $build_dir/gource.exe: $!\n");
 
@@ -57,6 +61,8 @@ sub update_binaries {
         warn "adding $name\n";
             
         copy($dll, "$binaries_dir/$name") or die "failed to copy $name: $!\n"; 
+
+        push @dll_files, $name;
     }
 }
 
@@ -134,6 +140,7 @@ Section "Gource" SecGource
 
   WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gource" "DisplayName"          "Gource"
   WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gource" "DisplayVersion"       "GOURCE_VERSION"
+  WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gource" "Publisher"            "acaudwell"
   WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gource" "UninstallString"      '"$INSTDIR\uninstall.exe"'
   WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gource" "QuietUninstallString" '"$INSTDIR\uninstall.exe" /S'
   WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gource" "NoModify" 1
@@ -189,7 +196,7 @@ my @gource_files = qw(
 );
 
 my @gource_txts = qw(
-    README
+    README.md
     ChangeLog
     data/fonts/README
     COPYING
@@ -198,28 +205,6 @@ my @gource_txts = qw(
 
 my @bin_files = qw(
     gource.exe
-    SDL2.dll
-    SDL2_image.dll
-    glew32.dll
-    libboost_filesystem-mt.dll
-    libboost_system-mt.dll
-    libbz2-1.dll
-    libfreetype-6.dll
-    libgcc_s_seh-1.dll
-    libglib-2.0-0.dll
-    libgraphite2.dll
-    libharfbuzz-0.dll
-    libiconv-2.dll
-    libintl-8.dll
-    libjpeg-8.dll
-    liblzma-5.dll
-    libpcre-1.dll
-    libpng16-16.dll
-    libstdc++-6.dll
-    libtiff-5.dll
-    libwebp-7.dll
-    libwinpthread-1.dll
-    zlib1.dll
 );
 
 my @gource_dirs = qw(
@@ -249,7 +234,7 @@ update_binaries();
 chdir("$base_dir") or die("chdir to $base_dir failed");
 
 # copy binaries
-foreach my $file (@bin_files) {
+foreach my $file (@bin_files, @dll_files) {
     doit("cp $binaries_dir/$file $tmp_dir/$file");
     push @gource_bundle, $file;
 }
@@ -262,8 +247,10 @@ foreach my $file (@gource_files) {
 
 # convert text files
 foreach my $file (@gource_txts) {
-    dosify("$file", "$tmp_dir/$file.txt");
-    push @gource_bundle, "$file.txt";
+    (my $file_prefix = $file) =~ s/\..+$//;
+    my $txt_file = "$file_prefix.txt";
+    dosify("$file", "$tmp_dir/$txt_file");
+    push @gource_bundle, $txt_file;
 }
 
 my $version = gource_version();
@@ -314,9 +301,9 @@ close $NSIS_HANDLE;
 # generate installer
 
 # assert we have the long string build of NSIS
-doit("makensis -HDRINFO | grep -q NSIS_MAX_STRLEN=8192");
+doit("$makensis -HDRINFO | grep -q NSIS_MAX_STRLEN=8192");
 
-doit("makensis $output_file");
+doit("$makensis $output_file");
 
 doit("rm $output_file");
 doit("mv $installer_name ..");
