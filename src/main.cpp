@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     }
 #endif
 
-    SDLAppInit("Mal4s", "mal4s", execpath);
+    SDLAppInit("Mal4s", "mal4s", exepath);
 
 #ifdef _WIN32
         SDLApp::initConsole();
