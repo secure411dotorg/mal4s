@@ -26,7 +26,7 @@ jobs:
         ONE_HOUR_AGO=$(date -u -d '-1 hour' +"%Y-%m-%dT%H:%M:%SZ")
 
         # Fetch all branches
-        BRANCHES=$(curl -s -H "Authorization: token $TOKEN" \
+        BRANCHES=$(curl --max-time 10 -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/branches" | jq -r '.[].name')
 
         # Initialize an empty JSON array
@@ -34,7 +34,7 @@ jobs:
 
         # Loop through all branches and aggregate commits
         for BRANCH in $BRANCHES; do
-          COMMITS=$(curl -s -H "Authorization: token $TOKEN" \
+          COMMITS=$(curl --max-time 10 -s -H "Authorization: token $TOKEN" \
             "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/commits?sha=$BRANCH&since=$ONE_HOUR_AGO&until=$CURRENT_TIME")
           
           # Merge the commits from this branch into the aggregated JSON array
@@ -54,15 +54,15 @@ jobs:
 
         ONE_HOUR_AGO=$(date -u -d '-1 hour' +"%Y-%m-%dT%H:%M:%SZ")
         
-        ISSUE_EVENTS=$(curl -s -H "Authorization: token $TOKEN" \
+        ISSUE_EVENTS=$(curl --max-time 10 -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/events")
-        ISSUE_COMMENTS=$(curl -s -H "Authorization: token $TOKEN" \
+        ISSUE_COMMENTS=$(curl --max-time 10 -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues/comments?per_page=100&since=$ONE_HOUR_AGO")
         # Pagination to get all issues.
         ALL_ISSUES=()
         PAGE=1
         while :; do
-          RESPONSE=$(curl -s -H "Authorization: token $TOKEN" "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues?state=all&per_page=100&page=$PAGE")
+          RESPONSE=$(curl --max-time 10 -s -H "Authorization: token $TOKEN" "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues?state=all&per_page=100&page=$PAGE")
           if [[ $(echo "$RESPONSE" | jq '. | length') -eq 0 ]]; then
             break
           fi
@@ -71,9 +71,9 @@ jobs:
           ((PAGE++))
         done
         ALL_ISSUES_JSON=$(echo "${ALL_ISSUES[@]}" | jq -s 'add')
-        ALL_LABELS=$(curl -s -H "Authorization: token $TOKEN" \
+        ALL_LABELS=$(curl --max-time 10 -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/labels")  
-        ALL_USERS=$(curl -s -H "Authorization: token $TOKEN" \
+        ALL_USERS=$(curl --max-time 10 -s -H "Authorization: token $TOKEN" \
           "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/assignees")  
         echo $ISSUE_EVENTS > issues.json
         echo $ISSUE_COMMENTS > comments.json
